@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using Amido.Stacks.Application.CQRS.Queries;
 using Microsoft.AspNetCore.Authorization;
@@ -45,7 +46,29 @@ namespace xxAMIDOxx.xxSTACKSxx.API.Controllers
             if (result == null)
                 return NotFound();
 
-            return new ObjectResult(result);
+            var menu = new Menu
+            {
+                Id = result.Id,
+                Name = result.Name, 
+                Description = result.Description,
+                Categories = result.Categories.Select(i => new Category()
+                {
+                    Id = i.Id,
+                    Name = i.Name,
+                    Description = i.Description,
+                    Items = i.Items.Select(x => new Item()
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Description = x.Description,
+                        Price = x.Price,
+                        Available = x.Available
+                    }).ToList(),
+                }).ToList(),
+                Enabled = result.Enabled
+            };
+
+            return new ObjectResult(menu);
         }
     }
 }
