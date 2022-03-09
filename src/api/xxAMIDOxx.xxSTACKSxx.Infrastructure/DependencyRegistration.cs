@@ -48,9 +48,8 @@ namespace xxAMIDOxx.xxSTACKSxx.Infrastructure
             services.AddCosmosDB();
             services.AddTransient<IMenuRepository, CosmosDbMenuRepository>();
 #elif (DynamoDb)
-            //services.Configure<DynamoDbConfiguration>(context.Configuration.GetSection("DynamoDb"));
-            //services.AddDynamoDB();
-            //services.AddTransient<IMenuRepository, DynamoDbMenuRepository>();
+            services.AddAWSService<IAmazonDynamoDB>();
+            services.AddTransient<IMenuRepository, DynamoDbMenuRepository>();
 #elif (InMemoryDb)
             services.AddTransient<IMenuRepository, InMemoryMenuRepository>();
 #else
