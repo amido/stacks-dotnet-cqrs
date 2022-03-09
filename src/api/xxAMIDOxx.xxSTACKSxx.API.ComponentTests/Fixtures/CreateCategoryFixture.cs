@@ -35,7 +35,7 @@ namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Fixtures
         {
             base.RegisterDependencies(collection);
 
-            // Mocked external dependencies, the setup should 
+            // Mocked external dependencies, the setup should
             // come later according to each scenario
             repository = Substitute.For<IMenuRepository>();
             applicationEventPublisher = Substitute.For<IApplicationEventPublisher>();
@@ -81,13 +81,13 @@ namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Fixtures
             {
                 existingMenu.RemoveCategory(existingMenu.Categories.First().Id);
             }
-            existingMenu.ClearEvents();
+            //existingMenu.ClearEvents();
         }
 
         internal void GivenTheCategoryAlreadyExist()
         {
             existingMenu.AddCategory(Guid.NewGuid(), newCategory.Name, "Some description");
-            existingMenu.ClearEvents();
+            //existingMenu.ClearEvents();
         }
 
         /****** WHEN ******************************************************/

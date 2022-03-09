@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.Domain;
 
@@ -7,8 +9,11 @@ namespace xxAMIDOxx.xxSTACKSxx.Infrastructure.Repositories
 {
     public class DynamoDbMenuRepository : IMenuRepository
     {
-        public DynamoDbMenuRepository()
+        private readonly DynamoDBContext context;
+
+        public DynamoDbMenuRepository(IAmazonDynamoDB dynamoDbClient)
         {
+            context = new DynamoDBContext(dynamoDbClient);
         }
 
         public Task<bool> DeleteAsync(Guid id)
@@ -16,14 +21,22 @@ namespace xxAMIDOxx.xxSTACKSxx.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<Menu> GetByIdAsync(Guid id)
+        public async Task<Menu> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await context.LoadAsync<Menu>(id.ToString());
         }
 
-        public Task<bool> SaveAsync(Menu entity)
+        public async Task<bool> SaveAsync(Menu entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await context.SaveAsync(entity);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

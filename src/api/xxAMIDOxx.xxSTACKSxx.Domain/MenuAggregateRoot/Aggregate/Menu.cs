@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Amazon.DynamoDBv2.DataModel;
 using Amido.Stacks.Domain;
 using Newtonsoft.Json;
 using xxAMIDOxx.xxSTACKSxx.Domain.Entities;
@@ -9,10 +10,14 @@ using xxAMIDOxx.xxSTACKSxx.Domain.MenuAggregateRoot.Exceptions;
 
 namespace xxAMIDOxx.xxSTACKSxx.Domain
 {
-    public class Menu : AggregateRoot<Guid>
+    [DynamoDBTable("Menus")]
+    public class Menu //: AggregateRoot<Guid>
     {
         [JsonProperty("Categories")]
+        [DynamoDBIgnore]
         private List<Category> categories;
+
+        public Menu() { }
 
         public Menu(Guid id, string name, Guid tenantId, string description, bool enabled, List<Category> categories = null)
         {
@@ -20,9 +25,12 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
             Name = name;
             TenantId = tenantId;
             Description = description;
-            this.categories = categories ?? new List<Category>(); 
+            this.categories = categories ?? new List<Category>();
             Enabled = enabled;
         }
+
+        [DynamoDBHashKey]
+        public Guid Id { get; set; }
 
         public string Name { get; private set; }
 
@@ -31,6 +39,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
         public string Description { get; private set; }
 
         [JsonIgnore]
+        [DynamoDBIgnore]
         public IReadOnlyList<Category> Categories { get => categories?.AsReadOnly(); private set => categories = value.ToList(); }
 
         public bool Enabled { get; private set; }
@@ -41,7 +50,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
             this.Description = description;
             this.Enabled = enabled;
 
-            Emit(new MenuChanged());//TODO: Pass the event data
+            // Emit(new MenuChanged());//TODO: Pass the event data
         }
 
         public void AddCategory(Guid categoryId, string name, string description)
@@ -51,7 +60,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
 
             categories.Add(new Category(categoryId, name, description));
 
-            Emit(new CategoryCreated());//TODO: Pass the event data
+            // Emit(new CategoryCreated());//TODO: Pass the event data
         }
 
         public void UpdateCategory(Guid categoryId, string name, string description)
@@ -60,7 +69,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
 
             category.Update(name, description);
 
-            Emit(new CategoryChanged());//TODO: Pass the event data
+            // Emit(new CategoryChanged());//TODO: Pass the event data
         }
 
         public void RemoveCategory(Guid categoryId)
@@ -69,7 +78,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
 
             categories.Remove(category);
 
-            Emit(new CategoryRemoved());//TODO: Pass the event data
+            // Emit(new CategoryRemoved());//TODO: Pass the event data
         }
 
         public void AddMenuItem(Guid categoryId,
@@ -92,7 +101,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
                         )
                 );
 
-            Emit(new MenuItemCreated());//TODO: Pass the event data
+            // Emit(new MenuItemCreated());//TODO: Pass the event data
         }
 
         public void UpdateMenuItem(Guid categoryId,
@@ -115,7 +124,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
                      )
             );
 
-            Emit(new MenuItemChanged());//TODO: Pass the event data
+            // Emit(new MenuItemChanged());//TODO: Pass the event data
         }
 
         public void RemoveMenuItem(Guid categoryId, Guid menuItemId)
@@ -124,7 +133,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
 
             category.RemoveMenuItem(menuItemId);
 
-            Emit(new MenuItemRemoved());//TODO: Pass the event data
+            // Emit(new MenuItemRemoved());//TODO: Pass the event data
         }
 
         private Category GetCategory(Guid categoryId)
@@ -136,6 +145,5 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
 
             return category;
         }
-
     }
 }

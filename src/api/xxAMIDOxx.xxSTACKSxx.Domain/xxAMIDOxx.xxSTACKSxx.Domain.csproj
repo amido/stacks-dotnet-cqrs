@@ -11,5 +11,6 @@
 
     <ItemGroup>
         <PackageReference Include="Amido.Stacks.Domain" Version="0.2.15" />
+        <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.3.8"/>
     </ItemGroup>
 </Project>
