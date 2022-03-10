@@ -44,18 +44,18 @@ namespace xxAMIDOxx.xxSTACKSxx.Infrastructure
         public static void ConfigureProductionDependencies(WebHostBuilderContext context, IServiceCollection services)
         {
             services.AddSecrets();
-            // #if (CosmosDb)
-            // services.Configure<CosmosDbConfiguration>(context.Configuration.GetSection("CosmosDB"));
-            // services.AddCosmosDB();
-            // services.AddTransient<IMenuRepository, CosmosDbMenuRepository>();
-            // #elif (DynamoDb)
+#if (CosmosDb)
+            services.Configure<CosmosDbConfiguration>(context.Configuration.GetSection("CosmosDB"));
+            services.AddCosmosDB();
+            services.AddTransient<IMenuRepository, CosmosDbMenuRepository>();
+#elif (DynamoDb)
             services.AddAWSService<IAmazonDynamoDB>();
             services.AddTransient<IMenuRepository, DynamoDbMenuRepository>();
-            // #elif (InMemoryDb)
-            //             services.AddTransient<IMenuRepository, InMemoryMenuRepository>();
-            // #else
-            // services.AddTransient<IMenuRepository, InMemoryMenuRepository>();
-            // #endif
+#elif (InMemoryDb)
+            services.AddTransient<IMenuRepository, InMemoryMenuRepository>();
+#else
+            services.AddTransient<IMenuRepository, InMemoryMenuRepository>();
+#endif
 
             AddEventPublishers(services);
 

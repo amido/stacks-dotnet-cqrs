@@ -81,13 +81,13 @@ namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Fixtures
             {
                 existingMenu.RemoveCategory(existingMenu.Categories.First().Id);
             }
-            //existingMenu.ClearEvents();
+            existingMenu.ClearEvents();
         }
 
         internal void GivenTheCategoryAlreadyExist()
         {
             existingMenu.AddCategory(Guid.NewGuid(), newCategory.Name, "Some description");
-            //existingMenu.ClearEvents();
+            existingMenu.ClearEvents();
         }
 
         /****** WHEN ******************************************************/
