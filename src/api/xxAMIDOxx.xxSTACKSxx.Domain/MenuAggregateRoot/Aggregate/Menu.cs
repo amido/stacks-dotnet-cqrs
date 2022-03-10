@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using Amido.Stacks.Domain;
 using xxAMIDOxx.xxSTACKSxx.Domain.Entities;
 using xxAMIDOxx.xxSTACKSxx.Domain.Events;
@@ -161,10 +163,12 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
         }
 
         [DynamoDBHashKey]
+        [DynamoDBProperty(typeof(DynamoDbGuidConverter))]
         public Guid Id { get; set; }
 
         public string Name { get; private set; }
 
+        [DynamoDBProperty(typeof(DynamoDbGuidConverter))]
         public Guid TenantId { get; private set; }
 
         public string Description { get; private set; }
@@ -272,6 +276,30 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
         }
 
         private void Emit(IDomainEvent domainEvent) { }
+    }
+
+    public class DynamoDbGuidConverter : IPropertyConverter
+    {
+        public DynamoDBEntry ToEntry(object value)
+        {
+            Guid id = Guid.Parse(value?.ToString());
+            DynamoDBEntry entry = new Primitive
+            {
+                Value = id.ToString()
+            };
+
+            return entry;
+        }
+
+        public object FromEntry(DynamoDBEntry entry)
+        {
+            Primitive primitive = entry as Primitive;
+            if (primitive == null || !(primitive.Value is String) || string.IsNullOrEmpty((string)primitive.Value))
+                throw new ArgumentOutOfRangeException();
+
+            Guid id = Guid.Parse(primitive.Value.ToString());
+            return id;
+        }
     }
 #endif
 
