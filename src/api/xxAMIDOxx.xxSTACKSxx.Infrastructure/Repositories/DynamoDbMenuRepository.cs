@@ -2,6 +2,9 @@
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amido.Stacks.Data.Documents.Abstractions;
+using Amido.Stacks.DynamoDB;
+using Amido.Stacks.DynamoDB.Abstractions;
 using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.Domain;
 
@@ -9,34 +12,32 @@ namespace xxAMIDOxx.xxSTACKSxx.Infrastructure.Repositories
 {
     public class DynamoDbMenuRepository : IMenuRepository
     {
-        private readonly DynamoDBContext context;
+        private readonly IDynamoDbObjectStorage<Menu> objectStorage;
 
-        public DynamoDbMenuRepository(IAmazonDynamoDB dynamoDbClient)
+        public DynamoDbMenuRepository(IDynamoDbObjectStorage<Menu> storage)
         {
-            context = new DynamoDBContext(dynamoDbClient);
+            this.objectStorage = storage;
         }
 
-        public Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var result = await objectStorage.DeleteAsync(id.ToString());
+
+            return result.IsSuccessful;
         }
 
         public async Task<Menu> GetByIdAsync(Guid id)
         {
-            return await context.LoadAsync<Menu>(id.ToString());
+            var result = await objectStorage.GetByIdAsync(id.ToString());
+
+            return result.Content;
         }
 
         public async Task<bool> SaveAsync(Menu entity)
         {
-            try
-            {
-                await context.SaveAsync(entity);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            var result = await objectStorage.SaveAsync(entity);
+
+            return result.IsSuccessful;
         }
     }
 }

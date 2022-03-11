@@ -10,7 +10,6 @@ using xxAMIDOxx.xxSTACKSxx.Domain.Entities;
 using xxAMIDOxx.xxSTACKSxx.Domain.Events;
 using xxAMIDOxx.xxSTACKSxx.Domain.MenuAggregateRoot.Exceptions;
 using Amido.Stacks.Domain.Events;
-using Amido.Stacks.DynamoDB.Model;
 using Amido.Stacks.DynamoDB.Converters;
 
 namespace xxAMIDOxx.xxSTACKSxx.Domain

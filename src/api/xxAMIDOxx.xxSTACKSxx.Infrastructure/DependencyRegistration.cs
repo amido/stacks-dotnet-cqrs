@@ -7,6 +7,7 @@ using Amido.Stacks.Configuration.Extensions;
 using Amido.Stacks.Data.Documents.CosmosDB;
 using Amido.Stacks.Data.Documents.CosmosDB.Extensions;
 using Amido.Stacks.DependencyInjection;
+using Amido.Stacks.DynamoDB.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -49,7 +50,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Infrastructure
             services.AddCosmosDB();
             services.AddTransient<IMenuRepository, CosmosDbMenuRepository>();
 #elif (DynamoDb)
-            services.AddAWSService<IAmazonDynamoDB>();
+            services.AddDynamoDB();
             services.AddTransient<IMenuRepository, DynamoDbMenuRepository>();
 #elif (InMemoryDb)
             services.AddTransient<IMenuRepository, InMemoryMenuRepository>();
