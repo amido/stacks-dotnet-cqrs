@@ -10,6 +10,8 @@ using xxAMIDOxx.xxSTACKSxx.Domain.Entities;
 using xxAMIDOxx.xxSTACKSxx.Domain.Events;
 using xxAMIDOxx.xxSTACKSxx.Domain.MenuAggregateRoot.Exceptions;
 using Amido.Stacks.Domain.Events;
+using Amido.Stacks.DynamoDB.Model;
+using Amido.Stacks.DynamoDB.Converters;
 
 namespace xxAMIDOxx.xxSTACKSxx.Domain
 {
@@ -142,7 +144,6 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
     }
 
 #elif (DynamoDb)
-
     [DynamoDBTable("Menus")]
     public class Menu
     {
@@ -150,6 +151,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
         [DynamoDBIgnore]
         private List<Category> categories;
 
+        // DynamoDB needs an empty constructor
         public Menu() { }
 
         public Menu(Guid id, string name, Guid tenantId, string description, bool enabled, List<Category> categories = null)
@@ -162,13 +164,12 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
             Enabled = enabled;
         }
 
-        [DynamoDBHashKey]
-        [DynamoDBProperty(typeof(DynamoDbGuidConverter))]
-        public Guid Id { get; set; }
+        [DynamoDBHashKey(AttributeName = "Id", Converter = typeof(DynamoDbGuidConverter))]
+        public Guid Id { get; private set; }
 
         public string Name { get; private set; }
 
-        [DynamoDBProperty(typeof(DynamoDbGuidConverter))]
+        [DynamoDBProperty(AttributeName = "TenantId", Converter = typeof(DynamoDbGuidConverter))]
         public Guid TenantId { get; private set; }
 
         public string Description { get; private set; }
@@ -278,29 +279,6 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
         private void Emit(IDomainEvent domainEvent) { }
     }
 
-    public class DynamoDbGuidConverter : IPropertyConverter
-    {
-        public DynamoDBEntry ToEntry(object value)
-        {
-            Guid id = Guid.Parse(value?.ToString());
-            DynamoDBEntry entry = new Primitive
-            {
-                Value = id.ToString()
-            };
-
-            return entry;
-        }
-
-        public object FromEntry(DynamoDBEntry entry)
-        {
-            Primitive primitive = entry as Primitive;
-            if (primitive == null || !(primitive.Value is String) || string.IsNullOrEmpty((string)primitive.Value))
-                throw new ArgumentOutOfRangeException();
-
-            Guid id = Guid.Parse(primitive.Value.ToString());
-            return id;
-        }
-    }
 #endif
 
 }
