@@ -143,14 +143,14 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
     }
 
 #elif (DynamoDb)
-    [DynamoDBTable("Menus")]
+    [DynamoDBTable("Menu")]
     public class Menu
     {
         [JsonProperty("Categories")]
         [DynamoDBIgnore]
         private List<Category> categories;
 
-        // DynamoDB needs an empty constructor
+        // DynamoDB needs an empty constructor. In a real project you'll probably wrap your domain obj in a Dynamo DTO
         public Menu() { }
 
         public Menu(Guid id, string name, Guid tenantId, string description, bool enabled, List<Category> categories = null)

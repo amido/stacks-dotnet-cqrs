@@ -7,11 +7,12 @@
 
     <ItemGroup>
         <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Common\xxAMIDOxx.xxSTACKSxx.Common.csproj" />
-        <ProjectReference Include="../../../../stacks-dotnet-packages-dynamodb/src/Amido.Stacks.DynamoDB/Amido.Stacks.DynamoDB.csproj" />
+        <!-- <ProjectReference Include="../../../../stacks-dotnet-packages-dynamodb/src/Amido.Stacks.DynamoDB/Amido.Stacks.DynamoDB.csproj" /> -->
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Amido.Stacks.Domain" Version="0.2.15" />
-        <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.3.9"/>
+        <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.3.10"/>
+        <PackageReference Include="Amido.Stacks.DynamoDB" Version="0.1.14-preview-dynamodb-pipeline"/>
     </ItemGroup>
 </Project>
