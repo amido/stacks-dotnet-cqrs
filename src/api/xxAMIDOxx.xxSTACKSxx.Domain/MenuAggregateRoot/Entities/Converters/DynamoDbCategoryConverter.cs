@@ -35,7 +35,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain.MenuAggregateRoot.Entities.Converters
         public object FromEntry(DynamoDBEntry entry)
         {
             PrimitiveList primitives = entry as PrimitiveList;
-            if (primitives == null || (primitives.Entries.Count == 0))
+            if (primitives == null || (primitives.Entries == null) || (primitives.Entries.Count == 0))
                 throw new ArgumentOutOfRangeException();
 
             var categories = primitives.Entries
