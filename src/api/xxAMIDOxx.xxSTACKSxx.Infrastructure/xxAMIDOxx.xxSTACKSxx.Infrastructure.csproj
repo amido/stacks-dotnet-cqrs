@@ -1,27 +1,25 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <LangVersion>10.0</LangVersion>
-    </PropertyGroup>
-
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Amido.Stacks.Data.Documents.CosmosDB" Version="0.2.50" />
-    <PackageReference Include="Amido.Stacks.DependencyInjection" Version="0.2.19" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
-    <PackageReference Include="Serilog" Version="2.10.0" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="6.0.2" />
+    <PackageReference Include="Amido.Stacks.Data.Documents.CosmosDB" Version="0.2.50"/>
+    <PackageReference Include="Amido.Stacks.DependencyInjection" Version="0.2.19"/>
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0"/>
+    <PackageReference Include="Serilog" Version="2.10.0"/>
+    <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="6.0.2"/>
+    <PackageReference Include="Amido.Stacks.DynamoDB" Version="0.1.14-preview-dynamodb-pipeline"/>
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.3.10"/>
   </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers\xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers.csproj" />
-        <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Application.Integration\xxAMIDOxx.xxSTACKSxx.Application.Integration.csproj" />
-        <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers\xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers.csproj" />
-        <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.CQRS\xxAMIDOxx.xxSTACKSxx.CQRS.csproj" />
-        <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Domain\xxAMIDOxx.xxSTACKSxx.Domain.csproj" />
-    </ItemGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers\xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers.csproj"/>
+    <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Application.Integration\xxAMIDOxx.xxSTACKSxx.Application.Integration.csproj"/>
+    <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers\xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers.csproj"/>
+    <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.CQRS\xxAMIDOxx.xxSTACKSxx.CQRS.csproj"/>
+    <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Domain\xxAMIDOxx.xxSTACKSxx.Domain.csproj"/>
+  </ItemGroup>
 </Project>
