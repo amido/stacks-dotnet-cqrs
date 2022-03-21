@@ -30,8 +30,6 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
             Enabled = enabled;
         }
 
-        public Guid Id { get; set; }
-
         public string Name { get; private set; }
 
         public Guid TenantId { get; private set; }
