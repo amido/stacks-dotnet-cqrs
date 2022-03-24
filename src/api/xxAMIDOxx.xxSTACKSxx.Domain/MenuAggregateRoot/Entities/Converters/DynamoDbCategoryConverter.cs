@@ -18,28 +18,28 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain.MenuAggregateRoot.Entities.Converters
         public DynamoDBEntry ToEntry(object value)
         {
             IEnumerable<Category> categories = value as IReadOnlyCollection<Category>;
-            List<Primitive> primitives = new List<Primitive>();
+            List<Document> entries = new List<Document>();
 
             if (categories == null) throw new ArgumentOutOfRangeException();
 
-            primitives.AddRange(categories.Select(x =>
+            entries.AddRange(categories.Select(x =>
             {
                 var category = JsonConvert.SerializeObject(x);
-                var dbEntry = new Primitive(category);
-                return dbEntry;
+                return Document.FromJson(category);
             }));
 
-            return new PrimitiveList() { Entries = primitives };
+            return entries;
         }
 
         public object FromEntry(DynamoDBEntry entry)
         {
-            PrimitiveList primitives = entry as PrimitiveList;
-            if (primitives == null || (primitives.Entries == null) || (primitives.Entries.Count == 0))
+            var entries = entry as DynamoDBList;
+            var documents = entries?.AsListOfDocument();
+            if (documents == null)
                 throw new ArgumentOutOfRangeException();
 
-            var categories = primitives.Entries
-                .Select(x => JsonConvert.DeserializeObject<Category>((string)x.Value))
+            var categories = documents
+                .Select(x => JsonConvert.DeserializeObject<Category>((x.ToJson())))
                 .ToList()
                 .AsReadOnly();
 
