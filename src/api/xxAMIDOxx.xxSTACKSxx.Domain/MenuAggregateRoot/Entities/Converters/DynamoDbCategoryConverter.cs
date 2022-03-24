@@ -6,7 +6,7 @@ using Amazon.DynamoDBv2.DocumentModel;
 using Newtonsoft.Json;
 using xxAMIDOxx.xxSTACKSxx.Domain.Entities;
 
-namespace xxAMIDOxx.xxSTACKSxx.Domain.MenuAggregateRoot.Entities.Converters
+namespace xxAMIDOxx.xxSTACKSxx.Domain.Converters
 {
     // IMPORTANT!!!
     // Since Categories is IReadOnlyCollection<T> we need the converter to work with that interface both during serialization

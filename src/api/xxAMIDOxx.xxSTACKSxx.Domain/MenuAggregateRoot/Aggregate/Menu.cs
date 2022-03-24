@@ -11,7 +11,7 @@ using xxAMIDOxx.xxSTACKSxx.Domain.Events;
 using xxAMIDOxx.xxSTACKSxx.Domain.MenuAggregateRoot.Exceptions;
 using Amido.Stacks.Domain.Events;
 using Amido.Stacks.DynamoDB.Converters;
-using xxAMIDOxx.xxSTACKSxx.Domain.MenuAggregateRoot.Entities.Converters;
+using xxAMIDOxx.xxSTACKSxx.Domain.Converters;
 
 namespace xxAMIDOxx.xxSTACKSxx.Domain
 {
