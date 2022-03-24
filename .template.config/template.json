@@ -47,7 +47,7 @@
 				{
 					"choice": "InMemoryDb",
 					"description": "Targets an In Memory database for storing data."
-				}			
+				}
 			],
 			"description": "Adds saving to database."
 		},
@@ -94,7 +94,8 @@
 					"condition": "(CosmosDb)",
 					"exclude": [
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs"
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/DynamoDbCategoryConverterTests.cs"
 					]
 				},
 				{
@@ -110,7 +111,8 @@
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/CosmosDbMenuRepository.cs",
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/CosmosDbMenuRepositoryTests.cs",
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs"
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/DynamoDbCategoryConverterTests.cs"
 					]
 				}
 			]
