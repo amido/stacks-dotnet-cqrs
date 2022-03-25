@@ -6,16 +6,14 @@ Amido Stacks targets different cloud providers.
 
 [Azure](https://amido.github.io/stacks/docs/workloads/azure/backend/netcore/introduction_netcore)
 
-### Templates
+## Templates
 
 All templates from this repository come as part of the [Amido.Stacks.CQRS.Templates](https://www.nuget.org/packages/Amido.Stacks.CQRS.Templates/) NuGet package. The list of templates inside the package are as follows:
 
 - `stacks-cqrs-webapi`. The full CQRS template including source + build infrastructure.
 - `stacks-add-cqrs`. A special template that can add `CQRS` functionality and projects to your existing Web API solution
 
-### Template usage
-
-#### Template installation
+## Template installation
 
 For the latest template version, please consult the Nuget page [Amido.Stacks.CQRS.Templates](https://www.nuget.org/packages/Amido.Stacks.CQRS.Templates/). To install the templates to your machine via the command line:
 
@@ -39,7 +37,7 @@ Examples:
     dotnet new --help
 ```
 
-#### Uninstalling a template
+## Uninstalling a template
 
 To uninstall the template pack you have to execute the following command
 
@@ -47,7 +45,7 @@ To uninstall the template pack you have to execute the following command
 dotnet new --uninstall Amido.Stacks.CQRS.Templates
 ```
 
-#### Important parameters
+## Important parameters
 
 - **-n|--name**
   - Sets the project name
@@ -60,7 +58,7 @@ dotnet new --uninstall Amido.Stacks.CQRS.Templates
   - Sets the path to where the project is added
   - Omitting the parameter will result in the creation of a new folder
 
-#### Creating a new WebAPI + CQRS project from the template
+## Creating a new WebAPI + CQRS project from the template
 
 Let's say you want to create a brand new WebAPI with CQRS for your project.
 
@@ -71,7 +69,27 @@ It's entirely up to you where you want to generate the WebAPI. For example your 
 The template "Amido Stacks Web Api" was created successfully.
 ```
 
-#### Adding a CQRS template to your existing solution
+## DynamoDb Setup
+
+### Requirements
+
+You need a DynamoDB instance in order to use this library. You can follow the official instructions provided by AWS [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SettingUp.DynamoWebService.html).
+
+Also the object(s) from your application that you want to store in DynamoDB have to conform to the [Object Persistence Model](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DotNetSDKHighLevel.html). That means your object and its fields will need to have certain attribute annotations like `[DynamoDBTable("Menu")]` etc.
+
+**IMPORTANT:** The DynamoDB table must have the same name as your Domain. If your domain is `Menu` then table created in AWS has to have the same name.
+
+### Configuration
+
+Relevant documentation pages that you can follow to set up your profile:
+
+- [Configuration and credential file settings](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)
+
+- [Named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html)
+
+This library assumes you'll use the `AWS CLI` tools and will have configured your access keys via the `aws configure` command.
+
+## Adding a CQRS template to your existing solution
 
 Let's say you have a WebAPI solution and you want to add CQRS functionality to it.
 
