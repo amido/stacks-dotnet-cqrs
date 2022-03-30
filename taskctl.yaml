@@ -14,13 +14,10 @@ watchers:
 pipelines:
 
   setup:
-    - task: debug:env
     - task: buildnumber
-      depends_on:
-        - debug:env
 
   lint:
-    - task: lint:yaml
+    # - task: lint:yaml
     - task: lint:terraform:format
     - task: lint:terraform:validate
 
@@ -56,9 +53,3 @@ pipelines:
       depends_on: deploy:templater
     - task: deploy:functional_tests
       depends_on: deploy:kubernetes
-
-  # Package Release pipeline
-  release:
-    - task: update:dashboard
-    - task: publish:github
-    - task: publish:nuget
