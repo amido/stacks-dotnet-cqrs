@@ -12,8 +12,8 @@
     <PackageReference Include="Serilog" Version="2.10.0"/>
     <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0"/>
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="6.0.2"/>
-    <PackageReference Include="Amido.Stacks.DynamoDB" Version="0.1.14-preview-dynamodb-pipeline"/>
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.3.10"/>
+    <PackageReference Include="Amido.Stacks.DynamoDB" Version="0.1.25" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.3.15"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers\xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers.csproj"/>
