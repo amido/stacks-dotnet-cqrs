@@ -27,15 +27,15 @@ pipelines:
   # Pipeline to perform the build of the project
   build:
     - pipeline: lint
-    - task: test:nosonarqube
+    # - task: test:nosonarqube
       depends_on:
         - lint
-    # - task: build:functional_tests
-    #   depends_on:
-    #     - lint
-    - task: build:container
+    - task: build:functional_tests
       depends_on:
-        - test:nosonarqube
+        - lint
+    - task: build:container
+      # depends_on:
+      #   - test:nosonarqube
 
   # Pipeline to ensure that the infrastructure is valid
   infrastructure:
