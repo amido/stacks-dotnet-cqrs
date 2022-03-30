@@ -114,8 +114,7 @@ tasks:
     context: powershell-dotnet
     description: Create container image for application
     command:
-      - gci env:/ | select Name,Value
-      - Write-Warning "Build-DockerImage -Name $env:DOCKER_IMAGE_NAME -buildargs src/api -push"
+      - Build-DockerImage -Name $env:DOCKER_IMAGE_NAME -buildargs src/api -push
 
   build:functional_tests:
     context: powershell-dotnet
@@ -191,6 +190,12 @@ tasks:
 
   debug:env:
     context: powershell
+    description: Debugging task to show the environment variables in the container
+    command:
+      - dir env:/
+
+  debug:env:dotnet:
+    context: powershell-dotnet
     description: Debugging task to show the environment variables in the container
     command:
       - dir env:/
