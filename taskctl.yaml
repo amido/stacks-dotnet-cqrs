@@ -32,8 +32,6 @@ pipelines:
     - task: build:container
       depends_on:
         - test
-      variables:
-        IMAGE_NAME: stacks-api
 
   # Pipeline to ensure that the infrastructure is valid
   infrastructure:
