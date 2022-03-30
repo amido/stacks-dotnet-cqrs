@@ -114,6 +114,7 @@ tasks:
     context: powershell-dotnet
     description: Create container image for application
     command:
+      - Write-Warning $env:DOCKER_IMAGE_NAME
       - Build-DockerImage -Name $env:DOCKER_IMAGE_NAME -buildargs src/api -push
 
   build:functional_tests:

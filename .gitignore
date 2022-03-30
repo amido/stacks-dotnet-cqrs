@@ -352,3 +352,6 @@ reportgenerator
 # Other tools
 .terraform
 **/terraform.tfvars
+
+# TaskCTL
+envfile
