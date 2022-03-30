@@ -188,16 +188,16 @@ tasks:
     description: Update the Deployment Dashboard
     command:
       - Update-InfluxDashboard
-    # env: 
-    #  PUBLISH_RELEASE: $true
+    # env:
+    #   PUBLISH_RELEASE: $true
 
   publish:nuget:
     context: powershell
     description: Publish Packages to NuGet
-    command: 
+    command:
       - Write-Warning "Not actually publishing yet..."
-      # env: 
-      #  PUBLISH_RELEASE: $true
+      # env:
+      #   PUBLISH_RELEASE: $true
 
   debug:env:
     context: powershell

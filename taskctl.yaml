@@ -28,7 +28,11 @@ pipelines:
   build:
     - pipeline: lint
     - task: test:nosonarqube
+      depends_on:
+      - lint
     - task: build:functional_tests
+      depends_on:
+      - lint
     - task: build:container
       depends_on:
       - test:nosonarqube
@@ -52,7 +56,7 @@ pipelines:
       depends_on: deploy:templater
     - task: deploy:functional_tests
       depends_on: deploy:kubernetes
-  
+
   # Package Release pipeline
   release:
     - task: update:dashboard

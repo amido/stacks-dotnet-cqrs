@@ -74,7 +74,7 @@ variables:
     value: netcore-api-cqrs
   - name: k8s_app_route
     value: /api/menu
-  
+
   # Test Configuration
   - name: FUNCTIONAL_TESTS_SRC_DIR
     value: src/tests/Functional
@@ -111,7 +111,7 @@ variables:
     value: amido-stacks-prod-euw-core
   - name: k8s_cluster_identifier_prod
     value: amido-stacks-prod-euw-core
-  
+
   # Kubernetes target file location
   - name: k8s_resource_file
     value: "deploy/k8s/app/api-deploy.yml"
@@ -133,7 +133,7 @@ variables:
   - name: DASHBOARD_MEASUREMENT
     value: deployment # Static definition within Influx Config
   - group: amido-stacks-influx-credentials-prod
-    # Group should contain: 
+    # Group should contain:
       # DASHBOARD_INFLUX_ORG
       # DASHBOARD_INFLUX_BUCKET
       # DASHBOARD_INFLUX_TOKEN

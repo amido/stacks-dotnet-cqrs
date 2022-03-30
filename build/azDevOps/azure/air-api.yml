@@ -72,10 +72,10 @@ stages:
           - task: PublishTestResults@2
             inputs:
               testResultsFormat: VSTest
-              testResultsFiles: '**/*.trx' 
+              testResultsFiles: '**/*.trx'
               searchFolder: $(Pipeline.Workspace)/s/testresults
               failTaskOnFailedTests: true # Optional
-              testRunTitle: Unit 
+              testRunTitle: Unit
 
           # Upload functional tests as artifacts
           - task: PublishPipelineArtifact@1
@@ -363,7 +363,7 @@ stages:
                     K8S_CLUSTER_TARGET: $(k8s_cluster_target_nonprod)
                     K8S_CLUSTER_IDENTIFIER: $(k8s_cluster_identifier_nonprod)
                     K8S_RESOURCE_FILE: $(k8s_resource_file)
-                    
+
                 - task: PublishPipelineArtifact@1
                   displayName: "Publish: Kubernetes Manifest"
                   inputs:
