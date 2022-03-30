@@ -27,17 +27,12 @@ pipelines:
   # Pipeline to perform the build of the project
   build:
     - pipeline: lint
-    - task: test
+    # - task: test
     - task: build:functional_tests
     - task: debug:env
-      depends_on:
-        - test
-    - task: debug:env:dotnet
-      depends_on:
-        - test
-    # - task: build:container
-    #   depends_on:
-    #     - test
+    - task: build:container
+    #  depends_on:
+    #  - test
 
   # Pipeline to ensure that the infrastructure is valid
   infrastructure:
