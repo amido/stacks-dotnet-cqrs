@@ -74,7 +74,7 @@ stages:
               testResultsFormat: VSTest
               testResultsFiles: '**/*.trx'
               searchFolder: $(Pipeline.Workspace)/s/testresults
-              failTaskOnFailedTests: true # Optional
+              failTaskOnFailedTests: true  # Optional
               testRunTitle: Unit
 
           # Upload functional tests as artifacts
@@ -92,7 +92,7 @@ stages:
       - group: stacks-credentials-nonprod-kv
       - name: Environment.ShortName
         value: dev
-      - name: dns_base_domain # Available in Terraform Output, but not yet enabled to export as pipeline vars
+      - name: dns_base_domain  # Available in Terraform Output, but not yet enabled to export as pipeline vars
         value: nonprod.amidostacks.com
 
     jobs:
@@ -208,7 +208,7 @@ stages:
                     # Configuration
                     ENV_NAME: $(Environment.ShortName)
                     DOMAIN: ${{ variables.domain }}
-                    FUNCTIONAL_TESTS_RUN_DIR: $(FUNCTIONAL_TESTS_RUN_DIR) # Must match RELATIVE path from repo root that artefact is downloaded to.
+                    FUNCTIONAL_TESTS_RUN_DIR: $(FUNCTIONAL_TESTS_RUN_DIR)  # Must match RELATIVE path from repo root that artefact is downloaded to.
                     BaseUrl: $(FUNCTIONAL_TEST_BASEURL)
                     # Invoke-KubeCTL control variables
                     NAMESPACE: $(namespace)
@@ -234,7 +234,7 @@ stages:
       - group: stacks-credentials-prod-kv
       - name: Environment.ShortName
         value: prod
-      - name: dns_base_domain # Available in Terraform Output, but not yet enabled to export as pipeline vars
+      - name: dns_base_domain  # Available in Terraform Output, but not yet enabled to export as pipeline vars
         value: prod.amidostacks.com
 
     jobs:
@@ -351,7 +351,7 @@ stages:
                     # Configuration
                     ENV_NAME: $(Environment.ShortName)
                     DOMAIN: ${{ variables.domain }}
-                    FUNCTIONAL_TESTS_RUN_DIR: $(FUNCTIONAL_TESTS_RUN_DIR) # Must match RELATIVE path from repo root that artefact is downloaded to.
+                    FUNCTIONAL_TESTS_RUN_DIR: $(FUNCTIONAL_TESTS_RUN_DIR)  # Must match RELATIVE path from repo root that artefact is downloaded to.
                     BaseUrl: $(FUNCTIONAL_TEST_BASEURL)
                     # Invoke-KubeCTL control variables
                     NAMESPACE: $(namespace)

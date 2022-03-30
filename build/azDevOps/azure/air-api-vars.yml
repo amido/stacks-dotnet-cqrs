@@ -125,7 +125,7 @@ variables:
   - name: version_number
     value: $(version_major).$(version_minor).$(version_revision)
 
-# Dashboard
+  # Dashboard
   - name: DASHBOARD_VERSION
     value: $(Build.BuildNumber)
   - name: DASHBOARD_TAGS
@@ -134,12 +134,12 @@ variables:
     value: deployment # Static definition within Influx Config
   - group: amido-stacks-influx-credentials-prod
     # Group should contain:
-      # DASHBOARD_INFLUX_ORG
-      # DASHBOARD_INFLUX_BUCKET
-      # DASHBOARD_INFLUX_TOKEN
-      # DASHBOARD_INFLUX_SERVER
+    # DASHBOARD_INFLUX_ORG
+    # DASHBOARD_INFLUX_BUCKET
+    # DASHBOARD_INFLUX_TOKEN
+    # DASHBOARD_INFLUX_SERVER
 
-# GitHub Release
+  # GitHub Release
   - name: COMMIT_ID
     value: "$(Build.SourceVersion)"
   - name: OWNER

@@ -29,13 +29,13 @@ pipelines:
     - pipeline: lint
     - task: test:nosonarqube
       depends_on:
-      - lint
+        - lint
     - task: build:functional_tests
       depends_on:
-      - lint
+        - lint
     - task: build:container
       depends_on:
-      - test:nosonarqube
+        - test:nosonarqube
 
   # Pipeline to ensure that the infrastructure is valid
   infrastructure:
