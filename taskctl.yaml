@@ -29,7 +29,6 @@ pipelines:
     - pipeline: lint
     - task: test:nosonarqube
     - task: build:functional_tests
-    - task: debug:env
     - task: build:container
       depends_on:
       - test:nosonarqube
