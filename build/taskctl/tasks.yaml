@@ -51,7 +51,7 @@ tasks:
     description: Run Tests
     command:
       - Invoke-SonarScanner -start &&
-      - Invoke-DotNet -Build &&
+        Invoke-DotNet -Build &&
         Invoke-DotNet -Tests -pattern "*UnitTests" -arguments "--logger 'trx' --results-directory /app/testresults" &&
         Invoke-SonarScanner -stop
         # Invoke-DotNet -Coverage -target /app/coverage &&
