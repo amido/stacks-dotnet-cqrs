@@ -50,12 +50,15 @@ tasks:
     context: powershell-dotnet
     description: Run Tests
     command:
+      - Invoke-SonarScanner -start &&
       - Invoke-DotNet -Build &&
-        Invoke-DotNet -Tests -pattern "*UnitTests" -arguments "--logger 'trx' --results-directory /app/testresults" # &&
+        Invoke-DotNet -Tests -pattern "*UnitTests" -arguments "--logger 'trx' --results-directory /app/testresults" &&
+        Invoke-SonarScanner -stop
         # Invoke-DotNet -Coverage -target /app/coverage &&
         # Invoke-DotNet -Tests -pattern "*ComponentTests" &&
         # Invoke-DotNet -Tests -pattern "*IntegrationTests" &&
         # Invoke-DotNet -Tests -pattern "*ContractTests" &&
+
     condition: exit $TEST_NO_RUN
 
 
