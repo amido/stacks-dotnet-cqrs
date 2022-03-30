@@ -125,11 +125,6 @@ variables:
   - name: version_number
     value: $(version_major).$(version_minor).$(version_revision)
 
-# NuGet
-  - name: nuget_service_connection
-    value: "NuGetAmidoStacksServiceConnection"
-
-
 # Dashboard
   - name: DASHBOARD_VERSION
     value: $(Build.BuildNumber)
