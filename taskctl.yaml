@@ -17,7 +17,7 @@ pipelines:
     - task: buildnumber
 
   lint:
-    # - task: lint:yaml
+    - task: lint:yaml
     - task: lint:terraform:format
     - task: lint:terraform:validate
 
@@ -25,13 +25,14 @@ pipelines:
   build:
     - pipeline: lint
     # - task: test:nosonarqube
-      depends_on:
-        - lint
+      # depends_on:
+      #   - lint
     - task: build:functional_tests
       depends_on:
         - lint
     - task: build:container
-      # depends_on:
+      depends_on:
+        - lint
       #   - test:nosonarqube
 
   # Pipeline to ensure that the infrastructure is valid
@@ -41,8 +42,6 @@ pipelines:
       depends_on: infra:init
     - task: infra:apply
       depends_on: infra:plan
-      # - task: infra:output
-      #   depends_on: infra:apply
 
   # Deploy pipeline
   deploy:

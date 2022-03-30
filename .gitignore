@@ -354,4 +354,4 @@ reportgenerator
 **/terraform.tfvars
 
 # TaskCTL
-envfile
+**/envfile
