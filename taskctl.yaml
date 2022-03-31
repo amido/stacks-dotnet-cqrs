@@ -30,10 +30,10 @@ pipelines:
     - task: build:functional_tests
       depends_on:
         - lint
-    - task: build:container
-      depends_on:
-        - lint
-        - test:debug
+    # - task: build:container
+    #   depends_on:
+    #     - lint
+    #     - test:debug
 
   # Pipeline to ensure that the infrastructure is valid
   infrastructure:
