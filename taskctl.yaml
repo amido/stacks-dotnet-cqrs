@@ -21,19 +21,15 @@ pipelines:
     - task: lint:terraform:format
     - task: lint:terraform:validate
 
+  test:
+    - pipeline: lint
+    - task: test
+      depends_on:
+        - lint
   # Pipeline to perform the build of the project
   build:
-    - pipeline: lint
-    - task: test:debug
-      depends_on:
-        - lint
     - task: build:functional_tests
-      depends_on:
-        - lint
-    # - task: build:container
-    #   depends_on:
-    #     - lint
-    #     - test:debug
+    - task: build:container
 
   # Pipeline to ensure that the infrastructure is valid
   infrastructure:

@@ -56,8 +56,8 @@ tasks:
         Invoke-DotNet -Coverage -target /app/coverage &&
         Invoke-DotNet -Tests -pattern "*IntegrationTests" &&
         Invoke-DotNet -Tests -pattern "*ComponentTests" &&
+        Invoke-DotNet -Tests -pattern "*ContractTests" &&
         Invoke-SonarScanner -stop
-        # Invoke-DotNet -Tests -pattern "*ContractTests" &&
 
 
     condition: exit $TEST_NO_RUN

@@ -39,6 +39,20 @@ stages:
               DOCKER_IMAGE_TAG: $(version_number)
 
           - task: Bash@3
+            displayName: "TaskCTL: Test"
+            inputs:
+              targetType: inline
+              script: taskctl test
+            env:
+              # SonarQube
+              SONAR_ORG: $(SONAR_ORGANIZATION)
+              SONAR_URL: "https://sonarcloud.io"
+              SONAR_TOKEN: $(SONAR_TOKEN)
+              SONAR_PROPERTIES: ""
+              PROJECT_NAME: stacks-dotnet-cqrs # TODO: Reset this to a var i.e. SONAR_PROECT_NAME
+              BUILD_BUILDNUMBER: $(version_number)
+
+          - task: Bash@3
             displayName: "TaskCTL: Build"
             inputs:
               targetType: inline
@@ -49,13 +63,6 @@ stages:
               ARM_SUBSCRIPTION_ID: "$(azure-subscription-id)"
               ARM_CLIENT_ID: "$(azure-client-id)"
               ARM_CLIENT_SECRET: "$(azure-client-secret)"
-              # SonarQube
-              SONAR_ORG: $(SONAR_ORGANIZATION)
-              SONAR_URL: "https://sonarcloud.io"
-              SONAR_TOKEN: $(SONAR_TOKEN)
-              SONAR_PROPERTIES: ""
-              PROJECT_NAME: stacks-dotnet-cqrs # TODO: Reset this to a var i.e. SONAR_PROECT_NAME
-              BUILD_BUILDNUMBER: $(version_number)
               # Docker
               DOCKER_CONTAINER_REGISTRY_NAME: $(docker_container_registry_name_nonprod).azurecr.io
               REGISTRY_RESOURCE_GROUP: $(docker_container_registry_rg_name_nonprod)
