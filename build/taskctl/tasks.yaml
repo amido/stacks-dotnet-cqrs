@@ -32,6 +32,8 @@ tasks:
 
   # TESTS
   # TODO: Wrapper for a Build and all Tests with SonarScanner, may be able to be split
+  # TODO: Validate whether Integration Tests are required. Command would be: Invoke-DotNet -Tests -pattern "*IntegrationTests" &&
+
   test:
     context: powershell-dotnet
     description: Run Tests
@@ -41,27 +43,9 @@ tasks:
         Invoke-DotNet -Tests -pattern "*UnitTests" -arguments "--logger 'trx' --results-directory /app/testresults" &&
         Invoke-DotNet -Coverage -target /app/coverage &&
         Invoke-DotNet -Tests -pattern "*ComponentTests" &&
-        Invoke-DotNet -Tests -pattern "*IntegrationTests" &&
         Invoke-DotNet -Tests -pattern "*ContractTests" &&
         Invoke-SonarScanner -stop
     condition: exit $TEST_NO_RUN
-
-  test:debug:
-    context: powershell-dotnet
-    description: Run Tests
-    command:
-      - Invoke-SonarScanner -start &&
-        Invoke-DotNet -Build &&
-        Invoke-DotNet -Tests -pattern "*UnitTests" -arguments "--logger 'trx' --results-directory /app/testresults" &&
-        Invoke-DotNet -Coverage -target /app/coverage &&
-        Invoke-DotNet -Tests -pattern "*IntegrationTests" &&
-        Invoke-DotNet -Tests -pattern "*ComponentTests" &&
-        Invoke-DotNet -Tests -pattern "*ContractTests" &&
-        Invoke-SonarScanner -stop
-
-
-    condition: exit $TEST_NO_RUN
-
 
   # TODO: Not currently used
   test:sonarcloud:start:
