@@ -3,7 +3,6 @@
 # Each module is conditionally created within this app infra definition interface and can be re-used across app types e.g. SSR webapp, API only
 ########
 
-# Naming convention
 module "default_label" {
   source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=0.24.1"
   namespace  = "${var.name_company}-${var.name_project}"

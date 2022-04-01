@@ -52,6 +52,19 @@ variable "location_name_map" {
   }
 }
 
+############################################
+# AZURE INFORMATION
+############################################
+
+variable "resource_group_location" {
+  type = string
+}
+
+variable "dns_record" {
+  description = ""
+  type        = string
+}
+
 ###########################
 # CONDITIONAL SETTINGS
 ##########################
