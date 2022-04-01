@@ -3,8 +3,6 @@
 # Each module is conditionally created within this app infra definition interface and can be re-used across app types e.g. SSR webapp, API only
 ########
 
-data "azurerm_client_config" "current" {}
-
 # Naming convention
 module "default_label" {
   source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=0.24.1"
@@ -29,10 +27,10 @@ module "app" {
   create_cache                         = var.create_cache
   create_dns_record                    = var.create_dns_record
   dns_record                           = var.dns_record
-  dns_zone_name                        = var.dns_zone_name
-  core_resource_group                  = var.core_resource_group
-  dns_zone_resource_group              = var.dns_zone_resource_group != "" ? var.dns_zone_resource_group : var.core_resource_group
-  dns_a_records                        = [data.azurerm_public_ip.app_gateway.ip_address]
+  dns_zone_name                        = data.terraform_remote_state.core.outputs.dns_base_domain
+  core_resource_group                  = data.terraform_remote_state.core.outputs.resource_group_name
+  dns_zone_resource_group              = data.terraform_remote_state.core.outputs.dns_resource_group_name != "" ? data.terraform_remote_state.core.outputs.dns_resource_group_name : data.terraform_remote_state.core.outputs.resource_group_name
+  dns_a_records                        = [data.terraform_remote_state.core.outputs.app_gateway_ip]
   subscription_id                      = data.azurerm_client_config.current.subscription_id
   create_cdn_endpoint                  = var.create_cdn_endpoint
   # Alternatively if you want you can pass in the IP directly and remove the need for a lookup

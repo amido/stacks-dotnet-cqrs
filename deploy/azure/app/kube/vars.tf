@@ -52,41 +52,6 @@ variable "location_name_map" {
   }
 }
 
-############################################
-# AZURE INFORMATION
-############################################
-
-variable "resource_group_location" {
-  type = string
-}
-
-variable "app_gateway_frontend_ip_name" {
-  description = ""
-  type        = string
-}
-
-variable "dns_record" {
-  description = ""
-  type        = string
-}
-
-variable "dns_zone_name" {
-  type = string
-}
-
-variable "dns_zone_resource_group" {
-  type = string
-}
-
-variable "core_resource_group" {
-  type = string
-}
-
-variable "internal_dns_zone_name" {
-  type = string
-}
-
-
 ###########################
 # CONDITIONAL SETTINGS
 ##########################
@@ -128,3 +93,46 @@ variable "cosmosdb_offer_type" {
   type        = string
   description = "Specify the offer type"
 }
+
+###########################
+# Core infrastructure settings
+##########################
+variable "core_environment" {
+  type        = string
+  description = "Name of the environment for the core infrastructure"
+  default     = "nonprod"
+}
+
+variable "tfstate_key" {
+  type        = string
+  description = "Name of the key in remote storage for the core environmnent"
+  default     = "core-sharedservicesenv"
+}
+
+variable "tfstate_storage_account" {
+  type        = string
+  description = "Name of the storage account that holds the Terraform state"
+  default     = "amidostackstfstate"
+}
+
+variable "tfstate_container_name" {
+  type        = string
+  description = "Name of the container in the specified storage account holding the state"
+  default     = "tfstate"
+}
+
+variable "tfstate_resource_group_name" {
+  type        = string
+  description = "Name of the resource group that holds the the above resources"
+  default     = "Stacks-Ancillary-Resources"
+}
+
+##########################
+# App Insights Lookup
+##########################
+variable "app_insights_name" {
+  type        = string
+  default     = ""
+  description = "app insights name for key retriaval in memory"
+}
+

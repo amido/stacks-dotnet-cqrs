@@ -11,7 +11,9 @@
             k8s_image = "`${DOCKER_REGISTRY}/`${DOCKER_IMAGE_NAME}:`${DOCKER_IMAGE_TAG}"
             aadpodidentitybinding = "stacks-webapp-identity"
             app_insights_key = "`${APP_INSIGHTS_INSTRUMENTATION_KEY}"
-            cosmosdb_key = "`${COSMOSDB_KEY}" # TODO: Set this using Invoke Templater!
+            cosmosdb_key = "`${COSMOSDB_PRIMARY_MASTER_KEY}" # TODO: Set this using Invoke Templater!
+            cosmosdb_endpoint = "`${COSMOSDB_ENDPOINT}" # TODO: Set this using Invoke Templater!
+            cosmosdb_name = "`${COSMOSDB_DATABASE_NAME}" # TODO: Set this using Invoke Templater!
             version = "`${DOCKER_IMAGE_TAG}"
             jwtbearerauthentication_audience = "<TODO>"
             jwtbearerauthentication_authority = "<TODO>"
