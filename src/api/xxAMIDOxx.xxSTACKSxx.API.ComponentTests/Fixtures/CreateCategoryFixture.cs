@@ -35,7 +35,7 @@ namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Fixtures
         {
             base.RegisterDependencies(collection);
 
-            // Mocked external dependencies, the setup should 
+            // Mocked external dependencies, the setup should
             // come later according to each scenario
             repository = Substitute.For<IMenuRepository>();
             applicationEventPublisher = Substitute.For<IApplicationEventPublisher>();

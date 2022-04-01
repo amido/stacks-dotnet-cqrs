@@ -37,7 +37,7 @@ namespace xxAMIDOxx.xxSTACKSxx.API.Controllers
         [HttpGet("/v1/menu/{id}")]
         [Authorize]
         [ProducesResponseType(typeof(Menu), 200)]
-        public async Task<IActionResult> GetMenu([FromRoute][Required]Guid id)
+        public async Task<IActionResult> GetMenu([FromRoute][Required] Guid id)
         {
             // NOTE: Please ensure the API returns the response codes annotated above
 
@@ -51,12 +51,12 @@ namespace xxAMIDOxx.xxSTACKSxx.API.Controllers
                 Id = result.Id,
                 Name = result.Name,
                 Description = result.Description,
-                Categories = result.Categories.Select(i => new Category()
+                Categories = result.Categories?.Select(i => new Category()
                 {
                     Id = i.Id,
                     Name = i.Name,
                     Description = i.Description,
-                    Items = i.Items.Select(x => new Item()
+                    Items = i.Items?.Select(x => new Item()
                     {
                         Id = x.Id,
                         Name = x.Name,
