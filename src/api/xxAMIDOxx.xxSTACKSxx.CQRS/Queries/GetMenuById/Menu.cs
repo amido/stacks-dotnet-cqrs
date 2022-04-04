@@ -33,23 +33,7 @@ namespace xxAMIDOxx.xxSTACKSxx.CQRS.Queries.GetMenuById
                 Name = menu.Name,
                 Description = menu.Description,
                 Enabled = menu.Enabled,
-                Categories = menu.Categories?.Select(c =>
-                    new Category()
-                    {
-                        Id = c.Id,
-                        Name = c.Name,
-                        Description = c.Description,
-                        Items = c.Items?.Select(i =>
-                            new MenuItem()
-                            {
-                                Id = i.Id,
-                                Name = i.Name,
-                                Description = i.Description,
-                                Price = i.Price,
-                                Available = i.Available
-                            }
-                        ).ToList()
-                    }).ToList()
+                Categories = menu.Categories?.Select(Category.FromEntity).ToList()
             };
         }
     }
