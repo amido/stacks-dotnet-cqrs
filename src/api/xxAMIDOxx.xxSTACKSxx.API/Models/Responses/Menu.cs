@@ -40,20 +40,7 @@ namespace xxAMIDOxx.xxSTACKSxx.API.Models.Responses
                 Id = menu.Id,
                 Name = menu.Name,
                 Description = menu.Description,
-                Categories = menu.Categories?.Select(i => new Category()
-                {
-                    Id = i.Id,
-                    Name = i.Name,
-                    Description = i.Description,
-                    Items = i.Items?.Select(x => new Item()
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Description = x.Description,
-                        Price = x.Price,
-                        Available = x.Available
-                    }).ToList(),
-                }).ToList(),
+                Categories = menu.Categories?.Select(Category.FromQuery).ToList(),
                 Enabled = menu.Enabled
             };
         }
