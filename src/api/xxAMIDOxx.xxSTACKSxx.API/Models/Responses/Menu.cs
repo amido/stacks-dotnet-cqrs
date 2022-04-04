@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using Query = xxAMIDOxx.xxSTACKSxx.CQRS.Queries.GetMenuById;
 
 namespace xxAMIDOxx.xxSTACKSxx.API.Models.Responses
 {
@@ -11,24 +13,49 @@ namespace xxAMIDOxx.xxSTACKSxx.API.Models.Responses
     {
         /// <example>d290f1ee-6c54-4b01-90e6-d701748f0851</example>
         [Required]
-        public Guid? Id { get; set; }
+        public Guid? Id { get; private set; }
 
         /// <example>Menu name</example>
         [Required]
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
         /// <example>Menu description</example>
-        public string Description { get; set; }
+        public string Description { get; private set; }
 
         /// <summary>
         /// Represents the categories contained in the menu
         /// </summary>
-        public List<Category> Categories { get; set; }
+        public List<Category> Categories { get; private set; }
 
         /// <summary>
         /// Represents the status of the menu. False if disabled
         /// </summary>
         [Required]
-        public bool? Enabled { get; set; }
+        public bool? Enabled { get; private set; }
+
+        public static Menu FromQuery(Query.Menu menu)
+        {
+            return new Menu
+            {
+                Id = menu.Id,
+                Name = menu.Name,
+                Description = menu.Description,
+                Categories = menu.Categories?.Select(i => new Category()
+                {
+                    Id = i.Id,
+                    Name = i.Name,
+                    Description = i.Description,
+                    Items = i.Items?.Select(x => new Item()
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Description = x.Description,
+                        Price = x.Price,
+                        Available = x.Available
+                    }).ToList(),
+                }).ToList(),
+                Enabled = menu.Enabled
+            };
+        }
     }
 }
