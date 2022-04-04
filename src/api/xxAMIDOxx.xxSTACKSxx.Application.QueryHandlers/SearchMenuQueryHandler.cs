@@ -55,15 +55,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers
             if (!results.IsSuccessful)
                 return result;
 
-            result.Results = results.Content.Select(i => new SearchMenuResultItem()
-            {
-                Id = i.Id,
-                RestaurantId = i.TenantId,
-                Name = i.Name,
-                Description = i.Description,
-                Enabled = i.Enabled
-            });
-
+            result.Results = results.Content.Select(SearchMenuResultItem.FromDomain);
 
             return result;
         }
