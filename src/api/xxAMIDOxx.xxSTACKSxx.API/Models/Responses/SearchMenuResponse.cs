@@ -27,7 +27,7 @@ namespace xxAMIDOxx.xxSTACKSxx.API.Models.Responses
             {
                 Offset = (results?.PageNumber ?? 0) * (results?.PageSize ?? 0),
                 Size = (results?.PageSize ?? 0),
-                Results = results.Results?.Select(SearchMenuResponseItem.FromSearchMenuResultItem).ToList()
+                Results = results?.Results?.Select(SearchMenuResponseItem.FromSearchMenuResultItem).ToList()
             };
         }
     }
