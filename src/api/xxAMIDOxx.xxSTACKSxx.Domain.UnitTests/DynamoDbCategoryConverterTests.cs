@@ -72,7 +72,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain.UnitTests
             Assert.NotNull(catResult);
             Assert.Equal(3, catResult.Count);
 
-            var first = catResult.FirstOrDefault();
+            var first = catResult[0];
             Assert.Equal(categories[0].Id, first.Id);
             Assert.Equal(categories[0].Description, first.Description);
             Assert.Equal(categories[0].Name, first.Name);

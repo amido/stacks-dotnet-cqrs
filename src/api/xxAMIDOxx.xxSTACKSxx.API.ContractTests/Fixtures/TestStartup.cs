@@ -39,7 +39,7 @@ namespace xxAMIDOxx.xxSTACKSxx.API.ContractTests.Fixtures
             base.Configure(app, env, jwtBearerAuthenticationOptions);
         }
 
-        public void AddMocks(IServiceCollection services)
+        public static void AddMocks(IServiceCollection services)
         {
             services.AddSingleton<IMenuRepository>((svc) => Substitute.For<IMenuRepository>());
             services.AddSingleton<IApplicationEventPublisher>((svc) => Substitute.For<IApplicationEventPublisher>());
