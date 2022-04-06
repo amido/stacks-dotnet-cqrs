@@ -83,7 +83,7 @@ namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests
             if (EqualityComparer<TContent>.Default.Equals(content, default(TContent)))
             {
                 Console.WriteLine($"API Fixture serialized request of type {typeof(TContent).Name} as empty");
-                return new ByteArrayContent(new byte[0]);
+                return new ByteArrayContent(Array.Empty<byte>());
             }
             else
             {

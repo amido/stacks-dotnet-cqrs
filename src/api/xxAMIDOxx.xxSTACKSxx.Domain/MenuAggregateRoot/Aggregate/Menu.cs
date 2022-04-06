@@ -64,7 +64,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
             this.Description = description;
             this.Enabled = enabled;
 
-            Emit(new MenuChanged());//TODO: Pass the event data
+            Emit(new MenuChanged());
         }
 
         public void AddCategory(Guid categoryId, string name, string description)
@@ -74,7 +74,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
 
             categories.Add(new Category(categoryId, name, description));
 
-            Emit(new CategoryCreated());//TODO: Pass the event data
+            Emit(new CategoryCreated());
         }
 
         public void UpdateCategory(Guid categoryId, string name, string description)
@@ -83,7 +83,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
 
             category.Update(name, description);
 
-            Emit(new CategoryChanged());//TODO: Pass the event data
+            Emit(new CategoryChanged());
         }
 
         public void RemoveCategory(Guid categoryId)
@@ -92,7 +92,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
 
             categories.Remove(category);
 
-            Emit(new CategoryRemoved());//TODO: Pass the event data
+            Emit(new CategoryRemoved());
         }
 
         public void AddMenuItem(
@@ -112,7 +112,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
                 price,
                 available));
 
-            Emit(new MenuItemCreated());//TODO: Pass the event data
+            Emit(new MenuItemCreated());
         }
 
         public void UpdateMenuItem(
@@ -132,7 +132,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
                 price,
                 available));
 
-            Emit(new MenuItemChanged());//TODO: Pass the event data
+            Emit(new MenuItemChanged());
         }
 
         public void RemoveMenuItem(Guid categoryId, Guid menuItemId)
@@ -141,7 +141,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
 
             category.RemoveMenuItem(menuItemId);
 
-            Emit(new MenuItemRemoved());//TODO: Pass the event data
+            Emit(new MenuItemRemoved());
         }
 
         private Category GetCategory(Guid categoryId)
@@ -191,7 +191,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
             this.Description = description;
             this.Enabled = enabled;
 
-            Emit(new MenuChanged());//TODO: Pass the event data
+            Emit(new MenuChanged());
         }
 
         public void AddCategory(Guid categoryId, string name, string description)
@@ -201,7 +201,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
 
             categories.Add(new Category(categoryId, name, description));
 
-            Emit(new CategoryCreated());//TODO: Pass the event data
+            Emit(new CategoryCreated());
         }
 
         public void UpdateCategory(Guid categoryId, string name, string description)
@@ -210,7 +210,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
 
             category.Update(name, description);
 
-            Emit(new CategoryChanged());//TODO: Pass the event data
+            Emit(new CategoryChanged());
         }
 
         public void RemoveCategory(Guid categoryId)
@@ -219,7 +219,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
 
             categories.Remove(category);
 
-            Emit(new CategoryRemoved());//TODO: Pass the event data
+            Emit(new CategoryRemoved());
         }
 
         public void AddMenuItem(
@@ -240,7 +240,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
                     price,
                     available));
 
-            Emit(new MenuItemCreated());//TODO: Pass the event data
+            Emit(new MenuItemCreated());
         }
 
         public void UpdateMenuItem(
@@ -261,7 +261,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
                     price,
                     available));
 
-            Emit(new MenuItemChanged());//TODO: Pass the event data
+            Emit(new MenuItemChanged());
         }
 
         public void RemoveMenuItem(Guid categoryId, Guid menuItemId)
@@ -270,7 +270,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Domain
 
             category.RemoveMenuItem(menuItemId);
 
-            Emit(new MenuItemRemoved());//TODO: Pass the event data
+            Emit(new MenuItemRemoved());
         }
 
         private Category GetCategory(Guid categoryId)

@@ -34,7 +34,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers
 
             var successful = await repository.DeleteAsync(command.MenuId);
 
-            if (!successful) 
+            if (!successful)
                 OperationFailedException.Raise(command, command.MenuId, "Unable to delete menu");
 
             await applicationEventPublisher.PublishAsync(

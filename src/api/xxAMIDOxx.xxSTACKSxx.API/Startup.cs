@@ -29,7 +29,6 @@ namespace xxAMIDOxx.xxSTACKSxx.API
         private readonly ILogger logger;
 
         private IConfiguration configuration { get; }
-        private readonly IWebHostEnvironment hostingEnv;
         private readonly string pathBase;
         private readonly bool useAppInsights;
         private readonly bool useOpenTelemetry;
@@ -38,7 +37,6 @@ namespace xxAMIDOxx.xxSTACKSxx.API
 
         public Startup(IWebHostEnvironment env, IConfiguration configuration, ILogger<Startup> logger)
         {
-            this.hostingEnv = env;
             this.configuration = configuration;
             this.logger = logger;
 
@@ -79,15 +77,7 @@ namespace xxAMIDOxx.xxSTACKSxx.API
                 .AddApiExplorer()
                 .AddAuthorization()
                 .AddDataAnnotations()
-                .AddCors()
-                /* Only required if the models will used Json.Net features for serialization
-                .AddNewtonsoftJson(options =>
-                {
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    options.SerializerSettings.Converters.Add(new StringEnumConverter(typeof(CamelCaseNamingStrategy)));
-                })
-                */
-                ;
+                .AddCors();
 
             //Access HttpContext in ASP.NET Core: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-2.2
             services.AddHttpContextAccessor();
@@ -190,7 +180,7 @@ namespace xxAMIDOxx.xxSTACKSxx.API
                         new OpenApiTag { Name = "Menu" },
                         new OpenApiTag { Name = "Category" },
                         new OpenApiTag { Name = "Item" }
-                    }, new string[] { });
+                    }, Array.Empty<string>());
 
                     //By Default, all endpoints are grouped by the controller name
                     //We want to Group by Api Group first, then by controller name if not provided

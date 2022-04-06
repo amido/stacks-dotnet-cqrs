@@ -99,14 +99,14 @@ namespace xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests
                 .Select(d => d).ToList();
 
             var join = (from c in commands
-                    join handler in handlers on c equals handler.Item1.GenericTypeArguments[0] into dj
-                    from h in dj.DefaultIfEmpty()
-                    select new
-                    {
-                        CommandType = c,
-                        GenericTypeArg = h.interfaceVariation?.GenericTypeArguments[0],
-                        Name = h.implementation?.Name
-                    })
+                        join handler in handlers on c equals handler.Item1.GenericTypeArguments[0] into dj
+                        from h in dj.DefaultIfEmpty()
+                        select new
+                        {
+                            CommandType = c,
+                            GenericTypeArg = h.interfaceVariation?.GenericTypeArguments[0],
+                            Name = h.implementation?.Name
+                        })
                 .ToList();
 
             foreach (var j in join)
@@ -130,14 +130,14 @@ namespace xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests
                 .Select(d => d).ToList();
 
             var join = (from q in queries
-                    join handler in handlers on q equals handler.Item1.GenericTypeArguments[0] into dj
-                    from h in dj.DefaultIfEmpty()
-                    select new
-                    {
-                        QueryType = q, 
-                        GenericTypeArg = h.interfaceVariation?.GenericTypeArguments[0],
-                        h.implementation?.Name
-                    })
+                        join handler in handlers on q equals handler.Item1.GenericTypeArguments[0] into dj
+                        from h in dj.DefaultIfEmpty()
+                        select new
+                        {
+                            QueryType = q,
+                            GenericTypeArg = h.interfaceVariation?.GenericTypeArguments[0],
+                            h.implementation?.Name
+                        })
                 .ToList();
 
             foreach (var j in join)
@@ -147,7 +147,7 @@ namespace xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests
             }
         }
 
-        private int GetOperationCode(Type commandType)
+        private static int GetOperationCode(Type commandType)
         {
             var fixture = new Fixture();
             fixture.Register<IOperationContext>(() => Substitute.For<IOperationContext>());
@@ -155,7 +155,7 @@ namespace xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests
             return ((IOperationContext)cmd).OperationCode;
         }
 
-        private string GetOperationName(int operationCode)
+        private static string GetOperationName(int operationCode)
         {
             return ((OperationCode)operationCode).ToString();
         }

@@ -49,7 +49,7 @@ namespace xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests
                 var eventCode = GetEventCode(definition.implementation);
                 var eventName = GetEventName(eventCode);
 
-                // If the user intend to use the type as part of the name for convention, 
+                // If the user intend to use the type as part of the name for convention,
                 // the convention should be nameApplicationEvent not nameEvent
                 // Event is generic and can mislead with DomainEvents
                 definition.implementation.Name.ShouldBeOneOf(eventName, $"{eventName}ApplicationEvent");
@@ -68,7 +68,7 @@ namespace xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests
             }
         }
 
-        private int GetEventCode(Type eventType)
+        private static int GetEventCode(Type eventType)
         {
             var fixture = new Fixture();
             fixture.Register<IOperationContext>(() => Substitute.For<IOperationContext>());
@@ -76,7 +76,7 @@ namespace xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests
             return ((IApplicationEvent)cmd).EventCode;
         }
 
-        private string GetEventName(int eventCode)
+        private static string GetEventName(int eventCode)
         {
             return ((EventCode)eventCode).ToString();
         }

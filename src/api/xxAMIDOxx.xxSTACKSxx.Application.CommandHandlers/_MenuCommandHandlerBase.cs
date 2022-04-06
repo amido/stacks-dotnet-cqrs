@@ -23,7 +23,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers
         protected IMenuRepository repository;
         private readonly IApplicationEventPublisher applicationEventPublisher;
 
-        public MenuCommandHandlerBase(IMenuRepository repository, IApplicationEventPublisher applicationEventPublisher)
+        protected MenuCommandHandlerBase(IMenuRepository repository, IApplicationEventPublisher applicationEventPublisher)
         {
             this.repository = repository;
             this.applicationEventPublisher = applicationEventPublisher;

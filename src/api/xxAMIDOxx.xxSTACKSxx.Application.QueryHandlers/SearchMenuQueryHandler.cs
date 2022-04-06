@@ -17,11 +17,17 @@ namespace xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers
             this.storage = storage;
         }
 
-        public async Task<SearchMenuResult> ExecuteAsync(SearchMenu criteria)
+        public Task<SearchMenuResult> ExecuteAsync(SearchMenu criteria)
         {
             if (criteria == null)
                 throw new ArgumentException("A valid SearchMenuQueryCriteria os required!");
 
+            // https://rules.sonarsource.com/csharp/RSPEC-4457
+            return ExecuteInternalAsync(criteria);
+        }
+
+        private async Task<SearchMenuResult> ExecuteInternalAsync(SearchMenu criteria)
+        {
             int pageSize = 10;
             int pageNumber = 1;
             var searchTerm = string.Empty;

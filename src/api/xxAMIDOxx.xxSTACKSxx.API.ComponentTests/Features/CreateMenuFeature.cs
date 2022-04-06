@@ -9,8 +9,8 @@ namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Features
     public class CreateMenuFeature
     {
         /* SCENARIOS: Create a menu
-          
-             Examples: 
+
+             Examples:
              -----------------------------------------------------------------
             | AsRole              | Menu Condition     | Outcome              |
             |---------------------|--------------------|----------------------|
@@ -25,8 +25,7 @@ namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Features
         public void CreateMenuAsAdminForValidMenuShouldSucceed(CreateMenuFixture fixture)
         {
             "Given the user is authenticated and has the Admin role".x(() => fixture.GivenTheUserIsAnAuthenticatedAdministrator());
-            "And a valid menu being submitted".x(fixture.GivenAValidMenu);
-            "And the menu does not does not exist".x(fixture.GivenAMenuDoesNotExist);
+            "And the menu does not exist".x(fixture.GivenAMenuDoesNotExist);
             "When the menu is submitted".x(fixture.WhenTheMenuCreationIsSubmitted);
             "Then a successful response is returned".x(fixture.ThenASuccessfulResponseIsReturned);
             "And the response code is CREATED".x(fixture.ThenACreatedResponseIsReturned);
@@ -54,8 +53,7 @@ namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Features
         public void CreateMenuAsNonAdminForValidMenuShouldFail(string role, CreateMenuFixture fixture)
         {
             $"Given the user is authenticated and has the {role} role".x(() => fixture.GivenTheUserIsAuthenticatedAndHasRole(role));
-            "And a valid menu being submitted".x(fixture.GivenAValidMenu);
-            "And the menu does not does not exist".x(fixture.GivenAMenuDoesNotExist);
+            "And the menu does not exist".x(fixture.GivenAMenuDoesNotExist);
             "When the menu is submitted".x(fixture.WhenTheMenuCreationIsSubmitted);
             "Then a Forbidden response is returned".x(fixture.ThenAForbiddenResponseIsReturned);
             "And the menu is not submitted to the database".x(fixture.ThenTheMenuIsNotSubmittedToDatabase);
