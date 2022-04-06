@@ -56,20 +56,9 @@ namespace xxAMIDOxx.xxSTACKSxx.API.Controllers
                 pageNumber: pageNumber
             );
 
-            var results = await queryHandler.ExecuteAsync(criteria);
+            var result = await queryHandler.ExecuteAsync(criteria);
 
-            var response = new SearchMenuResponse()
-            {
-                Offset = (results?.PageNumber ?? 0) * (results?.PageSize ?? 0),
-                Size = (results?.PageSize ?? 0),
-                Results = results.Results.Select(i => new SearchMenuResponseItem()
-                {
-                    Id = i.Id ?? Guid.Empty,
-                    Name = i.Name,
-                    Description = i.Description,
-                    Enabled = i.Enabled ?? false
-                }).ToList()
-            };
+            var response = SearchMenuResponse.FromMenuResultItem(result);
 
             return new ObjectResult(response);
         }

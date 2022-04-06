@@ -42,9 +42,9 @@
                     "description": "Targets AWS Dynamo database for storing data."
                 },
                 {
-					"choice": "InMemoryDb",
-					"description": "Targets an In Memory database for storing data."
-				}	
+                    "choice": "InMemoryDb",
+                    "description": "Targets an In Memory database for storing data."
+                }
             ],
             "description": "Adds saving to database."
         },
@@ -57,16 +57,15 @@
             "value": "(database == \"DynamoDb\")"
         },
         "InMemoryDb": {
-			"type": "computed",
-			"value": "(database == \"InMemoryDb\")"
-		}
+            "type": "computed",
+            "value": "(database == \"InMemoryDb\")"
+        }
     },
     "sources": [
         {
             "source": "./",
             "include": [
                 "**/xxAMIDOxx.xxSTACKSxx.API/**",
-                "**/xxAMIDOxx.xxSTACKSxx.API.Models/**",
                 "**/xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers/**",
                 "**/xxAMIDOxx.xxSTACKSxx.Application.Integration/**",
                 "**/xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers/**",
@@ -128,15 +127,14 @@
             "description": "Adding projects to solution",
             "manualInstructions": [
                 {
-                    "text": "Add the following projects to solution manually (API folder): Infrastructure, API.Models."
+                    "text": "Add the following projects to solution manually (API folder): Infrastructure, API"
                 }
             ],
             "args": {
                 "solutionFolder": "API",
                 "projectFiles": [
                     "xxAMIDOxx.xxSTACKSxx.Infrastructure.csproj",
-                    "xxAMIDOxx.xxSTACKSxx.API.csproj",
-                    "xxAMIDOxx.xxSTACKSxx.API.Models.csproj"
+                    "xxAMIDOxx.xxSTACKSxx.API.csproj"
                 ]
             },
             "actionId": "D396686C-DE0E-4DE6-906D-291CD29FC5DE",

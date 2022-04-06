@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using xxAMIDOxx.xxSTACKSxx.API.Models.Responses;
 using Query = xxAMIDOxx.xxSTACKSxx.CQRS.Queries.GetMenuById;
-
 namespace xxAMIDOxx.xxSTACKSxx.API.Controllers
 {
     /// <summary>
@@ -46,27 +45,7 @@ namespace xxAMIDOxx.xxSTACKSxx.API.Controllers
             if (result == null)
                 return NotFound();
 
-            var menu = new Menu
-            {
-                Id = result.Id,
-                Name = result.Name,
-                Description = result.Description,
-                Categories = result.Categories?.Select(i => new Category()
-                {
-                    Id = i.Id,
-                    Name = i.Name,
-                    Description = i.Description,
-                    Items = i.Items?.Select(x => new Item()
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Description = x.Description,
-                        Price = x.Price,
-                        Available = x.Available
-                    }).ToList(),
-                }).ToList(),
-                Enabled = result.Enabled
-            };
+            var menu = Menu.FromQuery(result);
 
             return new ObjectResult(menu);
         }
