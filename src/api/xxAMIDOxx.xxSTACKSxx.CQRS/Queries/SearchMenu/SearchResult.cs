@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 
-namespace xxAMIDOxx.xxSTACKSxx.CQRS.Queries.SearchMenu
+namespace xxAMIDOxx.xxSTACKSxx.CQRS.Queries.SearchMenu;
+
+public class SearchMenuResult
 {
-    public class SearchMenuResult
-    {
-        public int? PageSize { get; set; }
+    public int? PageSize { get; set; }
 
-        public int? PageNumber { get; set; }
+    public int? PageNumber { get; set; }
 
-        public IEnumerable<SearchMenuResultItem> Results { get; set; }
-    }
+    public IEnumerable<SearchMenuResultItem> Results { get; set; }
 }
