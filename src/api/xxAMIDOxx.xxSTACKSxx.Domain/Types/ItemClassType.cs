@@ -1,9 +1,8 @@
-namespace xxAMIDOxx.xxSTACKSxx.Domain.ValueObjects
+namespace xxAMIDOxx.xxSTACKSxx.Domain.ValueObjects;
+
+public enum ItemClassType
 {
-    public enum ItemClassType
-    {
-        Food,
-        Beverage,
-        Desert
-    }
+    Food,
+    Beverage,
+    Desert
 }
