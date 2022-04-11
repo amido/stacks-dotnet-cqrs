@@ -1,6 +1,4 @@
 variables:
-  - group: amido-stacks-webapp
-
   # Terraform Configuration
 
   # State configuration
@@ -11,15 +9,14 @@ variables:
   # - we suggest you create a runtime variable that is dynamically set based on a branch currently running
   # **`terraform_state_workspace: `**
   # avoid running anything past dev that is not on master
-  # sample value: company-webapp
   - name: tf_state_rg
-    value: Stacks-Ancillary-Resources
+    value: {{ .Input.Terraform.Backend.Group }}
   - name: tf_state_storage
-    value: amidostackstfstate
+    value: {{ .Input.Terraform.Backend.Storage }}
   - name: tf_state_container
-    value: tfstate
+    value: {{ .Input.Terraform.Backend.Container }}
   - name: tf_state_key
-    value: netcore-api-cqrs
+    value: $(self-generic-name)
 
   # TF File location in Repo
   - name: TF_FILE_LOCATION
@@ -45,25 +42,26 @@ variables:
 
   # App Specific Taxonomy
   - name: resource_def_name
-    value: dotnet-api
+    value: $(company)-$(domain)
   - name: component
     value: api
   - name: role
     value: backend
   - name: self_repo
-    value: stacks-dotnet
+    value: {{ .Project.Name }}
   - name: self_generic_name
-    value: stacks-api-cqrs
+    value: $(company)-$(domain)
   - name: app_name
-    value: yumido-netcore-api-cqrs
+    value: $(company)-$(domain)
   - name: region
-    value: westeurope
+    value: {{ .Project.Cloud.Region }}
   - name: company
-    value: amido
+    value: {{ .Input.Business.Company }}
   - name: project
-    value: stacks
+    value: {{ .Project.Name }}
   - name: domain
-    value: netcore-api-cqrs
+    value: {{ .Input.Business.Domain }}
+
   - name: k8s_app_route
     value: /api/menu
 
@@ -73,43 +71,44 @@ variables:
   - name: FUNCTIONAL_TESTS_RUN_DIR
     value: /app/tests
   - name: FUNCTIONAL_TEST_BASEURL
-    value: https://$(Environment.ShortName)-${{ variables.domain }}.$(dns_base_domain)$(k8s_app_route)/
+    value: https://$(Environment.ShortName)-$(domain).$(dns_base_domain)$(k8s_app_route)/
 
   # Docker Container registry configuration (used for image tagging and pushing)
   # TODO: Despite being available in the TF State, these are required in other steps
   # TODO: which do not inherit the state variables yet
   - name: docker_container_registry_rg_name_nonprod
-    value: amido-stacks-nonprod-euw-core
+    value:
   - name: docker_container_registry_name_nonprod
-    value: amidostacksnonprodeuwcore
+    value:
   - name: docker_container_registry_rg_name_prod
-    value: amido-stacks-prod-euw-core
+    value:
   - name: docker_container_registry_name_prod
-    value: amidostacksprodeuwcore
+    value:
 
   # Kubernetes & Docker Image Settings
   - name: docker_image_tag
     value: $(version_number)-$(Build.SourceBranchName)
   - name: docker_image_name
-    value: "stacks-api-cqrs"
+    value: $(self_generic_name)
 
   # TODO: Despite being available in the TF State, these are required in other steps
   # TODO: which do not inherit the state variables yet
   - name: k8s_cluster_target_nonprod
-    value: amido-stacks-nonprod-euw-core
+    value:
   - name: k8s_cluster_identifier_nonprod
-    value: amido-stacks-nonprod-euw-core
+    value:
   - name: k8s_cluster_target_prod
-    value: amido-stacks-prod-euw-core
+    value:
   - name: k8s_cluster_identifier_prod
-    value: amido-stacks-prod-euw-core
+    value:
 
   # Kubernetes target file location
   - name: k8s_resource_file
     value: "deploy/k8s/app/api-deploy.yml"
+
   # Versioning
   - name: version_major
-    value: 7
+    value: 0
   - name: version_minor
     value: 0
   - name: version_revision
@@ -138,16 +137,3 @@ variables:
     value: GitHubReleases
   - name: github_org
     value: $(company)
-
-  # GitHub Package Release
-  - name: COMMIT_ID
-    value: "$(Build.SourceVersion)"
-  - name: OWNER
-    value: "amido"
-  - name: REPOSITORY
-    value: "stacks-dotnet-cqrs"
-  - name: ARTIFACTS_DIR
-    value: "artifacts/"
-  - name: ARTIFACTS_LIST
-    value: "*.nupkg"
-  - group: amido-stacks-github-credentials
