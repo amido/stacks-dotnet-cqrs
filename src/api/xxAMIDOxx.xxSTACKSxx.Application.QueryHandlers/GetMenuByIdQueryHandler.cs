@@ -4,27 +4,26 @@ using Amido.Stacks.Application.CQRS.Queries;
 using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Queries.GetMenuById;
 
-namespace xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers
+namespace xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers;
+
+public class GetMenuByIdQueryHandler : IQueryHandler<GetMenuById, Menu>
 {
-    public class GetMenuByIdQueryHandler : IQueryHandler<GetMenuById, Menu>
+    private readonly IMenuRepository repository;
+
+    public GetMenuByIdQueryHandler(IMenuRepository repository)
     {
-        private readonly IMenuRepository repository;
+        this.repository = repository;
+    }
 
-        public GetMenuByIdQueryHandler(IMenuRepository repository)
-        {
-            this.repository = repository;
-        }
+    public async Task<Menu> ExecuteAsync(GetMenuById criteria)
+    {
+        var menu = await repository.GetByIdAsync(criteria.Id);
 
-        public async Task<Menu> ExecuteAsync(GetMenuById criteria)
-        {
-            var menu = await repository.GetByIdAsync(criteria.Id);
+        if (menu == null)
+            return null;
 
-            if (menu == null)
-                return null;
+        var result = Menu.FromDomain(menu);
 
-            var result = Menu.FromDomain(menu);
-
-            return result;
-        }
+        return result;
     }
 }
