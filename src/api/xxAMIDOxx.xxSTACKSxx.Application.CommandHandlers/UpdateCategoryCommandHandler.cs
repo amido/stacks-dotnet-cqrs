@@ -6,28 +6,27 @@ using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Commands;
 using xxAMIDOxx.xxSTACKSxx.Domain;
 
-namespace xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers
+namespace xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers;
+
+public class UpdateCategoryCommandHandler : MenuCommandHandlerBase<UpdateCategory, bool>
 {
-    public class UpdateCategoryCommandHandler : MenuCommandHandlerBase<UpdateCategory, bool>
+    public UpdateCategoryCommandHandler(IMenuRepository repository, IApplicationEventPublisher applicationEventPublisher)
+        : base(repository, applicationEventPublisher)
     {
-        public UpdateCategoryCommandHandler(IMenuRepository repository, IApplicationEventPublisher applicationEventPublisher)
-            : base(repository, applicationEventPublisher)
-        {
-        }
+    }
 
-        public override Task<bool> HandleCommandAsync(Menu menu, UpdateCategory command)
-        {
-            menu.UpdateCategory(command.CategoryId, command.Name, command.Description);
+    public override Task<bool> HandleCommandAsync(Menu menu, UpdateCategory command)
+    {
+        menu.UpdateCategory(command.CategoryId, command.Name, command.Description);
 
-            return Task.FromResult(true);
-        }
+        return Task.FromResult(true);
+    }
 
-        public override IEnumerable<IApplicationEvent> RaiseApplicationEvents(Menu menu, UpdateCategory command)
-        {
-            return new IApplicationEvent[] {
+    public override IEnumerable<IApplicationEvent> RaiseApplicationEvents(Menu menu, UpdateCategory command)
+    {
+        return new IApplicationEvent[] {
                 new MenuUpdated(command, command.MenuId),
                 new CategoryUpdated(command, command.MenuId, command.CategoryId)
             };
-        }
     }
 }
