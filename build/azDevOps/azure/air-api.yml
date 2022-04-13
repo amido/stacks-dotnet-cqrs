@@ -67,6 +67,12 @@ stages:
               DOCKER_CONTAINER_REGISTRY_NAME: $(docker_container_registry_name_nonprod).azurecr.io
               REGISTRY_RESOURCE_GROUP: $(docker_container_registry_rg_name_nonprod)
 
+          - task: PublishPipelineArtifact@1
+            displayName: "DEBUG: Publish: Coverage Folder"
+            inputs:
+              path: $(Agent.BuildDirectory)/s/coverage/
+              artifact: coverage_folder
+
           # Upload test coverage results as artifacts
           - task: PublishCodeCoverageResults@1
             displayName: "Upload: coverage results"
