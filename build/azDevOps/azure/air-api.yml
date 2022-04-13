@@ -46,10 +46,10 @@ stages:
             env:
               # SonarQube
               SONAR_ORG: $(SONAR_ORGANIZATION)
-              SONAR_URL: "https://sonarcloud.io"
+              SONAR_URL: $(sonar_url)
               SONAR_TOKEN: $(SONAR_TOKEN)
-              SONAR_PROPERTIES: ""
-              PROJECT_NAME: stacks-dotnet-cqrs # TODO: Reset this to a var i.e. SONAR_PROECT_NAME
+              SONAR_PROPERTIES: $(sonar_properties)
+              PROJECT_NAME: $(sonar_project_name)
               BUILD_BUILDNUMBER: $(version_number)
 
           - task: Bash@3

@@ -39,11 +39,12 @@ tasks:
     description: Run Tests
     command:
       - Invoke-SonarScanner -start &&
-        Invoke-DotNet -Build &&
-        Invoke-DotNet -Tests -pattern "*UnitTests" -arguments "--logger 'trx' --results-directory /app/testresults" &&
-        Invoke-DotNet -Coverage -target /app/coverage &&
+        Invoke-DotNet -Build -Path $env:SELF_REPO_SRC &&
+        Invoke-DotNet -Tests -pattern "*UnitTests" -arguments "--logger 'trx' --results-directory /app/testresults -p:CollectCoverage=true -p:CoverletOutputFormat=opencover -p:CoverletOutput=/app/coverage/" &&
+        Invoke-DotNet -Coverage -target /app/coverage/ -pattern "*.opencover.xml" &&
         Invoke-DotNet -Tests -pattern "*ComponentTests" &&
         Invoke-DotNet -Tests -pattern "*ContractTests" &&
+        Remove-Item Env:\SONAR_PROPERTIES &&
         Invoke-SonarScanner -stop
     condition: exit $TEST_NO_RUN
 
