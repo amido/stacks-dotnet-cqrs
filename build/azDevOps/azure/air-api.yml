@@ -46,10 +46,10 @@ stages:
             env:
               # SonarQube
               SONAR_ORG: $(SONAR_ORGANIZATION)
-              SONAR_URL: "https://sonarcloud.io"
+              SONAR_URL: $(sonar_url)
               SONAR_TOKEN: $(SONAR_TOKEN)
-              SONAR_PROPERTIES: ""
-              PROJECT_NAME: stacks-dotnet-cqrs # TODO: Reset this to a var i.e. SONAR_PROECT_NAME
+              SONAR_PROPERTIES: $(sonar_properties)
+              PROJECT_NAME: $(sonar_project_name)
               BUILD_BUILDNUMBER: $(version_number)
 
           - task: Bash@3
@@ -66,6 +66,12 @@ stages:
               # Docker
               DOCKER_CONTAINER_REGISTRY_NAME: $(docker_container_registry_name_nonprod).azurecr.io
               REGISTRY_RESOURCE_GROUP: $(docker_container_registry_rg_name_nonprod)
+
+          - task: PublishPipelineArtifact@1
+            displayName: "DEBUG: Publish: Coverage Folder"
+            inputs:
+              path: $(Agent.BuildDirectory)/s/coverage/
+              artifact: coverage_folder
 
           # Upload test coverage results as artifacts
           - task: PublishCodeCoverageResults@1

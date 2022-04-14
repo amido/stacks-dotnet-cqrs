@@ -67,6 +67,15 @@ variables:
   - name: k8s_app_route
     value: /api/menu
 
+  # SonarQube Configuration
+  # SONAR_TOKEN and SONAR_ORGANIZATION must be inherited from library groups/etc.
+  - name: sonar_url
+    value: "https://sonarcloud.io"
+  - name: sonar_properties
+    value: '/d:sonar.cs.opencover.reportsPaths="/app/coverage/*.opencover.xml /d:sonar.exclusions="**/*Tests" /d:sonar.coverage.exclusions="**/*Tests"'
+  - name: sonar_project_name
+    value: stacks-dotnet-cqrs
+
   # Test Configuration
   - name: FUNCTIONAL_TESTS_SRC_DIR
     value: src/tests/Functional
