@@ -22,29 +22,29 @@ using xxAMIDOxx.xxSTACKSxx.Infrastructure.Repositories;
 using xxAMIDOxx.xxSTACKSxx.Infrastructure.Repositories;
 #endif
 
-namespace xxAMIDOxx.xxSTACKSxx.Infrastructure
+namespace xxAMIDOxx.xxSTACKSxx.Infrastructure;
+
+public static class DependencyRegistration
 {
-    public static class DependencyRegistration
+    static readonly ILogger log = Log.Logger;
+
+    /// <summary>
+    /// Register static services that does not change between environment or contexts(i.e: tests)
+    /// </summary>
+    /// <param name="services"></param>
+    public static void ConfigureStaticDependencies(IServiceCollection services)
     {
-        static readonly ILogger log = Log.Logger;
+        AddCommandHandlers(services);
+        AddQueryHandlers(services);
+    }
 
-        /// <summary>
-        /// Register static services that does not change between environment or contexts(i.e: tests)
-        /// </summary>
-        /// <param name="services"></param>
-        public static void ConfigureStaticDependencies(IServiceCollection services)
-        {
-            AddCommandHandlers(services);
-            AddQueryHandlers(services);
-        }
-
-        /// <summary>
-        /// Register dynamic services that changes between environments or context(i.e: tests)
-        /// </summary>
-        /// <param name="services"></param>
-        public static void ConfigureProductionDependencies(WebHostBuilderContext context, IServiceCollection services)
-        {
-            services.AddSecrets();
+    /// <summary>
+    /// Register dynamic services that changes between environments or context(i.e: tests)
+    /// </summary>
+    /// <param name="services"></param>
+    public static void ConfigureProductionDependencies(WebHostBuilderContext context, IServiceCollection services)
+    {
+        services.AddSecrets();
 #if (CosmosDb)
             services.Configure<CosmosDbConfiguration>(context.Configuration.GetSection("CosmosDB"));
             services.AddCosmosDB();
@@ -55,50 +55,49 @@ namespace xxAMIDOxx.xxSTACKSxx.Infrastructure
 #elif (InMemoryDb)
             services.AddTransient<IMenuRepository, InMemoryMenuRepository>();
 #else
-            services.AddTransient<IMenuRepository, InMemoryMenuRepository>();
+        services.AddTransient<IMenuRepository, InMemoryMenuRepository>();
 #endif
 
-            AddEventPublishers(services);
+        AddEventPublishers(services);
 
-            var healthChecks = services.AddHealthChecks();
+        var healthChecks = services.AddHealthChecks();
 #if (CosmosDb)
             healthChecks.AddCheck<CustomHealthCheck>("Sample");//This is a sample health check, remove if not needed, more info: https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/monitor-app-health
             healthChecks.AddCheck<CosmosDbDocumentStorage<Menu>>("CosmosDB");
 #endif
-        }
+    }
 
-        private static void AddCommandHandlers(IServiceCollection services)
+    private static void AddCommandHandlers(IServiceCollection services)
+    {
+        log.Information("Loading implementations of {interface}", typeof(ICommandHandler<,>).Name);
+        var definitions = typeof(CreateMenuCommandHandler).Assembly.GetImplementationsOf(typeof(ICommandHandler<,>));
+        foreach (var definition in definitions)
         {
-            log.Information("Loading implementations of {interface}", typeof(ICommandHandler<,>).Name);
-            var definitions = typeof(CreateMenuCommandHandler).Assembly.GetImplementationsOf(typeof(ICommandHandler<,>));
-            foreach (var definition in definitions)
-            {
-                log.Information("Registering '{implementation}' as implementation of '{interface}'", definition.implementation.FullName, definition.interfaceVariation.FullName);
-                services.AddTransient(definition.interfaceVariation, definition.implementation);
-            }
+            log.Information("Registering '{implementation}' as implementation of '{interface}'", definition.implementation.FullName, definition.interfaceVariation.FullName);
+            services.AddTransient(definition.interfaceVariation, definition.implementation);
         }
+    }
 
-        private static void AddQueryHandlers(IServiceCollection services)
+    private static void AddQueryHandlers(IServiceCollection services)
+    {
+        log.Information("Loading implementations of {interface}", typeof(IQueryHandler<,>).Name);
+        var definitions = typeof(GetMenuByIdQueryHandler).Assembly.GetImplementationsOf(typeof(IQueryHandler<,>));
+        foreach (var definition in definitions)
         {
-            log.Information("Loading implementations of {interface}", typeof(IQueryHandler<,>).Name);
-            var definitions = typeof(GetMenuByIdQueryHandler).Assembly.GetImplementationsOf(typeof(IQueryHandler<,>));
-            foreach (var definition in definitions)
-            {
-                log.Information("Registering '{implementation}' as implementation of '{interface}'", definition.implementation.FullName, definition.interfaceVariation.FullName);
-                services.AddTransient(definition.interfaceVariation, definition.implementation);
-            }
+            log.Information("Registering '{implementation}' as implementation of '{interface}'", definition.implementation.FullName, definition.interfaceVariation.FullName);
+            services.AddTransient(definition.interfaceVariation, definition.implementation);
         }
+    }
 
-        private static void AddEventPublishers(IServiceCollection services)
+    private static void AddEventPublishers(IServiceCollection services)
+    {
+        log.Information("Loading implementations of {interface}", typeof(IApplicationEventPublisher).Name);
+        var definitions = typeof(DummyEventPublisher).Assembly.GetImplementationsOf(typeof(IApplicationEventPublisher));
+        foreach (var definition in definitions)
         {
-            log.Information("Loading implementations of {interface}", typeof(IApplicationEventPublisher).Name);
-            var definitions = typeof(DummyEventPublisher).Assembly.GetImplementationsOf(typeof(IApplicationEventPublisher));
-            foreach (var definition in definitions)
-            {
-                log.Information("Registering '{implementation}' as implementation of '{interface}'", definition.implementation.FullName, definition.interfaceVariation.FullName);
-                //TODO: maybe this should be singleton
-                services.AddTransient(definition.interfaceVariation, definition.implementation);
-            }
+            log.Information("Registering '{implementation}' as implementation of '{interface}'", definition.implementation.FullName, definition.interfaceVariation.FullName);
+            //TODO: maybe this should be singleton
+            services.AddTransient(definition.interfaceVariation, definition.implementation);
         }
     }
 }

@@ -4,16 +4,19 @@ framework:
   name: dotnet
   commands:
     - name: dotnet
-      version: ">= 3.1, > 3.2"
+      version: ">= 6.0, < 6.1"
 
 # Pipeline files
 pipeline:
   - type: azdo
     files:
       - name: build
-        path: build/azDevOps/azure/azure-pipelines-netcore-k8s.yml
+        path: build/azDevOps/azure/air-api.yml
       - name: variable
-        path: build/azDevOps/azure/azuredevops-vars.yml
+        path: build/azDevOps/azure/air-api-vars.yml
+    templates:
+      - name: variable
+        path: build/azDevOps/azure/air-api-vars_TEMPLATE.yml
     replacements:
       - pattern: ^.*stacks-credentials-nonprod-kv$
         value: ""
@@ -29,3 +32,7 @@ init:
       cmd: dotnet
       args: new stacks-cqrs-webapi -n {{ .Input.Business.Company }}.{{ .Input.Business.Domain }} -o {{ .Project.Directory.WorkingDir }}
       desc: Create a project using the "stacks-cqrs-webapi" template
+    - action: cmd
+      cmd: dotnet
+      args: new --uninstall {{ .Project.Directory.TempDir }}
+      desc: Remove the temporary template from dotnet

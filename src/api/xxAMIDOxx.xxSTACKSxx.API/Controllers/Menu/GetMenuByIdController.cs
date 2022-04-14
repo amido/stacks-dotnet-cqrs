@@ -7,47 +7,47 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using xxAMIDOxx.xxSTACKSxx.API.Models.Responses;
 using Query = xxAMIDOxx.xxSTACKSxx.CQRS.Queries.GetMenuById;
-namespace xxAMIDOxx.xxSTACKSxx.API.Controllers
+
+namespace xxAMIDOxx.xxSTACKSxx.API.Controllers;
+
+/// <summary>
+/// Menu related operations
+/// </summary>
+[Produces("application/json")]
+[Consumes("application/json")]
+[ApiExplorerSettings(GroupName = "Menu")]
+[ApiController]
+public class GetMenuByIdController : ApiControllerBase
 {
-    /// <summary>
-    /// Menu related operations
-    /// </summary>
-    [Produces("application/json")]
-    [Consumes("application/json")]
-    [ApiExplorerSettings(GroupName = "Menu")]
-    [ApiController]
-    public class GetMenuByIdController : ApiControllerBase
+    readonly IQueryHandler<Query.GetMenuById, Query.Menu> queryHandler;
+
+    public GetMenuByIdController(IQueryHandler<Query.GetMenuById, Query.Menu> queryHandler)
     {
-        readonly IQueryHandler<Query.GetMenuById, Query.Menu> queryHandler;
+        this.queryHandler = queryHandler;
+    }
 
-        public GetMenuByIdController(IQueryHandler<Query.GetMenuById, Query.Menu> queryHandler)
-        {
-            this.queryHandler = queryHandler;
-        }
+    /// <summary>
+    /// Get a menu
+    /// </summary>
+    /// <remarks>By passing the menu id, you can get access to available categories and items in the menu </remarks>
+    /// <param name="id">menu id</param>
+    /// <response code="200">Menu</response>
+    /// <response code="400">Bad Request</response>
+    /// <response code="404">Resource not found</response>
+    [HttpGet("/v1/menu/{id}")]
+    [Authorize]
+    [ProducesResponseType(typeof(Menu), 200)]
+    public async Task<IActionResult> GetMenu([FromRoute][Required] Guid id)
+    {
+        // NOTE: Please ensure the API returns the response codes annotated above
 
-        /// <summary>
-        /// Get a menu
-        /// </summary>
-        /// <remarks>By passing the menu id, you can get access to available categories and items in the menu </remarks>
-        /// <param name="id">menu id</param>
-        /// <response code="200">Menu</response>
-        /// <response code="400">Bad Request</response>
-        /// <response code="404">Resource not found</response>
-        [HttpGet("/v1/menu/{id}")]
-        [Authorize]
-        [ProducesResponseType(typeof(Menu), 200)]
-        public async Task<IActionResult> GetMenu([FromRoute][Required] Guid id)
-        {
-            // NOTE: Please ensure the API returns the response codes annotated above
+        var result = await queryHandler.ExecuteAsync(new Query.GetMenuById() { Id = id });
 
-            var result = await queryHandler.ExecuteAsync(new Query.GetMenuById() { Id = id });
+        if (result == null)
+            return NotFound();
 
-            if (result == null)
-                return NotFound();
+        var menu = Menu.FromQuery(result);
 
-            var menu = Menu.FromQuery(result);
-
-            return new ObjectResult(menu);
-        }
+        return new ObjectResult(menu);
     }
 }

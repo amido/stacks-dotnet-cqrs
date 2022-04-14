@@ -7,44 +7,43 @@ using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Commands;
 using xxAMIDOxx.xxSTACKSxx.Domain;
 
-namespace xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers
+namespace xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers;
+
+public class CreateMenuCommandHandler : ICommandHandler<CreateMenu, Guid>
 {
-    public class CreateMenuCommandHandler : ICommandHandler<CreateMenu, Guid>
+    private readonly IMenuRepository repository;
+    private readonly IApplicationEventPublisher applicationEventPublisher;
+
+    public CreateMenuCommandHandler(IMenuRepository repository, IApplicationEventPublisher applicationEventPublisher)
     {
-        private readonly IMenuRepository repository;
-        private readonly IApplicationEventPublisher applicationEventPublisher;
+        this.repository = repository;
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 
-        public CreateMenuCommandHandler(IMenuRepository repository, IApplicationEventPublisher applicationEventPublisher)
-        {
-            this.repository = repository;
-            this.applicationEventPublisher = applicationEventPublisher;
-        }
+    public async Task<Guid> HandleAsync(CreateMenu command)
+    {
+        var id = Guid.NewGuid();
 
-        public async Task<Guid> HandleAsync(CreateMenu command)
-        {
-            var id = Guid.NewGuid();
-
-            // TODO: Check if the user owns the resource before any operation
-            // if(command.User.TenantId != menu.TenantId)
-            // {
-            //     throw NotAuthorizedException()
-            // }
+        // TODO: Check if the user owns the resource before any operation
+        // if(command.User.TenantId != menu.TenantId)
+        // {
+        //     throw NotAuthorizedException()
+        // }
 
 
-            var newMenu = new Menu(
-                id: id,
-                name: command.Name,
-                tenantId: command.TenantId,
-                description: command.Description,
-                categories: null,
-                enabled: command.Enabled
-            );
+        var newMenu = new Menu(
+            id: id,
+            name: command.Name,
+            tenantId: command.TenantId,
+            description: command.Description,
+            categories: null,
+            enabled: command.Enabled
+        );
 
-            await repository.SaveAsync(newMenu);
+        await repository.SaveAsync(newMenu);
 
-            await applicationEventPublisher.PublishAsync(new MenuCreated(command, id));
+        await applicationEventPublisher.PublishAsync(new MenuCreated(command, id));
 
-            return id;
-        }
+        return id;
     }
 }

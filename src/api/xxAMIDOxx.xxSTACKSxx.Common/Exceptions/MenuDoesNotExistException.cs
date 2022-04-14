@@ -3,40 +3,39 @@ using Amido.Stacks.Core.Exceptions;
 using Amido.Stacks.Core.Operations;
 using xxAMIDOxx.xxSTACKSxx.Common.Operations;
 
-namespace xxAMIDOxx.xxSTACKSxx.Common.Exceptions
+namespace xxAMIDOxx.xxSTACKSxx.Common.Exceptions;
+
+[Serializable]
+public class MenuDoesNotExistException : ApplicationExceptionBase
 {
-    [Serializable]
-    public class MenuDoesNotExistException : ApplicationExceptionBase
+    private MenuDoesNotExistException(
+        ExceptionCode exceptionCode,
+        OperationCode operationCode,
+        Guid correlationId,
+        string message
+    ) : base((int)operationCode, correlationId, message)
     {
-        private MenuDoesNotExistException(
-            ExceptionCode exceptionCode,
-            OperationCode operationCode,
-            Guid correlationId,
-            string message
-        ) : base((int)operationCode, correlationId, message)
-        {
-            ExceptionCode = (int)exceptionCode;
+        ExceptionCode = (int)exceptionCode;
 
-            HttpStatusCode = (int)ExceptionCodeToHttpStatusCodeConverter.GetHttpStatusCode((int)exceptionCode);
-        }
+        HttpStatusCode = (int)ExceptionCodeToHttpStatusCodeConverter.GetHttpStatusCode((int)exceptionCode);
+    }
 
-        public override int ExceptionCode { get; protected set; }
+    public override int ExceptionCode { get; protected set; }
 
-        public static void Raise(OperationCode operationCode, Guid correlationId, Guid menuId, string message)
-        {
-            var exception = new MenuDoesNotExistException(
-                Exceptions.ExceptionCode.MenuDoesNotExist,
-                operationCode,
-                correlationId,
-                message ?? $"A menu with id '{menuId}' does not exist."
-            );
-            exception.Data["MenuId"] = menuId;
-            throw exception;
-        }
+    public static void Raise(OperationCode operationCode, Guid correlationId, Guid menuId, string message)
+    {
+        var exception = new MenuDoesNotExistException(
+            Exceptions.ExceptionCode.MenuDoesNotExist,
+            operationCode,
+            correlationId,
+            message ?? $"A menu with id '{menuId}' does not exist."
+        );
+        exception.Data["MenuId"] = menuId;
+        throw exception;
+    }
 
-        public static void Raise(IOperationContext context, Guid menuId)
-        {
-            Raise((OperationCode)context.OperationCode, context.CorrelationId, menuId, null);
-        }
+    public static void Raise(IOperationContext context, Guid menuId)
+    {
+        Raise((OperationCode)context.OperationCode, context.CorrelationId, menuId, null);
     }
 }

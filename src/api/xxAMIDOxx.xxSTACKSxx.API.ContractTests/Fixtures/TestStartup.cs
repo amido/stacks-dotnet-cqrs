@@ -10,39 +10,38 @@ using NSubstitute;
 using xxAMIDOxx.xxSTACKSxx.API.Authentication;
 using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 
-namespace xxAMIDOxx.xxSTACKSxx.API.ContractTests.Fixtures
+namespace xxAMIDOxx.xxSTACKSxx.API.ContractTests.Fixtures;
+
+public class TestStartup : Startup
 {
-    public class TestStartup : Startup
+    public TestStartup(IWebHostEnvironment env, IConfiguration configuration, ILogger<Startup> logger) : base(env, configuration, logger)
     {
-        public TestStartup(IWebHostEnvironment env, IConfiguration configuration, ILogger<Startup> logger) : base(env, configuration, logger)
+    }
+
+
+    public override void ConfigureServices(IServiceCollection services)
+    {
+        services.AddSingleton<ProviderStateMiddleware>();
+
+        services.Configure<KestrelServerOptions>(options =>
         {
-        }
+            options.AllowSynchronousIO = true;
+        });
 
+        AddMocks(services);
 
-        public override void ConfigureServices(IServiceCollection services)
-        {
-            services.AddSingleton<ProviderStateMiddleware>();
+        base.ConfigureServices(services);
+    }
 
-            services.Configure<KestrelServerOptions>(options =>
-            {
-                options.AllowSynchronousIO = true;
-            });
+    public override void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<JwtBearerAuthenticationConfiguration> jwtBearerAuthenticationOptions)
+    {
+        app.UseMiddleware<ProviderStateMiddleware>();
+        base.Configure(app, env, jwtBearerAuthenticationOptions);
+    }
 
-            AddMocks(services);
-
-            base.ConfigureServices(services);
-        }
-
-        public override void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<JwtBearerAuthenticationConfiguration> jwtBearerAuthenticationOptions)
-        {
-            app.UseMiddleware<ProviderStateMiddleware>();
-            base.Configure(app, env, jwtBearerAuthenticationOptions);
-        }
-
-        public static void AddMocks(IServiceCollection services)
-        {
-            services.AddSingleton<IMenuRepository>((svc) => Substitute.For<IMenuRepository>());
-            services.AddSingleton<IApplicationEventPublisher>((svc) => Substitute.For<IApplicationEventPublisher>());
-        }
+    public static void AddMocks(IServiceCollection services)
+    {
+        services.AddSingleton<IMenuRepository>((svc) => Substitute.For<IMenuRepository>());
+        services.AddSingleton<IApplicationEventPublisher>((svc) => Substitute.For<IApplicationEventPublisher>());
     }
 }

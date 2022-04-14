@@ -13,28 +13,28 @@ using xxAMIDOxx.xxSTACKSxx.API.Models.Requests;
 using xxAMIDOxx.xxSTACKSxx.API.Models.Responses;
 using xxAMIDOxx.xxSTACKSxx.Infrastructure;
 
-namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Fixtures
+namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Fixtures;
+
+/// <summary>
+/// ApiClientFixture handles the communication with TestServer
+/// and httpClient handling
+/// </summary>
+public abstract class ApiClientFixture : ApiFixture<Startup>
 {
-    /// <summary>
-    /// ApiClientFixture handles the communication with TestServer
-    /// and httpClient handling
-    /// </summary>
-    public abstract class ApiClientFixture : ApiFixture<Startup>
+    private readonly IOptions<JwtBearerAuthenticationConfiguration> jwtBearerAuthenticationOptions;
+
+    protected ApiClientFixture(
+        IOptions<JwtBearerAuthenticationConfiguration> jwtBearerAuthenticationOptions)
     {
-        private readonly IOptions<JwtBearerAuthenticationConfiguration> jwtBearerAuthenticationOptions;
+        this.jwtBearerAuthenticationOptions = jwtBearerAuthenticationOptions;
+    }
 
-        protected ApiClientFixture(
-            IOptions<JwtBearerAuthenticationConfiguration> jwtBearerAuthenticationOptions)
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureAppConfiguration(configurationBuilder =>
         {
-            this.jwtBearerAuthenticationOptions = jwtBearerAuthenticationOptions;
-        }
-
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
-        {
-            builder.ConfigureAppConfiguration(configurationBuilder =>
+            configurationBuilder.AddInMemoryCollection(new Dictionary<string, string>
             {
-                configurationBuilder.AddInMemoryCollection(new Dictionary<string, string>
-                {
                     {"JwtBearerAuthentication:AllowExpiredTokens", jwtBearerAuthenticationOptions.Value.AllowExpiredTokens.ToString().ToLowerInvariant()},
                     {"JwtBearerAuthentication:Audience", jwtBearerAuthenticationOptions.Value.Audience},
                     {"JwtBearerAuthentication:Authority", jwtBearerAuthenticationOptions.Value.Authority},
@@ -43,112 +43,111 @@ namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Fixtures
                     {"JwtBearerAuthentication:OpenApi:ClientId", jwtBearerAuthenticationOptions.Value.OpenApi?.ClientId},
                     {"JwtBearerAuthentication:OpenApi:TokenUrl", jwtBearerAuthenticationOptions.Value.OpenApi?.TokenUrl},
                     {"JwtBearerAuthentication:UseStubbedBackchannelHandler", jwtBearerAuthenticationOptions.Value.UseStubbedBackchannelHandler.ToString().ToLowerInvariant()},
-                });
             });
-        }
+        });
+    }
 
-        protected override void RegisterDependencies(IServiceCollection collection)
+    protected override void RegisterDependencies(IServiceCollection collection)
+    {
+        DependencyRegistration.ConfigureStaticDependencies(collection);
+
+        collection.AddSingleton<IOptions<JwtBearerAuthenticationConfiguration>>(serviceProvider => jwtBearerAuthenticationOptions);
+    }
+
+    /// <summary>
+    /// Adds bearer token to the request based on role name.
+    /// When a feature has same behaviour for multiple roles
+    /// We could use the same theory and test multiple roles
+    /// </summary>
+    /// <param name="role">Name of role being authenticated</param>
+    public string GivenTheUserIsAuthenticatedAndHasRole(string role)
+    {
+        switch (role.ToLower())
         {
-            DependencyRegistration.ConfigureStaticDependencies(collection);
-
-            collection.AddSingleton<IOptions<JwtBearerAuthenticationConfiguration>>(serviceProvider => jwtBearerAuthenticationOptions);
+            case "admin":
+                return GivenTheUserIsAnAuthenticatedAdministrator();
+            case "employee":
+                return GivenTheUserIsAnAuthenticatedEmployee();
+            case "customer":
+                return GivenTheUserIsAnAuthenticatedCustomer();
+            default:
+                return GivenTheUserIsUnauthenticated();
         }
+    }
 
-        /// <summary>
-        /// Adds bearer token to the request based on role name.
-        /// When a feature has same behaviour for multiple roles
-        /// We could use the same theory and test multiple roles
-        /// </summary>
-        /// <param name="role">Name of role being authenticated</param>
-        public string GivenTheUserIsAuthenticatedAndHasRole(string role)
-        {
-            switch (role.ToLower())
-            {
-                case "admin":
-                    return GivenTheUserIsAnAuthenticatedAdministrator();
-                case "employee":
-                    return GivenTheUserIsAnAuthenticatedEmployee();
-                case "customer":
-                    return GivenTheUserIsAnAuthenticatedCustomer();
-                default:
-                    return GivenTheUserIsUnauthenticated();
-            }
-        }
+    /// <summary>
+    /// Adds an Admin bearer token to the request
+    /// </summary>
+    public string GivenTheUserIsAnAuthenticatedAdministrator() => HttpClient.AsAdmin();
 
-        /// <summary>
-        /// Adds an Admin bearer token to the request
-        /// </summary>
-        public string GivenTheUserIsAnAuthenticatedAdministrator() => HttpClient.AsAdmin();
+    /// <summary>
+    /// Adds an Employee bearer token to the request
+    /// </summary>
+    public string GivenTheUserIsAnAuthenticatedEmployee() => HttpClient.AsEmployee();
 
-        /// <summary>
-        /// Adds an Employee bearer token to the request
-        /// </summary>
-        public string GivenTheUserIsAnAuthenticatedEmployee() => HttpClient.AsEmployee();
+    /// <summary>
+    /// Adds a Customer bearer token to the request
+    /// </summary>
+    public string GivenTheUserIsAnAuthenticatedCustomer() => HttpClient.AsCustomer();
 
-        /// <summary>
-        /// Adds a Customer bearer token to the request
-        /// </summary>
-        public string GivenTheUserIsAnAuthenticatedCustomer() => HttpClient.AsCustomer();
+    /// <summary>
+    /// Removes any bearer token from the request to simulate unauthenticated user
+    /// </summary>
+    public string GivenTheUserIsUnauthenticated() => HttpClient.AsUnauthenticatedUser();
 
-        /// <summary>
-        /// Removes any bearer token from the request to simulate unauthenticated user
-        /// </summary>
-        public string GivenTheUserIsUnauthenticated() => HttpClient.AsUnauthenticatedUser();
+    /// <summary>
+    /// Send a POST Http request to the API CreateMenu endpoint passing the menu being created
+    /// </summary>
+    /// <param name="menu">Menu being created</param>
+    public async Task<HttpResponseMessage> CreateMenu(CreateMenuRequest menu)
+    {
+        return await SendAsync(HttpMethod.Post, "/v1/menu", menu);
+    }
 
-        /// <summary>
-        /// Send a POST Http request to the API CreateMenu endpoint passing the menu being created
-        /// </summary>
-        /// <param name="menu">Menu being created</param>
-        public async Task<HttpResponseMessage> CreateMenu(CreateMenuRequest menu)
-        {
-            return await SendAsync(HttpMethod.Post, "/v1/menu", menu);
-        }
+    /// <summary>
+    /// Send a POST Http request to the API CreateCategory endpoint passing the menu id and category being created
+    /// </summary>
+    /// <param name="category">Category being created</param>
+    public async Task<HttpResponseMessage> CreateCategory(Guid menuId, CreateCategoryRequest category)
+    {
+        return await SendAsync(HttpMethod.Post, $"/v1/menu/{menuId}/category", category);
+    }
 
-        /// <summary>
-        /// Send a POST Http request to the API CreateCategory endpoint passing the menu id and category being created
-        /// </summary>
-        /// <param name="category">Category being created</param>
-        public async Task<HttpResponseMessage> CreateCategory(Guid menuId, CreateCategoryRequest category)
-        {
-            return await SendAsync(HttpMethod.Post, $"/v1/menu/{menuId}/category", category);
-        }
+    internal void ThenASuccessfulResponseIsReturned()
+    {
+        LastResponse.IsSuccessStatusCode.ShouldBeTrue();
+    }
 
-        internal void ThenASuccessfulResponseIsReturned()
-        {
-            LastResponse.IsSuccessStatusCode.ShouldBeTrue();
-        }
+    internal void ThenAFailureResponseIsReturned()
+    {
+        LastResponse.IsSuccessStatusCode.ShouldBeFalse();
+    }
 
-        internal void ThenAFailureResponseIsReturned()
-        {
-            LastResponse.IsSuccessStatusCode.ShouldBeFalse();
-        }
+    internal void ThenAForbiddenResponseIsReturned()
+    {
+        LastResponse.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+    }
 
-        internal void ThenAForbiddenResponseIsReturned()
-        {
-            LastResponse.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
-        }
+    internal void ThenACreatedResponseIsReturned()
+    {
+        LastResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
+    }
 
-        internal void ThenACreatedResponseIsReturned()
-        {
-            LastResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
-        }
+    internal void ThenANotFoundResponseIsReturned()
+    {
+        LastResponse.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
 
-        internal void ThenANotFoundResponseIsReturned()
-        {
-            LastResponse.StatusCode.ShouldBe(HttpStatusCode.NotFound);
-        }
+    internal void ThenAConflictResponseIsReturned()
+    {
+        LastResponse.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+    }
 
-        internal void ThenAConflictResponseIsReturned()
-        {
-            LastResponse.StatusCode.ShouldBe(HttpStatusCode.Conflict);
-        }
+    internal async Task ThenTheResourceCreatedResponseIsReturned()
+    {
+        var responseObject = await GetResponseObject<ResourceCreatedResponse>();
 
-        internal async Task ThenTheResourceCreatedResponseIsReturned()
-        {
-            var responseObject = await GetResponseObject<ResourceCreatedResponse>();
-
-            responseObject.ShouldNotBeNull();
-            responseObject.Id.ShouldNotBe(default(Guid));
-        }
+        responseObject.ShouldNotBeNull();
+        responseObject.Id.ShouldNotBe(default(Guid));
     }
 }

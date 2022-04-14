@@ -9,81 +9,80 @@ using xxAMIDOxx.xxSTACKSxx.API.Models.Requests;
 using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 
-namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Fixtures
+namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Fixtures;
+
+public class CreateMenuFixture : ApiClientFixture
 {
-    public class CreateMenuFixture : ApiClientFixture
+    readonly CreateMenuRequest newMenu;
+    IMenuRepository repository;
+    IApplicationEventPublisher applicationEventPublisher;
+
+    public CreateMenuFixture(CreateMenuRequest newMenu, IOptions<JwtBearerAuthenticationConfiguration> jwtBearerAuthenticationOptions)
+        : base(jwtBearerAuthenticationOptions)
     {
-        readonly CreateMenuRequest newMenu;
-        IMenuRepository repository;
-        IApplicationEventPublisher applicationEventPublisher;
+        this.newMenu = newMenu;
+    }
 
-        public CreateMenuFixture(CreateMenuRequest newMenu, IOptions<JwtBearerAuthenticationConfiguration> jwtBearerAuthenticationOptions)
-            : base(jwtBearerAuthenticationOptions)
-        {
-            this.newMenu = newMenu;
-        }
+    protected override void RegisterDependencies(IServiceCollection collection)
+    {
+        base.RegisterDependencies(collection);
 
-        protected override void RegisterDependencies(IServiceCollection collection)
-        {
-            base.RegisterDependencies(collection);
+        // Mocked external dependencies, the setup should
+        // come later according to the scenarios
+        repository = Substitute.For<IMenuRepository>();
+        applicationEventPublisher = Substitute.For<IApplicationEventPublisher>();
 
-            // Mocked external dependencies, the setup should
-            // come later according to the scenarios
-            repository = Substitute.For<IMenuRepository>();
-            applicationEventPublisher = Substitute.For<IApplicationEventPublisher>();
-
-            collection.AddTransient(IoC => repository);
-            collection.AddTransient(IoC => applicationEventPublisher);
-        }
+        collection.AddTransient(IoC => repository);
+        collection.AddTransient(IoC => applicationEventPublisher);
+    }
 
 
-        /****** GIVEN ******************************************************/
+    /****** GIVEN ******************************************************/
 
-        internal void GivenAInvalidMenu()
-        {
-            newMenu.Name = null;
-            newMenu.Description = null;
-        }
-
-
-        internal void GivenAMenuDoesNotExist()
-        {
-            repository.GetByIdAsync(id: Arg.Any<Guid>())
-                        .Returns((Domain.Menu)null);
-        }
+    internal void GivenAInvalidMenu()
+    {
+        newMenu.Name = null;
+        newMenu.Description = null;
+    }
 
 
-        /****** WHEN ******************************************************/
+    internal void GivenAMenuDoesNotExist()
+    {
+        repository.GetByIdAsync(id: Arg.Any<Guid>())
+                    .Returns((Domain.Menu)null);
+    }
 
-        internal async Task WhenTheMenuCreationIsSubmitted()
-        {
-            await CreateMenu(newMenu);
-        }
 
-        /****** THEN ******************************************************/
+    /****** WHEN ******************************************************/
 
-        internal void ThenGetMenuByIdIsCalled()
-        {
-            repository.Received(1).GetByIdAsync(Arg.Any<Guid>());
-        }
-        internal void ThenTheMenuIsSubmittedToDatabase()
-        {
-            repository.Received(1).SaveAsync(Arg.Is<Domain.Menu>(menu => menu.Name == newMenu.Name));
-        }
+    internal async Task WhenTheMenuCreationIsSubmitted()
+    {
+        await CreateMenu(newMenu);
+    }
 
-        internal void ThenTheMenuIsNotSubmittedToDatabase()
-        {
-            repository.DidNotReceive().SaveAsync(Arg.Any<Domain.Menu>());
-        }
+    /****** THEN ******************************************************/
 
-        internal void ThenAMenuCreatedEventIsRaised()
-        {
-            applicationEventPublisher.Received(1).PublishAsync(Arg.Any<MenuCreated>());
-        }
+    internal void ThenGetMenuByIdIsCalled()
+    {
+        repository.Received(1).GetByIdAsync(Arg.Any<Guid>());
+    }
+    internal void ThenTheMenuIsSubmittedToDatabase()
+    {
+        repository.Received(1).SaveAsync(Arg.Is<Domain.Menu>(menu => menu.Name == newMenu.Name));
+    }
 
-        internal void ThenAMenuCreatedEventIsNotRaised()
-        {
-            applicationEventPublisher.DidNotReceive().PublishAsync(Arg.Any<MenuCreated>());
-        }
+    internal void ThenTheMenuIsNotSubmittedToDatabase()
+    {
+        repository.DidNotReceive().SaveAsync(Arg.Any<Domain.Menu>());
+    }
+
+    internal void ThenAMenuCreatedEventIsRaised()
+    {
+        applicationEventPublisher.Received(1).PublishAsync(Arg.Any<MenuCreated>());
+    }
+
+    internal void ThenAMenuCreatedEventIsNotRaised()
+    {
+        applicationEventPublisher.DidNotReceive().PublishAsync(Arg.Any<MenuCreated>());
     }
 }
