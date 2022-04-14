@@ -29,7 +29,7 @@ public class CategoryCreated : IApplicationEvent
 
     public Guid CorrelationId { get; }
 
-    public Guid MenuId { get; set; }
-    public Guid CategoryId { get; set; }
+    public Guid MenuId { get; }
 
+    public Guid CategoryId { get; }
 }

@@ -27,5 +27,5 @@ public class MenuUpdated : IApplicationEvent
 
     public Guid CorrelationId { get; }
 
-    public Guid MenuId { get; set; }
+    public Guid MenuId { get; }
 }
