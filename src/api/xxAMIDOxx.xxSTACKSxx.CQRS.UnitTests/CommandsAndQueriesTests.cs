@@ -1,15 +1,18 @@
 using System;
 using System.Linq;
+using Amido.Stacks.Application.CQRS.ApplicationEvents;
 using Amido.Stacks.Application.CQRS.Commands;
 using Amido.Stacks.Application.CQRS.Queries;
 using Amido.Stacks.Core.Operations;
 using Amido.Stacks.DependencyInjection;
 using AutoFixture;
 using AutoFixture.Kernel;
+using AutoFixture.Xunit2;
 using NSubstitute;
 using Shouldly;
 using Xunit;
 using xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers;
+using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers;
 using xxAMIDOxx.xxSTACKSxx.Common.Operations;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Commands;
@@ -145,6 +148,23 @@ public class CommandsAndQueriesTests
             j.GenericTypeArg.ShouldBe(j.QueryType);
             j.Name.ShouldBe($"{j.QueryType.Name}QueryHandler");
         }
+    }
+
+    [Theory, AutoData]
+
+    public async void CreateMenuCommandHanlder_HandleAsync(CreateMenu cmd)
+    {
+        // Arrange
+        var fixture = new Fixture();
+        var menuRepo = fixture.Create<IMenuRepository>();
+        var eventPub = fixture.Create<IApplicationEventPublisher>();
+        var handler = new CreateMenuCommandHandler(menuRepo, eventPub);
+
+        // Act
+        var res = await handler.HandleAsync(cmd);
+
+        // Assert
+        res.ShouldBeOfType<Guid>();
     }
 
     private static int GetOperationCode(Type commandType)
