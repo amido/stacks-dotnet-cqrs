@@ -150,26 +150,6 @@ public class CommandsAndQueriesTests
         }
     }
 
-    [Theory, AutoData]
-
-    public async void CreateMenuCommandHanlder_HandleAsync(CreateMenu cmd)
-    {
-        var fixture = new Fixture();
-        fixture.Register<IOperationContext>(() => Substitute.For<IOperationContext>());
-        fixture.Register<IMenuRepository>(() => Substitute.For<IMenuRepository>());
-        fixture.Register<IApplicationEventPublisher>(() => Substitute.For<IApplicationEventPublisher>());
-
-        var menuRepo = fixture.Create<IMenuRepository>();
-        var eventPub = fixture.Create<IApplicationEventPublisher>();
-
-        var handler = new CreateMenuCommandHandler(menuRepo, eventPub);
-
-        // Act
-        var res = await handler.HandleAsync(cmd);
-
-        res.ShouldBeOfType<Guid>();
-    }
-
     private static int GetOperationCode(Type commandType)
     {
         var fixture = new Fixture();
