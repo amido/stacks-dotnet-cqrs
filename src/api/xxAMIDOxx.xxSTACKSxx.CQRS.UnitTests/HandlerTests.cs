@@ -8,9 +8,12 @@ using Shouldly;
 using Xunit;
 using xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers;
 using xxAMIDOxx.xxSTACKSxx.Application.Integration;
+using xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers;
 using xxAMIDOxx.xxSTACKSxx.Common.Exceptions;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Commands;
+using xxAMIDOxx.xxSTACKSxx.CQRS.Queries.GetMenuById;
 using xxAMIDOxx.xxSTACKSxx.Domain.MenuAggregateRoot.Exceptions;
+using Query = xxAMIDOxx.xxSTACKSxx.CQRS.Queries;
 
 namespace xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests;
 
@@ -201,6 +204,40 @@ public class HandlerTests
         // Act
         // Assert
         await Should.ThrowAsync<MenuItemDoesNotExistException>(async () => await handler.HandleCommandAsync(menu, cmd));
+    }
+
+    #endregion
+
+    #region QUERIES
+
+    [Theory, AutoData]
+    public async void GetMenuByIdQueryHandler_ExecuteAsync(Domain.Menu menu, GetMenuById criteria)
+    {
+        // Arrange
+        menuRepo.GetByIdAsync(Arg.Any<Guid>()).Returns(menu);
+        var handler = new GetMenuByIdQueryHandler(menuRepo);
+
+        // Act
+        var res = await handler.ExecuteAsync(criteria);
+
+        // Assert
+        await menuRepo.Received(1).GetByIdAsync(Arg.Any<Guid>());
+        res.ShouldNotBeNull();
+        res.ShouldBeOfType<Query.GetMenuById.Menu>();
+    }
+
+    [Theory, AutoData]
+    public async void GetMenuByIdQueryHandler_ExecuteAsync_NoMenu_ReturnNull(Domain.Menu menu, GetMenuById criteria)
+    {
+        // Arrange
+        var handler = new GetMenuByIdQueryHandler(menuRepo);
+
+        // Act
+        var res = await handler.ExecuteAsync(criteria);
+
+        // Assert
+        await menuRepo.Received(1).GetByIdAsync(Arg.Any<Guid>());
+        res.ShouldBeNull();
     }
 
     #endregion
