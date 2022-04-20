@@ -227,7 +227,7 @@ public class HandlerTests
     }
 
     [Theory, AutoData]
-    public async void GetMenuByIdQueryHandler_ExecuteAsync_NoMenu_ReturnNull(Domain.Menu menu, GetMenuById criteria)
+    public async void GetMenuByIdQueryHandler_ExecuteAsync_NoMenu_ReturnNull(GetMenuById criteria)
     {
         // Arrange
         var handler = new GetMenuByIdQueryHandler(menuRepo);
