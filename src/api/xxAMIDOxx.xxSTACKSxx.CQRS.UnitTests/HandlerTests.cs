@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
 using Amido.Stacks.Core.Operations;
+using Amido.Stacks.Data.Documents;
+using Amido.Stacks.Data.Documents.Abstractions;
 using AutoFixture;
 using AutoFixture.Xunit2;
 using NSubstitute;
@@ -12,6 +15,7 @@ using xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers;
 using xxAMIDOxx.xxSTACKSxx.Common.Exceptions;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Commands;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Queries.GetMenuById;
+using xxAMIDOxx.xxSTACKSxx.CQRS.Queries.SearchMenu;
 using xxAMIDOxx.xxSTACKSxx.Domain.MenuAggregateRoot.Exceptions;
 using Query = xxAMIDOxx.xxSTACKSxx.CQRS.Queries;
 
@@ -26,6 +30,7 @@ public class HandlerTests
     private Fixture fixture;
     private IMenuRepository menuRepo;
     private IApplicationEventPublisher eventPublisher;
+    private IDocumentSearch<Domain.Menu> storage;
 
     public HandlerTests()
     {
@@ -33,9 +38,11 @@ public class HandlerTests
         fixture.Register<IOperationContext>(() => Substitute.For<IOperationContext>());
         fixture.Register<IMenuRepository>(() => Substitute.For<IMenuRepository>());
         fixture.Register<IApplicationEventPublisher>(() => Substitute.For<IApplicationEventPublisher>());
+        fixture.Register<IDocumentSearch<Domain.Menu>>(() => Substitute.For<IDocumentSearch<Domain.Menu>>());
 
         menuRepo = fixture.Create<IMenuRepository>();
         eventPublisher = fixture.Create<IApplicationEventPublisher>();
+        storage = fixture.Create<IDocumentSearch<Domain.Menu>>();
     }
 
     #region CREATE
@@ -238,6 +245,72 @@ public class HandlerTests
         // Assert
         await menuRepo.Received(1).GetByIdAsync(Arg.Any<Guid>());
         res.ShouldBeNull();
+    }
+
+    [Theory, AutoData]
+    public async void SearchMenuQueryHandler_ExecuteAsync(SearchMenu criteria, OperationResult<IEnumerable<Domain.Menu>> result)
+    {
+        // Arrange
+        storage.Search(
+            Arg.Any<System.Linq.Expressions.Expression<Func<Domain.Menu, bool>>>(),
+            Arg.Any<string>(),
+            Arg.Any<int>(),
+            Arg.Any<int>())
+        .Returns(result);
+
+        var handler = new SearchMenuQueryHandler(storage);
+
+        // Act
+        var res = await handler.ExecuteAsync(criteria);
+
+        // Assert
+        await storage.Received(1).Search(
+            Arg.Any<System.Linq.Expressions.Expression<Func<Domain.Menu, bool>>>(),
+            Arg.Any<string>(),
+            Arg.Any<int>(),
+            Arg.Any<int>());
+
+        res.ShouldBeOfType<SearchMenuResult>();
+    }
+
+    [Theory, AutoData]
+    public async void SearchMenuQueryHandler_ExecuteAsync_NoCriteria_ShouldThrow(SearchMenu criteria, OperationResult<IEnumerable<Domain.Menu>> result)
+    {
+        // Arrange
+        var handler = new SearchMenuQueryHandler(storage);
+
+        // Act
+        // Assert
+        await Should.ThrowAsync<ArgumentException>(async () => await handler.ExecuteAsync(null));
+    }
+
+    [Theory, AutoData]
+    public async void SearchMenuQueryHandler_ExecuteAsync_NotSuccessful(SearchMenu criteria)
+    {
+        // Arrange
+        var result = new OperationResult<IEnumerable<Domain.Menu>>(false, null, null);
+
+        storage.Search(
+            Arg.Any<System.Linq.Expressions.Expression<Func<Domain.Menu, bool>>>(),
+            Arg.Any<string>(),
+            Arg.Any<int>(),
+            Arg.Any<int>())
+        .Returns(result);
+
+        var handler = new SearchMenuQueryHandler(storage);
+
+        // Act
+        var res = await handler.ExecuteAsync(criteria);
+
+        // Assert
+        await storage.Received(1).Search(
+            Arg.Any<System.Linq.Expressions.Expression<Func<Domain.Menu, bool>>>(),
+            Arg.Any<string>(),
+            Arg.Any<int>(),
+            Arg.Any<int>());
+
+        res.ShouldBeOfType<SearchMenuResult>();
+        res.Results.ShouldBeNull();
     }
 
     #endregion
