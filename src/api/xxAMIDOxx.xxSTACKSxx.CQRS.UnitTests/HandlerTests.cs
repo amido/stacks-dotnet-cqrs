@@ -274,7 +274,7 @@ public class HandlerTests
     }
 
     [Theory, AutoData]
-    public async void SearchMenuQueryHandler_ExecuteAsync_NoCriteria_ShouldThrow(SearchMenu criteria, OperationResult<IEnumerable<Domain.Menu>> result)
+    public async void SearchMenuQueryHandler_ExecuteAsync_NoCriteria_ShouldThrow()
     {
         // Arrange
         var handler = new SearchMenuQueryHandler(storage);
