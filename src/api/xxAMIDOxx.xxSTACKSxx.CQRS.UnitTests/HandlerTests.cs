@@ -10,6 +10,7 @@ using xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers;
 using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.Common.Exceptions;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Commands;
+using xxAMIDOxx.xxSTACKSxx.Domain.MenuAggregateRoot.Exceptions;
 
 namespace xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests;
 
@@ -34,6 +35,8 @@ public class HandlerTests
         eventPublisher = fixture.Create<IApplicationEventPublisher>();
     }
 
+    #region CREATE
+
     [Theory, AutoData]
     public async void CreateMenuCommandHandler_HandleAsync(CreateMenu cmd)
     {
@@ -44,6 +47,7 @@ public class HandlerTests
         var res = await handler.HandleAsync(cmd);
 
         // Assert
+        await menuRepo.Received(1).SaveAsync(Arg.Any<Domain.Menu>());
         await eventPublisher.Received(1).PublishAsync(Arg.Any<IApplicationEvent>());
         res.ShouldBeOfType<Guid>();
     }
@@ -75,6 +79,10 @@ public class HandlerTests
         res.ShouldBeOfType<Guid>();
     }
 
+    #endregion
+
+    #region DELETE
+
     [Theory, AutoData]
     public async void DeleteMenuCommandHandler_HandleAsync(Domain.Menu menu, DeleteMenu cmd)
     {
@@ -88,13 +96,14 @@ public class HandlerTests
         var res = await handler.HandleAsync(cmd);
 
         // Assert
+        await menuRepo.Received(1).DeleteAsync(Arg.Any<Guid>());
         await eventPublisher.Received(1).PublishAsync(Arg.Any<IApplicationEvent>());
         res.ShouldBeOfType<bool>();
         res.ShouldBeTrue();
     }
 
     [Theory, AutoData]
-    public async void DeleteMenuCommandHandler_HandleAsync_MenuMissing_ShouldThrow(Domain.Menu menu, DeleteMenu cmd)
+    public async void DeleteMenuCommandHandler_HandleAsync_MenuMissing_ShouldThrow(DeleteMenu cmd)
     {
         // Arrange
         var handler = fixture.Create<DeleteMenuCommandHandler>();
@@ -102,6 +111,7 @@ public class HandlerTests
         // Act
         // Assert
         await handler.HandleAsync(cmd).ShouldThrowAsync<MenuDoesNotExistException>();
+        await menuRepo.Received(0).DeleteAsync(Arg.Any<Guid>());
         await eventPublisher.Received(0).PublishAsync(Arg.Any<IApplicationEvent>());
     }
 
@@ -116,6 +126,82 @@ public class HandlerTests
         // Act
         // Assert
         await handler.HandleAsync(cmd).ShouldThrowAsync<OperationFailedException>();
+        await menuRepo.Received(1).DeleteAsync(Arg.Any<Guid>());
         await eventPublisher.Received(0).PublishAsync(Arg.Any<IApplicationEvent>());
     }
+
+    #endregion
+
+    #region UPDATE
+
+    [Theory, AutoData]
+    public async void UpdateMenuCommandHandler_HandleAsync(Domain.Menu menu, UpdateMenu cmd)
+    {
+        // Arrange
+        var handler = new UpdateMenuCommandHandler(menuRepo, eventPublisher);
+
+        // Act
+        var res = await handler.HandleCommandAsync(menu, cmd);
+
+        // Assert
+        res.ShouldBeOfType<bool>();
+        res.ShouldBe(true);
+    }
+
+    [Theory, AutoData]
+    public async void UpdateCategoryCommandHandler_HandleAsync(Domain.Menu menu, UpdateCategory cmd)
+    {
+        // Arrange
+        var handler = new UpdateCategoryCommandHandler(menuRepo, eventPublisher);
+        cmd.CategoryId = menu.Categories[0].Id;
+
+        // Act
+        var res = await handler.HandleCommandAsync(menu, cmd);
+
+        // Assert
+        res.ShouldBeOfType<bool>();
+        res.ShouldBe(true);
+    }
+
+    [Theory, AutoData]
+    public async void UpdateMenuItemCommandHandler_HandleAsync(Domain.Menu menu, UpdateMenuItem cmd)
+    {
+        // Arrange
+        var handler = new UpdateMenuItemCommandHandler(menuRepo, eventPublisher);
+        cmd.CategoryId = menu.Categories[0].Id;
+        cmd.MenuItemId = menu.Categories[0].Items[0].Id;
+
+
+        // Act
+        var res = await handler.HandleCommandAsync(menu, cmd);
+
+        // Assert
+        res.ShouldBeOfType<bool>();
+        res.ShouldBe(true);
+    }
+
+    [Theory, AutoData]
+    public async void UpdateCategoryCommandHandler_HandleAsync_NoCategory_ShouldThrow(Domain.Menu menu, UpdateCategory cmd)
+    {
+        // Arrange
+        var handler = new UpdateCategoryCommandHandler(menuRepo, eventPublisher);
+
+        // Act
+        // Assert
+        await Should.ThrowAsync<CategoryDoesNotExistException>(async () => await handler.HandleCommandAsync(menu, cmd));
+    }
+
+    [Theory, AutoData]
+    public async void UpdateMenuItemCommandHandler_HandleAsync_NoMenuItem_ShouldThrow(Domain.Menu menu, UpdateMenuItem cmd)
+    {
+        // Arrange
+        var handler = new UpdateMenuItemCommandHandler(menuRepo, eventPublisher);
+        cmd.CategoryId = menu.Categories[0].Id;
+
+        // Act
+        // Assert
+        await Should.ThrowAsync<MenuItemDoesNotExistException>(async () => await handler.HandleCommandAsync(menu, cmd));
+    }
+
+    #endregion
 }
