@@ -36,11 +36,11 @@ public class CosmosDbMenuRepositoryTests
         // Note the use of a double _ between the section and the property name
         if (Environment.GetEnvironmentVariable(settings.SecurityKeySecret.Identifier) == null)
         {
-            //if locahost and running in visual studio use the default emulator key
+            //if localhost and running in visual studio use the default emulator key
             if (settings.DatabaseAccountUri.Contains("localhost", StringComparison.InvariantCultureIgnoreCase) && Environment.GetEnvironmentVariable("VisualStudioEdition") != null)
                 Environment.SetEnvironmentVariable(settings.SecurityKeySecret.Identifier, "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
             else
-                throw new ArgumentNullException($"The environment variable '{settings.SecurityKeySecret.Identifier}' has not been set. Esure all environment variables required are set before wunning integration tests.");
+                throw new ArgumentNullException($"The environment variable '{settings.SecurityKeySecret.Identifier}' has not been set. Ensure all environment variables required are set before running integration tests.");
         }
     }
 

@@ -21,7 +21,7 @@ public class DeleteMenuController : ApiControllerBase
 
     public DeleteMenuController(ICommandHandler<DeleteMenu, bool> commandHandler)
     {
-        this.commandHandler = commandHandler;
+        this.commandHandler = commandHandler ?? throw new ArgumentNullException(nameof(commandHandler));
     }
 
     /// <summary>

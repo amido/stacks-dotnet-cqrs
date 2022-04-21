@@ -7,10 +7,10 @@ namespace xxAMIDOxx.xxSTACKSxx.API.Models.Requests;
 /// </summary>
 public class UpdateCategoryRequest
 {
-    /// <example>Burguers</example>
+    /// <example>Burgers</example>
     [Required]
     public string Name { get; set; }
 
-    /// <example>A delicious selection of burguers</example>
+    /// <example>A delicious selection of burgers</example>
     public string Description { get; set; }
 }

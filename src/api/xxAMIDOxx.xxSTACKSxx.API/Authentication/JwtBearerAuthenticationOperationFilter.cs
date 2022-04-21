@@ -26,7 +26,7 @@ public class JwtBearerAuthenticationOperationFilter : IOperationFilter
         operation.Security = new List<OpenApiSecurityRequirement>
             {
                 {
-                    new OpenApiSecurityRequirement
+                    new()
                     {
                         { new OpenApiSecurityScheme { Reference = new OpenApiReference { Id = OpenApiSecurityDefinitions.OAuth2, Type = ReferenceType.SecurityScheme } }, new List<string>() },
                         { new OpenApiSecurityScheme { Reference = new OpenApiReference { Id = OpenApiSecurityDefinitions.Bearer, Type = ReferenceType.SecurityScheme } }, new List<string>() },

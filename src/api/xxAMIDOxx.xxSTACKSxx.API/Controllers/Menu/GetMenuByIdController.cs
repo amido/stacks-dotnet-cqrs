@@ -23,7 +23,7 @@ public class GetMenuByIdController : ApiControllerBase
 
     public GetMenuByIdController(IQueryHandler<Query.GetMenuById, Query.Menu> queryHandler)
     {
-        this.queryHandler = queryHandler;
+        this.queryHandler = queryHandler ?? throw new ArgumentNullException(nameof(queryHandler));
     }
 
     /// <summary>

@@ -32,7 +32,7 @@ public class Item
 
     public static Item FromQuery(Query.MenuItem item)
     {
-        return new Item()
+        return new Item
         {
             Id = item.Id,
             Name = item.Name,

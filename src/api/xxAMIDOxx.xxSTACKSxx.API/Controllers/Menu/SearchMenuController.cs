@@ -23,7 +23,7 @@ public class SearchMenuController : ApiControllerBase
 
     public SearchMenuController(IQueryHandler<SearchMenu, SearchMenuResult> queryHandler)
     {
-        this.queryHandler = queryHandler;
+        this.queryHandler = queryHandler ?? throw new ArgumentNullException(nameof(queryHandler));
     }
 
 

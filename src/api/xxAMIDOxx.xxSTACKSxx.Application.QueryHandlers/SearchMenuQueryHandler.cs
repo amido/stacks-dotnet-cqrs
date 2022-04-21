@@ -48,8 +48,7 @@ public class SearchMenuQueryHandler : IQueryHandler<SearchMenu, SearchMenuResult
             itemFilter =>
                 (string.IsNullOrEmpty(searchTerm) || itemFilter.Name.Contains(searchTerm)) &&
                 //Nullable types must have a value when passed to a seach, this is why we convert it to non nullable and pass a boolean check
-                (!restaurantIdProvided || itemFilter.TenantId == tenantId)
-                ,
+                (!restaurantIdProvided || itemFilter.TenantId == tenantId),
             null,
             pageSize,
             pageNumber);

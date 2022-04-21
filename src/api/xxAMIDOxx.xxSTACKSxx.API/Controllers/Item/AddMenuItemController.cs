@@ -23,7 +23,7 @@ public class AddMenuItemController : ApiControllerBase
 
     public AddMenuItemController(ICommandHandler<CreateMenuItem, Guid> commandHandler)
     {
-        this.commandHandler = commandHandler;
+        this.commandHandler = commandHandler ?? throw new ArgumentNullException(nameof(commandHandler));
     }
 
     /// <summary>

@@ -273,7 +273,7 @@ public class HandlerTests
         res.ShouldBeOfType<SearchMenuResult>();
     }
 
-    [Theory, AutoData]
+    [Fact]
     public async void SearchMenuQueryHandler_ExecuteAsync_NoCriteria_ShouldThrow()
     {
         // Arrange

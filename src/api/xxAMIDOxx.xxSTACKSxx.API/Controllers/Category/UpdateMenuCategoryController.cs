@@ -21,7 +21,7 @@ public class UpdateMenuCategoryController : ApiControllerBase
 
     public UpdateMenuCategoryController(ICommandHandler<UpdateCategory, bool> commandHandler)
     {
-        this.commandHandler = commandHandler;
+        this.commandHandler = commandHandler ?? throw new ArgumentNullException(nameof(commandHandler));
     }
 
     /// <summary>

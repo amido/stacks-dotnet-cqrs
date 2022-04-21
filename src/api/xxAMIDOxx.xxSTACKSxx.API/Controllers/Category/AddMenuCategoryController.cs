@@ -23,7 +23,7 @@ public class AddMenuCategoryController : ApiControllerBase
 
     public AddMenuCategoryController(ICommandHandler<CreateCategory, Guid> commandHandler)
     {
-        this.commandHandler = commandHandler;
+        this.commandHandler = commandHandler ?? throw new ArgumentNullException(nameof(commandHandler));
     }
 
     /// <summary>

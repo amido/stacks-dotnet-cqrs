@@ -30,7 +30,7 @@ public class Category
 
     public static Category FromQuery(Query.Category category)
     {
-        return new Category()
+        return new Category
         {
             Id = category.Id,
             Name = category.Name,
