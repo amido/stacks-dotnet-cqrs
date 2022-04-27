@@ -6,8 +6,8 @@ namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Features;
 public class DeleteMenuFeature
 {
     /* SCENARIOS: Delete a menu
-      
-         Examples: 
+
+         Examples:
          -------------------------------------------------------------------------
         | AsRole                        | Menu Condition   | Outcome              |
         |-------------------------------|------------------|----------------------|

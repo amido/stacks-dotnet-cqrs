@@ -79,7 +79,7 @@ public class CreateCategoryFixture : ApiClientFixture
         //Ensure in the future menu is not created with categories
         for (int i = 0; i < existingMenu.Categories.Count(); i++)
         {
-            existingMenu.RemoveCategory(existingMenu.Categories.First().Id);
+            existingMenu.RemoveCategory(existingMenu.Categories[0].Id);
         }
         existingMenu.ClearEvents();
     }

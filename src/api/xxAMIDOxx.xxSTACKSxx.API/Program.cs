@@ -31,6 +31,5 @@ public static class Program
             .UseStartup<Startup>()
             .UseSerilog()
             .ConfigureServices(DependencyRegistration.ConfigureStaticDependencies)
-            .ConfigureServices(DependencyRegistration.ConfigureProductionDependencies)
-    ;
+            .ConfigureServices(DependencyRegistration.ConfigureProductionDependencies);
 }

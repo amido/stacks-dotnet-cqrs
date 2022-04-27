@@ -163,8 +163,7 @@ public class Startup
                     c.OAuthClientId(jwtBearerAuthenticationConfiguration.OpenApi.ClientId);
                     c.OAuthUsePkce();
                 }
-            })
-            ;
+            });
     }
 
     private void AddSwagger(

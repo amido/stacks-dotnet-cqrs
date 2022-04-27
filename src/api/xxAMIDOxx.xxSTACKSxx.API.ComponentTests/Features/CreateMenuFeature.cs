@@ -25,7 +25,6 @@ public class CreateMenuFeature
     public void CreateMenuAsAdminForValidMenuShouldSucceed(CreateMenuFixture fixture)
     {
         "Given the user is authenticated and has the Admin role".x(() => fixture.GivenTheUserIsAnAuthenticatedAdministrator());
-        "And a valid menu being submitted".x(fixture.GivenAValidMenu);
         "And the menu does not does not exist".x(fixture.GivenAMenuDoesNotExist);
         "When the menu is submitted".x(fixture.WhenTheMenuCreationIsSubmitted);
         "Then a successful response is returned".x(fixture.ThenASuccessfulResponseIsReturned);
@@ -54,7 +53,6 @@ public class CreateMenuFeature
     public void CreateMenuAsNonAdminForValidMenuShouldFail(string role, CreateMenuFixture fixture)
     {
         $"Given the user is authenticated and has the {role} role".x(() => fixture.GivenTheUserIsAuthenticatedAndHasRole(role));
-        "And a valid menu being submitted".x(fixture.GivenAValidMenu);
         "And the menu does not does not exist".x(fixture.GivenAMenuDoesNotExist);
         "When the menu is submitted".x(fixture.WhenTheMenuCreationIsSubmitted);
         "Then a Forbidden response is returned".x(fixture.ThenAForbiddenResponseIsReturned);
