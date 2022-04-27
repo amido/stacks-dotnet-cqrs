@@ -1,6 +1,6 @@
 # Amido Stacks Automated Functional Testing
 
-The full documentation on Amido Stacks can be found [here](https://github.com/amido/stacks-dotnet).
+The full documentation on Amido Stacks can be found [here](https://github.com/amido/stacks-dotnet-cqrs).
 
 Amido Stacks targets different cloud providers.
 
