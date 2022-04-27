@@ -5,7 +5,7 @@ namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Fixtures;
 /// <summary>
 /// This class will add the auth token to the client requests
 /// By default static tokens with long expiration should be used
-/// For dynamic generation, refactor it to retrieve the tokens from
+/// For dynamic generation, refactor it to retrieve the tokens from 
 /// token provider
 /// </summary>
 public static class AuthTokenFixture
