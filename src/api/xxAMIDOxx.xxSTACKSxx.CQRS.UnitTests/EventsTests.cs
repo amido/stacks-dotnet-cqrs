@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
-using xxAMIDOxx.xxSTACKSxx.Application.CQRS.Events;
+using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 using Amido.Stacks.Core.Operations;
 using Amido.Stacks.DependencyInjection;
 using AutoFixture;
@@ -26,10 +26,10 @@ public class EventsTests
         var definitions = assembly.GetImplementationsOf(typeof(IApplicationEvent));
 
         var duplicateCodes = definitions.Select(d => new
-            {
-                EventCode = GetEventCode(d.implementation),
-                d.implementation.Name
-            })
+        {
+            EventCode = GetEventCode(d.implementation),
+            d.implementation.Name
+        })
             .GroupBy(i => i.EventCode)
             .Where(g => g.Count() > 1)
             .Select(g => g.Key)
@@ -49,7 +49,7 @@ public class EventsTests
             var eventCode = GetEventCode(definition.implementation);
             var eventName = GetEventName(eventCode);
 
-            // If the user intend to use the type as part of the name for convention, 
+            // If the user intend to use the type as part of the name for convention,
             // the convention should be nameApplicationEvent not nameEvent
             // Event is generic and can mislead with DomainEvents
             definition.implementation.Name.ShouldBeOneOf(eventName, $"{eventName}Event");
