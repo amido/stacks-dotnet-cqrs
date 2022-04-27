@@ -37,9 +37,9 @@ public class MenuApiProviderTests
             // however xUnit 2 does not capture the console output,
             // so a custom outputter is required.
             Outputters = new List<IOutput>
-                {
-                    new XUnitOutput(OutputHelper)
-                },
+            {
+                new XUnitOutput(OutputHelper)
+            },
 
             // Output verbose verification logs to the test output
             Verbose = true,
@@ -62,11 +62,11 @@ public class MenuApiProviderTests
 
         //Create the mocked provider service
         using (var ProviderWebHost = WebHost.CreateDefaultBuilder()
-            .UseUrls(ProviderUri)
-            .UseStartup<TestStartup>()
-            .UseSetting(WebHostDefaults.ApplicationKey, typeof(Startup).Assembly.GetName().Name)
-            .ConfigureServices(DependencyRegistration.ConfigureStaticDependencies)
-            .Build())
+                   .UseUrls(ProviderUri)
+                   .UseStartup<TestStartup>()
+                   .UseSetting(WebHostDefaults.ApplicationKey, typeof(Startup).Assembly.GetName().Name)
+                   .ConfigureServices(DependencyRegistration.ConfigureStaticDependencies)
+                   .Build())
         {
             ProviderWebHost.Start();
 

@@ -39,7 +39,7 @@ public class TestStartup : Startup
         base.Configure(app, env, jwtBearerAuthenticationOptions);
     }
 
-    public static void AddMocks(IServiceCollection services)
+    public void AddMocks(IServiceCollection services)
     {
         services.AddSingleton<IMenuRepository>((svc) => Substitute.For<IMenuRepository>());
         services.AddSingleton<IApplicationEventPublisher>((svc) => Substitute.For<IApplicationEventPublisher>());
