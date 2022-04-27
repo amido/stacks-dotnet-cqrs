@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
-using xxAMIDOxx.xxSTACKSxx.Application.CQRS.Events;
+using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 using Amido.Stacks.Testing.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

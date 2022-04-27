@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
 using Amido.Stacks.Application.CQRS.Commands;
-using xxAMIDOxx.xxSTACKSxx.Application.CQRS.Events;
+using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.Common.Exceptions;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Commands;
