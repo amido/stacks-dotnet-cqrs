@@ -3,8 +3,10 @@
 	"author": "stacks@amido.com",
 	"classifications": [
 		"Stacks",
+		"Application",
 		"Infrastructure",
 		"CQRS",
+		"Events",
 		"WebAPI"
 	],
 	"name": "Amido Stacks CQRS Web API",
@@ -64,6 +66,61 @@
 			"value": "(database == \"InMemoryDb\")"
 		}
 	},
+	"eventPublisher": {
+		"type": "parameter",
+		"datatype": "choice",
+		"defaultValue": "None",
+		"choices": [
+			{
+				"choice": "ServiceBus",
+				"description": "Targets the Azure Service Bus for publishing events."
+			},
+			{
+				"choice": "EventHub",
+				"description": "Targets the Azure Event Hub for publishing events."
+			},
+			{
+				"choice": "AwsSqs",
+				"description": "Targets the AWS SQS for publishing events."
+			},
+			{
+				"choice": "None",
+				"description": "Does not add event publishing"
+			}
+		],
+		"description": "Adds event publishing."
+	},
+	"EventPublisherServiceBus": {
+		"type": "computed",
+		"value": "(eventPublisher == \"ServiceBus\")"
+	},
+	"EventPublisherEventHub": {
+		"type": "computed",
+		"value": "(eventPublisher == \"EventHub\")"
+	},
+	"EventPublisherAwsSqs": {
+		"type": "computed",
+		"value": "(eventPublisher == \"AwsSqs\")"
+	},
+	"EventPublisherNone": {
+		"type": "computed",
+		"value": "(eventPublisher == \"None\")"
+	},
+	"enableFunctionWorker": {
+		"type": "parameter",
+		"dataType": "bool",
+		"defaultValue": "true"
+	},
+	"enableFunctionListener": {
+		"type": "parameter",
+		"dataType": "bool",
+		"defaultValue": "true"
+	},
+	"enableBackgroundWorker": {
+		"type": "parameter",
+		"dataType": "bool",
+		"defaultValue": "true"
+	},
 	"sources": [
 		{
 			"source": "./",
@@ -113,6 +170,53 @@
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs",
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/DynamoDbCategoryConverterTests.cs"
+					]
+				},
+				{
+					"condition": "(!enableFunctionWorker)",
+					"exclude": [
+						"**/src/functions/func-cosmosdb-worker/xxAMIDOxx.xxSTACKSxx.Worker/**",
+						"**/src/functions/func-cosmosdb-worker/xxAMIDOxx.xxSTACKSxx.Worker.UnitTests/**"
+					]
+				},
+				{
+					"condition": "(!enableFunctionListener)",
+					"exclude": [
+						"**/src/functions/func-aeh-listener/xxAMIDOxx.xxSTACKSxx.Listener/**",
+						"**/src/functions/func-aeh-listener/xxAMIDOxx.xxSTACKSxx.Listener.UnitTests/**",
+						"**/src/functions/func-asb-listener/xxAMIDOxx.xxSTACKSxx.Listener/**",
+						"**/src/functions/func-asb-listener/xxAMIDOxx.xxSTACKSxx.Listener.UnitTests/**"
+					]
+				},
+				{
+					"condition": "(enableFunctionListener && EventPublisherServiceBus)",
+					"exclude": [
+						"**/src/functions/func-aeh-listener/**"
+					]
+				},
+				{
+					"condition": "(enableFunctionListener && EventPublisherEventHub)",
+					"exclude": [
+						"**/src/functions/func-asb-listener/**"
+					]
+				},
+				{
+					"condition": "(!enableFunctionListener && !enableFunctionWorker)",
+					"exclude": [
+						"**/src/functions/**",
+						"**/build/azDevOps/azure/templates/steps/build/build-function.yml"
+					]
+				},
+				{
+					"condition": "(!enableBackgroundWorker)",
+					"exclude": [
+						"**/src/worker/**"
+					]
+				},
+				{
+					"condition": "EventPublisherServiceBus || EventPublisherEventHub",
+					"exclude": [
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Fakes/DummyEventPublisher.cs"
 					]
 				}
 			]
