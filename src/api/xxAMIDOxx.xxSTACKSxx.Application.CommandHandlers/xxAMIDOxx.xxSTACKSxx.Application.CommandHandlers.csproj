@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <LangVersion>10.0</LangVersion>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Application.Integration\xxAMIDOxx.xxSTACKSxx.Application.Integration.csproj" />
-        <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Common\xxAMIDOxx.xxSTACKSxx.Common.csproj" />
-        <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.CQRS\xxAMIDOxx.xxSTACKSxx.CQRS.csproj" />
-        <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Domain\xxAMIDOxx.xxSTACKSxx.Domain.csproj" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Application.Integration\xxAMIDOxx.xxSTACKSxx.Application.Integration.csproj" />
+    <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Common\xxAMIDOxx.xxSTACKSxx.Common.csproj" />
+    <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.CQRS\xxAMIDOxx.xxSTACKSxx.CQRS.csproj" />
+    <ProjectReference Include="..\xxAMIDOxx.xxSTACKSxx.Domain\xxAMIDOxx.xxSTACKSxx.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Amido.Stacks.Messaging.Azure.ServiceBus" Version="0.2.49" />
+  </ItemGroup>
 </Project>

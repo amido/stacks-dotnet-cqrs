@@ -9,12 +9,12 @@ namespace xxAMIDOxx.xxSTACKSxx.Common.Exceptions;
 public class OperationFailedException : ApplicationExceptionBase
 {
     public OperationFailedException(ExceptionCode exceptionCode,
-               OperationCode operationCode,
-               Guid correlationId,
-               string message)
-               : base((int)operationCode,
-                   correlationId,
-                   message)
+        OperationCode operationCode,
+        Guid correlationId,
+        string message)
+        : base((int)operationCode,
+            correlationId,
+            message)
     {
         ExceptionCode = (int)exceptionCode;
 
@@ -30,7 +30,7 @@ public class OperationFailedException : ApplicationExceptionBase
             (OperationCode)context.OperationCode,
             context.CorrelationId,
             message
-            );
+        );
         exception.Data["MenuId"] = menuId;
         throw exception;
     }

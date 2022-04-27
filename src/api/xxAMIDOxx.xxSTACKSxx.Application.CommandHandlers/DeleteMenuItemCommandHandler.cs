@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
-using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
+using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Commands;
 using xxAMIDOxx.xxSTACKSxx.Domain;
 
@@ -25,9 +25,9 @@ public class DeleteMenuItemCommandHandler : MenuCommandHandlerBase<DeleteMenuIte
     public override IEnumerable<IApplicationEvent> RaiseApplicationEvents(Menu menu, DeleteMenuItem command)
     {
         return new IApplicationEvent[] {
-                new MenuUpdated(command, command.MenuId),
-                new CategoryUpdated(command, command.MenuId, command.CategoryId),
-                new MenuItemDeleted(command, command.MenuId, command.CategoryId, command.MenuItemId)
-            };
+            new MenuUpdatedEvent(command, command.MenuId),
+            new CategoryUpdatedEvent(command, command.MenuId, command.CategoryId),
+            new MenuItemDeletedEvent(command, command.MenuId, command.CategoryId, command.MenuItemId)
+        };
     }
 }

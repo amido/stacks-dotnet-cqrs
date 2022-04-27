@@ -13,7 +13,7 @@ namespace xxAMIDOxx.xxSTACKSxx.Application.CommandHandlers;
 
 /// <summary>
 /// MenuCommandHandlerBase used for common operations updating an existing menu
-/// Creation and Deletion of the AggregateRoot should have its own implementation
+/// Creation and Deletion of the AggregateRoot should have it's own implementation
 /// Command specific logic should be handled within HandleCommandAsync() method implementation
 /// </summary>
 /// <typeparam name="TCommand">The type of command being handled</typeparam>
@@ -23,7 +23,7 @@ public abstract class MenuCommandHandlerBase<TCommand, TResult> : ICommandHandle
     protected IMenuRepository repository;
     private readonly IApplicationEventPublisher applicationEventPublisher;
 
-    protected MenuCommandHandlerBase(IMenuRepository repository, IApplicationEventPublisher applicationEventPublisher)
+    public MenuCommandHandlerBase(IMenuRepository repository, IApplicationEventPublisher applicationEventPublisher)
     {
         this.repository = repository;
         this.applicationEventPublisher = applicationEventPublisher;
@@ -51,7 +51,7 @@ public abstract class MenuCommandHandlerBase<TCommand, TResult> : ICommandHandle
             var issuccessful = await repository.SaveAsync(menu);
 
             if (!issuccessful)
-                OperationFailedException.Raise(command, command.MenuId,
+                OperationFailedException.Raise(command, command.MenuId, 
                     $"Unable to handle command {typeof(ICommand).Name}");
 
             foreach (var appEvent in RaiseApplicationEvents(menu, command))

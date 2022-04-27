@@ -1,13 +1,8 @@
-﻿using System;
-using Amazon.DynamoDBv2;
-using Amido.Stacks.Application.CQRS.ApplicationEvents;
+﻿using Amido.Stacks.Application.CQRS.ApplicationEvents;
 using Amido.Stacks.Application.CQRS.Commands;
 using Amido.Stacks.Application.CQRS.Queries;
 using Amido.Stacks.Configuration.Extensions;
-using Amido.Stacks.Data.Documents.CosmosDB;
-using Amido.Stacks.Data.Documents.CosmosDB.Extensions;
 using Amido.Stacks.DependencyInjection;
-using Amido.Stacks.DynamoDB.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -17,9 +12,15 @@ using xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers;
 using xxAMIDOxx.xxSTACKSxx.Domain;
 using xxAMIDOxx.xxSTACKSxx.Infrastructure.Fakes;
 using xxAMIDOxx.xxSTACKSxx.Infrastructure.HealthChecks;
-using xxAMIDOxx.xxSTACKSxx.Infrastructure.Repositories;
+#if (EventPublisherAwsSqs)
+using Amido.Stacks.Messaging.AWS.SQS;
+using Amido.Stacks.Messaging.AWS.SQS.Extensions;
+#endif
 #if (CosmosDb || DynamoDb)
+using Amido.Stacks.DynamoDB.Extensions;
+using Amazon.DynamoDBv2;
 using xxAMIDOxx.xxSTACKSxx.Infrastructure.Repositories;
+using Amido.Stacks.Data.Documents.CosmosDB.Extensions;
 #endif
 
 namespace xxAMIDOxx.xxSTACKSxx.Infrastructure;
@@ -45,25 +46,41 @@ public static class DependencyRegistration
     public static void ConfigureProductionDependencies(WebHostBuilderContext context, IServiceCollection services)
     {
         services.AddSecrets();
+
+#if (EventPublisherServiceBus)
+        services.Configure<Amido.Stacks.Messaging.Azure.ServiceBus.Configuration.ServiceBusConfiguration>(context.Configuration.GetSection("ServiceBusConfiguration"));
+        services.AddServiceBus();
+        services.AddTransient<IApplicationEventPublisher, Amido.Stacks.Messaging.Azure.ServiceBus.Senders.Publishers.EventPublisher>();
+#elif (EventPublisherEventHub)
+        services.Configure<Amido.Stacks.Messaging.Azure.EventHub.Configuration.EventHubConfiguration>(context.Configuration.GetSection("EventHubConfiguration"));
+        services.AddEventHub();
+        services.AddTransient<IApplicationEventPublisher, Amido.Stacks.Messaging.Azure.EventHub.Publisher.EventPublisher>();
+#elif (EventPublisherAwsSqs)
+        services.Configure<AwsSqsConfiguration>(context.Configuration.GetSection("AwsSqsConfiguration"));
+        services.AddAwsSqs();
+        services.AddTransient<IApplicationEventPublisher, Amido.Stacks.Messaging.AWS.SQS.Publisher.EventPublisher>();
+#elif (EventPublisherNone)
+        services.AddTransient<IApplicationEventPublisher, DummyEventPublisher>();
+#else
+        services.AddTransient<IApplicationEventPublisher, DummyEventPublisher>();
+#endif
+
 #if (CosmosDb)
-            services.Configure<CosmosDbConfiguration>(context.Configuration.GetSection("CosmosDB"));
-            services.AddCosmosDB();
-            services.AddTransient<IMenuRepository, CosmosDbMenuRepository>();
+        services.Configure<Amido.Stacks.Data.Documents.CosmosDB.CosmosDbConfiguration>(context.Configuration.GetSection("CosmosDb"));
+        services.AddCosmosDB();
+        services.AddTransient<IMenuRepository, CosmosDbMenuRepository>();
 #elif (DynamoDb)
-            services.AddDynamoDB();
-            services.AddTransient<IMenuRepository, DynamoDbMenuRepository>();
+        services.AddDynamoDB();
+        services.AddTransient<IMenuRepository, DynamoDbMenuRepository>();
 #elif (InMemoryDb)
-            services.AddTransient<IMenuRepository, InMemoryMenuRepository>();
+        services.AddTransient<IMenuRepository, InMemoryMenuRepository>();
 #else
         services.AddTransient<IMenuRepository, InMemoryMenuRepository>();
 #endif
-
-        AddEventPublishers(services);
-
         var healthChecks = services.AddHealthChecks();
 #if (CosmosDb)
-            healthChecks.AddCheck<CustomHealthCheck>("Sample");//This is a sample health check, remove if not needed, more info: https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/monitor-app-health
-            healthChecks.AddCheck<CosmosDbDocumentStorage<Menu>>("CosmosDB");
+        healthChecks.AddCheck<CustomHealthCheck>("Sample"); //This is a sample health check, remove if not needed, more info: https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/monitor-app-health
+        healthChecks.AddCheck<Amido.Stacks.Data.Documents.CosmosDB.CosmosDbDocumentStorage<Menu>>("CosmosDB");
 #endif
     }
 
@@ -73,7 +90,8 @@ public static class DependencyRegistration
         var definitions = typeof(CreateMenuCommandHandler).Assembly.GetImplementationsOf(typeof(ICommandHandler<,>));
         foreach (var definition in definitions)
         {
-            log.Information("Registering '{implementation}' as implementation of '{interface}'", definition.implementation.FullName, definition.interfaceVariation.FullName);
+            log.Information("Registering '{implementation}' as implementation of '{interface}'",
+                definition.implementation.FullName, definition.interfaceVariation.FullName);
             services.AddTransient(definition.interfaceVariation, definition.implementation);
         }
     }
@@ -84,19 +102,8 @@ public static class DependencyRegistration
         var definitions = typeof(GetMenuByIdQueryHandler).Assembly.GetImplementationsOf(typeof(IQueryHandler<,>));
         foreach (var definition in definitions)
         {
-            log.Information("Registering '{implementation}' as implementation of '{interface}'", definition.implementation.FullName, definition.interfaceVariation.FullName);
-            services.AddTransient(definition.interfaceVariation, definition.implementation);
-        }
-    }
-
-    private static void AddEventPublishers(IServiceCollection services)
-    {
-        log.Information("Loading implementations of {interface}", typeof(IApplicationEventPublisher).Name);
-        var definitions = typeof(DummyEventPublisher).Assembly.GetImplementationsOf(typeof(IApplicationEventPublisher));
-        foreach (var definition in definitions)
-        {
-            log.Information("Registering '{implementation}' as implementation of '{interface}'", definition.implementation.FullName, definition.interfaceVariation.FullName);
-            //TODO: maybe this should be singleton
+            log.Information("Registering '{implementation}' as implementation of '{interface}'",
+                definition.implementation.FullName, definition.interfaceVariation.FullName);
             services.AddTransient(definition.interfaceVariation, definition.implementation);
         }
     }

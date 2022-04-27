@@ -1,4 +1,4 @@
-﻿namespace xxAMIDOxx.xxSTACKSxx.Common.Events;
+﻿namespace xxAMIDOxx.xxSTACKSxx.CQRS.Enums;
 
 public enum EventCode
 {
@@ -6,9 +6,6 @@ public enum EventCode
     MenuCreated = 101,
     MenuUpdated = 102,
     MenuDeleted = 103,
-
-    //GetMenu = 104,
-    //SearchMenu = 110,
 
     // Categories Operations
     CategoryCreated = 201,
@@ -20,5 +17,6 @@ public enum EventCode
     MenuItemUpdated = 302,
     MenuItemDeleted = 303,
 
-    CosmosDbChangeFeedEvent = 999
+    // CosmosDB change feed operations
+    EntityUpdated = 999
 }

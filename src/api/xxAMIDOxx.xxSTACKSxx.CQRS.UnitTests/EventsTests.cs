@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Linq;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
+using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 using Amido.Stacks.Core.Operations;
 using Amido.Stacks.DependencyInjection;
 using AutoFixture;
@@ -9,7 +10,6 @@ using NSubstitute;
 using Shouldly;
 using Xunit;
 using xxAMIDOxx.xxSTACKSxx.Common.Events;
-using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 
 namespace xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests;
 
@@ -22,7 +22,7 @@ public class EventsTests
     [Fact]
     public void EventsShouldHaveUniqueIds()
     {
-        var assembly = typeof(MenuCreated).Assembly;
+        var assembly = typeof(MenuCreatedEvent).Assembly;
         var definitions = assembly.GetImplementationsOf(typeof(IApplicationEvent));
 
         var duplicateCodes = definitions.Select(d => new
@@ -43,7 +43,7 @@ public class EventsTests
 
     public void EventNameShouldMatchOperationName()
     {
-        var definitions = typeof(MenuCreated).Assembly.GetImplementationsOf(typeof(IApplicationEvent));
+        var definitions = typeof(MenuCreatedEvent).Assembly.GetImplementationsOf(typeof(IApplicationEvent));
         foreach (var definition in definitions)
         {
             var eventCode = GetEventCode(definition.implementation);
@@ -52,7 +52,7 @@ public class EventsTests
             // If the user intend to use the type as part of the name for convention,
             // the convention should be nameApplicationEvent not nameEvent
             // Event is generic and can mislead with DomainEvents
-            definition.implementation.Name.ShouldBeOneOf(eventName, $"{eventName}ApplicationEvent");
+            definition.implementation.Name.ShouldBeOneOf(eventName, $"{eventName}Event");
         }
     }
 
@@ -60,7 +60,7 @@ public class EventsTests
 
     public void EventCodeShouldHaveOneImplementation()
     {
-        var definitions = typeof(MenuCreated).Assembly.GetImplementationsOf(typeof(IApplicationEvent));
+        var definitions = typeof(MenuCreatedEvent).Assembly.GetImplementationsOf(typeof(IApplicationEvent));
         foreach (EventCode code in Enum.GetValues(typeof(EventCode)))
         {
             var implementation = definitions.Select(d => d.implementation).SingleOrDefault(o => GetEventCode(o) == (int)code);
@@ -68,7 +68,7 @@ public class EventsTests
         }
     }
 
-    private static int GetEventCode(Type eventType)
+    private int GetEventCode(Type eventType)
     {
         var fixture = new Fixture();
         fixture.Register<IOperationContext>(() => Substitute.For<IOperationContext>());
@@ -76,7 +76,7 @@ public class EventsTests
         return ((IApplicationEvent)cmd).EventCode;
     }
 
-    private static string GetEventName(int eventCode)
+    private string GetEventName(int eventCode)
     {
         return ((EventCode)eventCode).ToString();
     }

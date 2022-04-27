@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
 using Amido.Stacks.Core.Operations;
@@ -35,10 +35,10 @@ public class HandlerTests
     public HandlerTests()
     {
         fixture = new Fixture();
-        fixture.Register<IOperationContext>(() => Substitute.For<IOperationContext>());
-        fixture.Register<IMenuRepository>(() => Substitute.For<IMenuRepository>());
-        fixture.Register<IApplicationEventPublisher>(() => Substitute.For<IApplicationEventPublisher>());
-        fixture.Register<IDocumentSearch<Domain.Menu>>(() => Substitute.For<IDocumentSearch<Domain.Menu>>());
+        fixture.Register(() => Substitute.For<IOperationContext>());
+        fixture.Register(() => Substitute.For<IMenuRepository>());
+        fixture.Register(() => Substitute.For<IApplicationEventPublisher>());
+        fixture.Register(() => Substitute.For<IDocumentSearch<Domain.Menu>>());
 
         menuRepo = fixture.Create<IMenuRepository>();
         eventPublisher = fixture.Create<IApplicationEventPublisher>();
@@ -48,45 +48,46 @@ public class HandlerTests
     #region CREATE
 
     [Theory, AutoData]
-    public async void CreateMenuCommandHandler_HandleAsync(CreateMenu cmd)
+    public async void CreateMenuCommandHandler_HandleAsync(CreateMenu command)
     {
         // Arrange
         var handler = new CreateMenuCommandHandler(menuRepo, eventPublisher);
 
         // Act
-        var res = await handler.HandleAsync(cmd);
+        var result = await handler.HandleAsync(command);
 
         // Assert
         await menuRepo.Received(1).SaveAsync(Arg.Any<Domain.Menu>());
         await eventPublisher.Received(1).PublishAsync(Arg.Any<IApplicationEvent>());
-        res.ShouldBeOfType<Guid>();
+
+        result.ShouldBeOfType<Guid>();
     }
 
     [Theory, AutoData]
-    public async void CreateCategoryCommandHandler_HandleAsync(Domain.Menu menu, CreateCategory cmd)
+    public async void CreateCategoryCommandHandler_HandleAsync(Domain.Menu menu, CreateCategory command)
     {
         // Arrange
         var handler = new CreateCategoryCommandHandler(menuRepo, eventPublisher);
 
         // Act
-        var res = await handler.HandleCommandAsync(menu, cmd);
+        var result = await handler.HandleCommandAsync(menu, command);
 
         // Assert
-        res.ShouldBeOfType<Guid>();
+        result.ShouldBeOfType<Guid>();
     }
 
     [Theory, AutoData]
-    public async void CreateMenuItemCommandHandler_HandleAsync(Domain.Menu menu, CreateMenuItem cmd)
+    public async void CreateMenuItemCommandHandler_HandleAsync(Domain.Menu menu, CreateMenuItem command)
     {
         // Arrange
         var handler = new CreateMenuItemCommandHandler(menuRepo, eventPublisher);
-        cmd.CategoryId = menu.Categories[0].Id;
+        command.CategoryId = menu.Categories[0].Id;
 
         // Act
-        var res = await handler.HandleCommandAsync(menu, cmd);
+        var result = await handler.HandleCommandAsync(menu, command);
 
         // Assert
-        res.ShouldBeOfType<Guid>();
+        result.ShouldBeOfType<Guid>();
     }
 
     #endregion
@@ -94,7 +95,7 @@ public class HandlerTests
     #region DELETE
 
     [Theory, AutoData]
-    public async void DeleteMenuCommandHandler_HandleAsync(Domain.Menu menu, DeleteMenu cmd)
+    public async void DeleteMenuCommandHandler_HandleAsync(Domain.Menu menu, DeleteMenu command)
     {
         // Arrange
         menuRepo.GetByIdAsync(Arg.Any<Guid>()).Returns(menu);
@@ -103,30 +104,31 @@ public class HandlerTests
         var handler = new DeleteMenuCommandHandler(menuRepo, eventPublisher);
 
         // Act
-        var res = await handler.HandleAsync(cmd);
+        var result = await handler.HandleAsync(command);
 
         // Assert
         await menuRepo.Received(1).DeleteAsync(Arg.Any<Guid>());
         await eventPublisher.Received(1).PublishAsync(Arg.Any<IApplicationEvent>());
-        res.ShouldBeOfType<bool>();
-        res.ShouldBeTrue();
+
+        result.ShouldBeOfType<bool>();
+        result.ShouldBeTrue();
     }
 
     [Theory, AutoData]
-    public async void DeleteMenuCommandHandler_HandleAsync_MenuMissing_ShouldThrow(DeleteMenu cmd)
+    public async void DeleteMenuCommandHandler_HandleAsync_MenuMissing_ShouldThrow(DeleteMenu command)
     {
         // Arrange
         var handler = fixture.Create<DeleteMenuCommandHandler>();
 
         // Act
         // Assert
-        await handler.HandleAsync(cmd).ShouldThrowAsync<MenuDoesNotExistException>();
+        await handler.HandleAsync(command).ShouldThrowAsync<MenuDoesNotExistException>();
         await menuRepo.Received(0).DeleteAsync(Arg.Any<Guid>());
         await eventPublisher.Received(0).PublishAsync(Arg.Any<IApplicationEvent>());
     }
 
     [Theory, AutoData]
-    public async void DeleteMenuCommandHandler_HandleAsync_NotSuccessful_ShouldThrow(Domain.Menu menu, DeleteMenu cmd)
+    public async void DeleteMenuCommandHandler_HandleAsync_NotSuccessful_ShouldThrow(Domain.Menu menu, DeleteMenu command)
     {
         // Arrange
         menuRepo.GetByIdAsync(Arg.Any<Guid>()).Returns(menu);
@@ -135,7 +137,7 @@ public class HandlerTests
 
         // Act
         // Assert
-        await handler.HandleAsync(cmd).ShouldThrowAsync<OperationFailedException>();
+        await handler.HandleAsync(command).ShouldThrowAsync<OperationFailedException>();
         await menuRepo.Received(1).DeleteAsync(Arg.Any<Guid>());
         await eventPublisher.Received(0).PublishAsync(Arg.Any<IApplicationEvent>());
     }
@@ -145,72 +147,72 @@ public class HandlerTests
     #region UPDATE
 
     [Theory, AutoData]
-    public async void UpdateMenuCommandHandler_HandleAsync(Domain.Menu menu, UpdateMenu cmd)
+    public async void UpdateMenuCommandHandler_HandleAsync(Domain.Menu menu, UpdateMenu command)
     {
         // Arrange
         var handler = new UpdateMenuCommandHandler(menuRepo, eventPublisher);
 
         // Act
-        var res = await handler.HandleCommandAsync(menu, cmd);
+        var result = await handler.HandleCommandAsync(menu, command);
 
         // Assert
-        res.ShouldBeOfType<bool>();
-        res.ShouldBe(true);
+        result.ShouldBeOfType<bool>();
+        result.ShouldBe(true);
     }
 
     [Theory, AutoData]
-    public async void UpdateCategoryCommandHandler_HandleAsync(Domain.Menu menu, UpdateCategory cmd)
+    public async void UpdateCategoryCommandHandler_HandleAsync(Domain.Menu menu, UpdateCategory command)
     {
         // Arrange
         var handler = new UpdateCategoryCommandHandler(menuRepo, eventPublisher);
-        cmd.CategoryId = menu.Categories[0].Id;
+        command.CategoryId = menu.Categories[0].Id;
 
         // Act
-        var res = await handler.HandleCommandAsync(menu, cmd);
+        var result = await handler.HandleCommandAsync(menu, command);
 
         // Assert
-        res.ShouldBeOfType<bool>();
-        res.ShouldBe(true);
+        result.ShouldBeOfType<bool>();
+        result.ShouldBe(true);
     }
 
     [Theory, AutoData]
-    public async void UpdateMenuItemCommandHandler_HandleAsync(Domain.Menu menu, UpdateMenuItem cmd)
+    public async void UpdateMenuItemCommandHandler_HandleAsync(Domain.Menu menu, UpdateMenuItem command)
     {
         // Arrange
         var handler = new UpdateMenuItemCommandHandler(menuRepo, eventPublisher);
-        cmd.CategoryId = menu.Categories[0].Id;
-        cmd.MenuItemId = menu.Categories[0].Items[0].Id;
+        command.CategoryId = menu.Categories[0].Id;
+        command.MenuItemId = menu.Categories[0].Items[0].Id;
 
 
         // Act
-        var res = await handler.HandleCommandAsync(menu, cmd);
+        var result = await handler.HandleCommandAsync(menu, command);
 
         // Assert
-        res.ShouldBeOfType<bool>();
-        res.ShouldBe(true);
+        result.ShouldBeOfType<bool>();
+        result.ShouldBe(true);
     }
 
     [Theory, AutoData]
-    public async void UpdateCategoryCommandHandler_HandleAsync_NoCategory_ShouldThrow(Domain.Menu menu, UpdateCategory cmd)
+    public async void UpdateCategoryCommandHandler_HandleAsync_NoCategory_ShouldThrow(Domain.Menu menu, UpdateCategory command)
     {
         // Arrange
         var handler = new UpdateCategoryCommandHandler(menuRepo, eventPublisher);
 
         // Act
         // Assert
-        await Should.ThrowAsync<CategoryDoesNotExistException>(async () => await handler.HandleCommandAsync(menu, cmd));
+        await Should.ThrowAsync<CategoryDoesNotExistException>(async () => await handler.HandleCommandAsync(menu, command));
     }
 
     [Theory, AutoData]
-    public async void UpdateMenuItemCommandHandler_HandleAsync_NoMenuItem_ShouldThrow(Domain.Menu menu, UpdateMenuItem cmd)
+    public async void UpdateMenuItemCommandHandler_HandleAsync_NoMenuItem_ShouldThrow(Domain.Menu menu, UpdateMenuItem command)
     {
         // Arrange
         var handler = new UpdateMenuItemCommandHandler(menuRepo, eventPublisher);
-        cmd.CategoryId = menu.Categories[0].Id;
+        command.CategoryId = menu.Categories[0].Id;
 
         // Act
         // Assert
-        await Should.ThrowAsync<MenuItemDoesNotExistException>(async () => await handler.HandleCommandAsync(menu, cmd));
+        await Should.ThrowAsync<MenuItemDoesNotExistException>(async () => await handler.HandleCommandAsync(menu, command));
     }
 
     #endregion
@@ -225,12 +227,12 @@ public class HandlerTests
         var handler = new GetMenuByIdQueryHandler(menuRepo);
 
         // Act
-        var res = await handler.ExecuteAsync(criteria);
+        var result = await handler.ExecuteAsync(criteria);
 
         // Assert
         await menuRepo.Received(1).GetByIdAsync(Arg.Any<Guid>());
-        res.ShouldNotBeNull();
-        res.ShouldBeOfType<Query.GetMenuById.Menu>();
+        result.ShouldNotBeNull();
+        result.ShouldBeOfType<Menu>();
     }
 
     [Theory, AutoData]
@@ -240,15 +242,15 @@ public class HandlerTests
         var handler = new GetMenuByIdQueryHandler(menuRepo);
 
         // Act
-        var res = await handler.ExecuteAsync(criteria);
+        var result = await handler.ExecuteAsync(criteria);
 
         // Assert
         await menuRepo.Received(1).GetByIdAsync(Arg.Any<Guid>());
-        res.ShouldBeNull();
+        result.ShouldBeNull();
     }
 
     [Theory, AutoData]
-    public async void SearchMenuQueryHandler_ExecuteAsync(SearchMenu criteria, OperationResult<IEnumerable<Domain.Menu>> result)
+    public async void SearchMenuQueryHandler_ExecuteAsync(SearchMenu criteria, OperationResult<IEnumerable<Domain.Menu>> operationResult)
     {
         // Arrange
         storage.Search(
@@ -256,12 +258,12 @@ public class HandlerTests
             Arg.Any<string>(),
             Arg.Any<int>(),
             Arg.Any<int>())
-        .Returns(result);
+        .Returns(operationResult);
 
         var handler = new SearchMenuQueryHandler(storage);
 
         // Act
-        var res = await handler.ExecuteAsync(criteria);
+        var result = await handler.ExecuteAsync(criteria);
 
         // Assert
         await storage.Received(1).Search(
@@ -270,7 +272,7 @@ public class HandlerTests
             Arg.Any<int>(),
             Arg.Any<int>());
 
-        res.ShouldBeOfType<SearchMenuResult>();
+        result.ShouldBeOfType<SearchMenuResult>();
     }
 
     [Fact]
@@ -288,19 +290,19 @@ public class HandlerTests
     public async void SearchMenuQueryHandler_ExecuteAsync_NotSuccessful(SearchMenu criteria)
     {
         // Arrange
-        var result = new OperationResult<IEnumerable<Domain.Menu>>(false, null, null);
+        var operationResult = new OperationResult<IEnumerable<Domain.Menu>>(false, null, null);
 
         storage.Search(
             Arg.Any<System.Linq.Expressions.Expression<Func<Domain.Menu, bool>>>(),
             Arg.Any<string>(),
             Arg.Any<int>(),
             Arg.Any<int>())
-        .Returns(result);
+        .Returns(operationResult);
 
         var handler = new SearchMenuQueryHandler(storage);
 
         // Act
-        var res = await handler.ExecuteAsync(criteria);
+        var result = await handler.ExecuteAsync(criteria);
 
         // Assert
         await storage.Received(1).Search(
@@ -309,8 +311,8 @@ public class HandlerTests
             Arg.Any<int>(),
             Arg.Any<int>());
 
-        res.ShouldBeOfType<SearchMenuResult>();
-        res.Results.ShouldBeNull();
+        result.ShouldBeOfType<SearchMenuResult>();
+        result.Results.ShouldBeNull();
     }
 
     #endregion

@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
-using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
+using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Commands;
 using xxAMIDOxx.xxSTACKSxx.Domain;
 
@@ -25,8 +25,8 @@ public class DeleteCategoryCommandHandler : MenuCommandHandlerBase<DeleteCategor
     public override IEnumerable<IApplicationEvent> RaiseApplicationEvents(Menu menu, DeleteCategory command)
     {
         return new IApplicationEvent[] {
-                new MenuUpdated(command, command.MenuId),
-                new CategoryDeleted(command, command.MenuId, command.CategoryId)
-            };
+            new MenuUpdatedEvent(command, command.MenuId),
+            new CategoryDeletedEvent(command, command.MenuId, command.CategoryId)
+        };
     }
 }

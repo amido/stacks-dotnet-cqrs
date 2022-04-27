@@ -1,31 +1,30 @@
-using System;
+﻿using System;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
 using Amido.Stacks.Core.Operations;
-using xxAMIDOxx.xxSTACKSxx.Common.Operations;
+using Newtonsoft.Json;
 
 namespace xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 
-public class MenuItemCreated : IApplicationEvent
+public class CategoryDeletedEvent : IApplicationEvent
 {
-    public MenuItemCreated(OperationCode operationCode, Guid correlationId, Guid menuId, Guid categoryId, Guid menuItemId)
+    [JsonConstructor]
+    public CategoryDeletedEvent(int operationCode, Guid correlationId, Guid menuId, Guid categoryId)
     {
-        OperationCode = (int)operationCode;
+        OperationCode = operationCode;
         CorrelationId = correlationId;
         MenuId = menuId;
         CategoryId = categoryId;
-        MenuItemId = menuItemId;
     }
 
-    public MenuItemCreated(IOperationContext context, Guid menuId, Guid categoryId, Guid menuItemId)
+    public CategoryDeletedEvent(IOperationContext context, Guid menuId, Guid categoryId)
     {
         OperationCode = context.OperationCode;
         CorrelationId = context.CorrelationId;
         MenuId = menuId;
         CategoryId = categoryId;
-        MenuItemId = menuItemId;
     }
 
-    public int EventCode => (int)Common.Events.EventCode.MenuItemCreated;
+    public int EventCode => (int)Enums.EventCode.CategoryDeleted;
 
     public int OperationCode { get; }
 
@@ -34,6 +33,4 @@ public class MenuItemCreated : IApplicationEvent
     public Guid MenuId { get; }
 
     public Guid CategoryId { get; }
-
-    public Guid MenuItemId { get; }
 }

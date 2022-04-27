@@ -1,27 +1,28 @@
-using System;
+﻿using System;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
 using Amido.Stacks.Core.Operations;
-using xxAMIDOxx.xxSTACKSxx.Common.Operations;
+using Newtonsoft.Json;
 
 namespace xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 
-public class MenuDeleted : IApplicationEvent
+public class MenuUpdatedEvent : IApplicationEvent
 {
-    public MenuDeleted(OperationCode operationCode, Guid correlationId, Guid menuId)
+    [JsonConstructor]
+    public MenuUpdatedEvent(int operationCode, Guid correlationId, Guid menuId)
     {
-        OperationCode = (int)operationCode;
+        OperationCode = operationCode;
         CorrelationId = correlationId;
         MenuId = menuId;
     }
 
-    public MenuDeleted(IOperationContext context, Guid menuId)
+    public MenuUpdatedEvent(IOperationContext context, Guid menuId)
     {
         OperationCode = context.OperationCode;
         CorrelationId = context.CorrelationId;
         MenuId = menuId;
     }
 
-    public int EventCode => (int)Common.Events.EventCode.MenuDeleted;
+    public int EventCode => (int)Enums.EventCode.MenuUpdated;
 
     public int OperationCode { get; }
 
