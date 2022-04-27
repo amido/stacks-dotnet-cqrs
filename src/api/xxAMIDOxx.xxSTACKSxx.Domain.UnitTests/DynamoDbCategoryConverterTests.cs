@@ -20,7 +20,7 @@ public class DynamoDbCategoryConverterTests
 
         // Act
         var result = converter.ToEntry(categories);
-        var first = result.AsListOfDocument().FirstOrDefault();
+        var first = result.AsListOfDocument()[0];
 
         // Assert
         Assert.NotNull(result);
@@ -35,7 +35,7 @@ public class DynamoDbCategoryConverterTests
         Assert.Equal(3, first["Items"].AsListOfDocument().Count);
 
         // MenuItem
-        var menuItem = first["Items"].AsListOfDocument().FirstOrDefault();
+        var menuItem = first["Items"].AsListOfDocument()[0];
         Assert.Equal(categories[0].Items[0].Id.ToString(), menuItem["Id"]);
         Assert.Equal(categories[0].Items[0].Description, menuItem["Description"]);
         Assert.Equal(categories[0].Items[0].Name, menuItem["Name"]);
@@ -52,9 +52,9 @@ public class DynamoDbCategoryConverterTests
         {
             var data = new Dictionary<string, DynamoDBEntry>
             {
-                    { "Id", x.Id },
-                    { "Description", x.Description },
-                    { "Name", x.Name }
+                { "Id", x.Id },
+                { "Description", x.Description },
+                { "Name", x.Name }
             };
 
             return new Document(data);
