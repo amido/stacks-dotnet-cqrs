@@ -145,4 +145,34 @@ public class GetMenuByIdControllerTests
             .Should()
             .BeOfType<xxAMIDOxx.xxSTACKSxx.API.Models.Responses.Menu>();
     }
+
+    [Fact]
+    public async Task UpdateCategory_Should_Return_StatusCodeNotFound()
+    {
+        // Arrange
+        var fakeCommandHandler = Substitute.For<IQueryHandler<GetMenuById, Menu>>();
+        var correlationId = Guid.NewGuid();
+        fakeCommandHandler.ExecuteAsync(Arg.Any<GetMenuById>())!.Returns(default(Menu));
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.Headers["x-correlation-id"] = correlationId.ToString();
+
+        var sut = new GetMenuByIdController(fakeCommandHandler)
+        {
+            ControllerContext = new ControllerContext()
+            {
+                HttpContext = httpContext,
+            }
+        };
+
+        // Act
+        var result = await sut.GetMenu(Guid.Empty);
+
+        // Assert
+        await fakeCommandHandler.Received().ExecuteAsync(Arg.Any<GetMenuById>());
+
+        result
+            .Should()
+            .BeOfType<NotFoundResult>();
+    }
 }
