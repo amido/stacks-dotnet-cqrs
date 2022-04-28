@@ -9,7 +9,7 @@ Amido Stacks targets different cloud providers.
 ## Folders of interest in this repository
 
 ```shell
-stacks-dotnet-cqrs-events
+stacks-dotnet-cqrs
 │   README.md
 └─── src
 │    └─── api
@@ -44,7 +44,7 @@ All templates from this repository come as part of the [Amido.Stacks.CQRS.Templa
 
 - `stacks-cqrs-app`. The full CQRS template including source + build infrastructure.
 - `stacks-add-cqrs`. A special template that can add `CQRS` functionality and projects to your existing Web API solution
-- `stacks-cqrs-events-webapi`. A template for the `api` project. If you need a CQRS WebAPI that can publish messages to ServiceBus or SQS, this is the template to use.
+- `stacks-cqrs-webapi`. A template for the `api` project. If you need a CQRS WebAPI that can publish messages to ServiceBus or SQS, this is the template to use.
 - `stacks-asb-worker`. This template contains a background worker application that reads and handles messages from a ServiceBus subscription.
 - `stacks-az-func-asb-listener`. Template containing an Azure Function project with a single function that has a Service Bus subscription trigger. The function receives the message and deserializes it.
 - `stacks-az-func-aeh-listener`. Template containing an Azure Function project with a single function that has a Event Hub trigger. The function receives the message and deserializes it.
@@ -68,7 +68,7 @@ The output will list all installed templates (not listed for brevity). In that l
 | Amido Stacks Azure Function Service Bus Trigger | stacks-az-func-asb-listener | [C#] | Stacks/Azure Function/Service Bus/Listener |
 | Amido Stacks Azure Function Event Hub Trigger | stacks-az-func-aeh-listener | [C#] | Stacks/Azure Function/Event Hub/Listener |
 | Amido Stacks Service Bus Worker | stacks-asb-worker | [C#] | Stacks/Service Bus/Worker |
-| Amido Stacks CQRS Events Web API | stacks-cqrs-events-webapi | [C#] | Stacks/CQRS/Events/WebAPI |
+| Amido Stacks CQRS Events Web API | stacks-cqrs-webapi | [C#] | Stacks/CQRS/Events/WebAPI |
 
 ```shell
 Examples:
@@ -233,14 +233,14 @@ Let's say you want to create a brand new WebAPI with CQRS and Event sourcing for
 It's entirely up to you where you want to generate the WebAPI. For example your company has the name structure `Foo.Bar` as a prefix to all your namespaces where `Foo` is the company name and `Bar` is the name of the project. If you want the WebAPI to have a domain `Warehouse`, use `CosmosDb`, publish events to `ServiceBus` and be generated inside a folder called `new-proj-folder` you'll execute the following command:
 
 ```shell
-% dotnet new stacks-cqrs-events-webapi -n Foo.Bar -do Warehouse -db CosmosDb -e ServiceBus -o new-proj-folder
+% dotnet new stacks-cqrs-webapi -n Foo.Bar -do Warehouse -db CosmosDb -e ServiceBus -o new-proj-folder
 The template "Amido Stacks CQRS Events App" was created successfully.
 ```
 
 Alternatively, if you wanted to generate the WebAPI. For example your company has the name structure `Bar.Baz` as a prefix to all your namespaces where `Bar` is the company name and `Baz` is the name of the project. If you want the WebAPI to have a domain `Warehouse`, use `DynamoDb`, publish events to `AwsSqs` and be generated inside a folder called `new-proj-folder` you'll execute the following command:
 
 ```shell
-% dotnet new stacks-cqrs-events-webapi -n Foo.Bar -do Warehouse -db DynamoDb -e AwsSqs -o new-proj-folder
+% dotnet new stacks-cqrs-webapi -n Foo.Bar -do Warehouse -db DynamoDb -e AwsSqs -o new-proj-folder
 The template "Amido Stacks CQRS Events App" was created successfully.
 ```
 
