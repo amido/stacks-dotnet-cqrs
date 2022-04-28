@@ -12,7 +12,7 @@
 	"name": "Amido Stacks CQRS Web API",
 	"identity": "Amido.Stacks.CQRS.WebApi.CSharp",
 	"groupIdentity": "Amido.Stacks.CQRS.WebApi",
-	"shortName": "stacks-cqrs-webapi",
+	"shortName": "stacks-cqrs-app",
 	"tags": {
 		"language": "C#",
 		"type": "project"
