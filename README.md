@@ -89,20 +89,20 @@ dotnet new --uninstall Amido.Stacks.CQRS.Templates
 - **-n|--name**
   - Sets the project name
   - Omitting it will result in the project name being the same as the folder where the command has been ran from
-- **-do|--domain**
-  - Sets the name of the aggregate root object. It is also the name of the collection within CosmosDB instance.
+- **-do|--domain [Required]**
+  - Sets the name of the aggregate root object. It is also the name of the collection within CosmosDB instance/DynamoDB table name.
 - **-db|--database**
   - Configures which database provider to be used
 - **-e|--eventPublisher**
   - Configures the messaging service
 - **-e:fw|--enableFunctionWorker**
-  - Configures the messaging service
+  - Flag for whether you want to create an Azure Function CosmosDB change feed listener as part of your project
 - **-e:fl|--enableFunctionListener**
-  - Configures the messaging service
+  - Flag for whether you want to create an Azure Function Service Bus listener as part of your project
 - **-e:bw|--enableBackgroundWorker**
-  - Configures the messaging service
+  - Flag for whether you want to create a background worker service for ServiceBus as part of your project
 - **-o|--output**
-  - Sets the path to where the project is added
+  - Sets the path to where the template project is generated
   - Omitting the parameter will result in the creation of a new folder
 
 ## Creating a new WebAPI + CQRS project from the template
