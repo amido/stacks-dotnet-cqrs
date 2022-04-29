@@ -122,7 +122,7 @@ You need a DynamoDB instance in order to use this library. You can follow the of
 
 Also the object(s) from your application that you want to store in DynamoDB have to conform to the [Object Persistence Model](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DotNetSDKHighLevel.html). That means your object and its fields will need to have certain attribute annotations like `[DynamoDBTable("Menu")]` etc.
 
-**IMPORTANT:** The DynamoDB table must have the same name as your Domain. If your domain is `Menu` then table created in AWS has to have the same name.
+**IMPORTANT:** The DynamoDB table must have the same name as your Domain. If your domain is `Menu` then the table created in AWS has to have the same name.
 
 Relevant documentation pages that you can follow to set up your profile:
 
