@@ -33,6 +33,30 @@
 				]
 			}
 		},
+		"eventPublisher": {
+			"type": "parameter",
+			"datatype": "choice",
+			"defaultValue": "None",
+			"choices": [
+				{
+					"choice": "ServiceBus",
+					"description": "Targets the Azure Service Bus for publishing events."
+				},
+				{
+					"choice": "EventHub",
+					"description": "Targets the Azure Event Hub for publishing events."
+				},
+				{
+					"choice": "AwsSqs",
+					"description": "Targets the AWS SQS for publishing events."
+				},
+				{
+					"choice": "None",
+					"description": "Does not add event publishing"
+				}
+			],
+			"description": "Adds event publishing."
+		},
 		"database": {
 			"type": "parameter",
 			"datatype": "choice",
@@ -64,62 +88,38 @@
 		"InMemoryDb": {
 			"type": "computed",
 			"value": "(database == \"InMemoryDb\")"
+		},
+		"EventPublisherServiceBus": {
+			"type": "computed",
+			"value": "(eventPublisher == \"ServiceBus\")"
+		},
+		"EventPublisherEventHub": {
+			"type": "computed",
+			"value": "(eventPublisher == \"EventHub\")"
+		},
+		"EventPublisherAwsSqs": {
+			"type": "computed",
+			"value": "(eventPublisher == \"AwsSqs\")"
+		},
+		"EventPublisherNone": {
+			"type": "computed",
+			"value": "(eventPublisher == \"None\")"
+		},
+		"enableFunctionWorker": {
+			"type": "parameter",
+			"dataType": "bool",
+			"defaultValue": "true"
+		},
+		"enableFunctionListener": {
+			"type": "parameter",
+			"dataType": "bool",
+			"defaultValue": "true"
+		},
+		"enableBackgroundWorker": {
+			"type": "parameter",
+			"dataType": "bool",
+			"defaultValue": "true"
 		}
-	},
-	"eventPublisher": {
-		"type": "parameter",
-		"datatype": "choice",
-		"defaultValue": "None",
-		"choices": [
-			{
-				"choice": "ServiceBus",
-				"description": "Targets the Azure Service Bus for publishing events."
-			},
-			{
-				"choice": "EventHub",
-				"description": "Targets the Azure Event Hub for publishing events."
-			},
-			{
-				"choice": "AwsSqs",
-				"description": "Targets the AWS SQS for publishing events."
-			},
-			{
-				"choice": "None",
-				"description": "Does not add event publishing"
-			}
-		],
-		"description": "Adds event publishing."
-	},
-	"EventPublisherServiceBus": {
-		"type": "computed",
-		"value": "(eventPublisher == \"ServiceBus\")"
-	},
-	"EventPublisherEventHub": {
-		"type": "computed",
-		"value": "(eventPublisher == \"EventHub\")"
-	},
-	"EventPublisherAwsSqs": {
-		"type": "computed",
-		"value": "(eventPublisher == \"AwsSqs\")"
-	},
-	"EventPublisherNone": {
-		"type": "computed",
-		"value": "(eventPublisher == \"None\")"
-	},
-	"enableFunctionWorker": {
-		"type": "parameter",
-		"dataType": "bool",
-		"defaultValue": "true"
-	},
-	"enableFunctionListener": {
-		"type": "parameter",
-		"dataType": "bool",
-		"defaultValue": "true"
-	},
-	"enableBackgroundWorker": {
-		"type": "parameter",
-		"dataType": "bool",
-		"defaultValue": "true"
 	},
 	"sources": [
 		{
