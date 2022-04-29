@@ -108,17 +108,17 @@
 		"enableFunctionWorker": {
 			"type": "parameter",
 			"dataType": "bool",
-			"defaultValue": "true"
+			"defaultValue": "false"
 		},
 		"enableFunctionListener": {
 			"type": "parameter",
 			"dataType": "bool",
-			"defaultValue": "true"
+			"defaultValue": "false"
 		},
 		"enableBackgroundWorker": {
 			"type": "parameter",
 			"dataType": "bool",
-			"defaultValue": "true"
+			"defaultValue": "false"
 		}
 	},
 	"sources": [
@@ -173,19 +173,15 @@
 					]
 				},
 				{
-					"condition": "(!enableFunctionWorker)",
+					"condition": "(enableFunctionWorker == false)",
 					"exclude": [
-						"**/src/functions/func-cosmosdb-worker/xxAMIDOxx.xxSTACKSxx.Worker/**",
-						"**/src/functions/func-cosmosdb-worker/xxAMIDOxx.xxSTACKSxx.Worker.UnitTests/**"
+						"**/src/functions/func-cosmosdb-worker/**"
 					]
 				},
 				{
-					"condition": "(!enableFunctionListener)",
+					"condition": "(enableFunctionListener == false)",
 					"exclude": [
-						"**/src/functions/func-aeh-listener/xxAMIDOxx.xxSTACKSxx.Listener/**",
-						"**/src/functions/func-aeh-listener/xxAMIDOxx.xxSTACKSxx.Listener.UnitTests/**",
-						"**/src/functions/func-asb-listener/xxAMIDOxx.xxSTACKSxx.Listener/**",
-						"**/src/functions/func-asb-listener/xxAMIDOxx.xxSTACKSxx.Listener.UnitTests/**"
+						"**/src/functions/func-aeh-listener/*"
 					]
 				},
 				{
@@ -208,13 +204,13 @@
 					]
 				},
 				{
-					"condition": "(!enableBackgroundWorker)",
+					"condition": "(enableBackgroundWorker == false)",
 					"exclude": [
 						"**/src/worker/**"
 					]
 				},
 				{
-					"condition": "EventPublisherServiceBus || EventPublisherEventHub",
+					"condition": "(EventPublisherServiceBus || EventPublisherEventHub || EventPublisherAwsSqs)",
 					"exclude": [
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Fakes/DummyEventPublisher.cs"
 					]
