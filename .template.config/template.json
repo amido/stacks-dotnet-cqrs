@@ -40,19 +40,19 @@
 			"choices": [
 				{
 					"choice": "ServiceBus",
-					"description": "Targets the Azure Service Bus for publishing events."
+					"description": "Targets Azure Service Bus for publishing events."
 				},
 				{
 					"choice": "EventHub",
-					"description": "Targets the Azure Event Hub for publishing events."
+					"description": "Targets Azure Event Hubs for publishing events."
 				},
 				{
 					"choice": "AwsSqs",
-					"description": "Targets the AWS SQS for publishing events."
+					"description": "Targets AWS SQS for publishing events."
 				},
 				{
 					"choice": "None",
-					"description": "Does not add event publishing"
+					"description": "Use a dummy event publisher"
 				}
 			],
 			"description": "Adds event publishing."
@@ -64,15 +64,15 @@
 			"choices": [
 				{
 					"choice": "CosmosDb",
-					"description": "Targets Azure Cosmos database for storing data."
+					"description": "Targets Azure CosmosDB for storing data."
 				},
 				{
 					"choice": "DynamoDb",
-					"description": "Targets AWS Dynamo database for storing data."
+					"description": "Targets AWS DynamoDB for storing data."
 				},
 				{
 					"choice": "InMemoryDb",
-					"description": "Targets an In Memory database for storing data."
+					"description": "Targets an In-Memory database for storing data."
 				}
 			],
 			"description": "Adds saving to database."
