@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
-using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
+using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Commands;
 using xxAMIDOxx.xxSTACKSxx.Domain;
 
@@ -25,7 +25,7 @@ public class UpdateMenuCommandHandler : MenuCommandHandlerBase<UpdateMenu, bool>
     public override IEnumerable<IApplicationEvent> RaiseApplicationEvents(Menu menu, UpdateMenu command)
     {
         return new IApplicationEvent[] {
-                new MenuUpdated(command, command.MenuId)
-            };
+            new MenuUpdatedEvent(command, command.MenuId)
+        };
     }
 }

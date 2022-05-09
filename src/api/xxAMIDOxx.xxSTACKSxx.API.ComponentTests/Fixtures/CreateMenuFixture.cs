@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
+using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using xxAMIDOxx.xxSTACKSxx.API.Authentication;
 using xxAMIDOxx.xxSTACKSxx.API.Models.Requests;
 using xxAMIDOxx.xxSTACKSxx.Application.Integration;
-using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 
 namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Fixtures;
 
@@ -49,7 +49,7 @@ public class CreateMenuFixture : ApiClientFixture
     internal void GivenAMenuDoesNotExist()
     {
         repository.GetByIdAsync(id: Arg.Any<Guid>())
-                    .Returns((Domain.Menu)null);
+            .Returns((Domain.Menu)null);
     }
 
 
@@ -78,11 +78,11 @@ public class CreateMenuFixture : ApiClientFixture
 
     internal void ThenAMenuCreatedEventIsRaised()
     {
-        applicationEventPublisher.Received(1).PublishAsync(Arg.Any<MenuCreated>());
+        applicationEventPublisher.Received(1).PublishAsync(Arg.Any<MenuCreatedEvent>());
     }
 
     internal void ThenAMenuCreatedEventIsNotRaised()
     {
-        applicationEventPublisher.DidNotReceive().PublishAsync(Arg.Any<MenuCreated>());
+        applicationEventPublisher.DidNotReceive().PublishAsync(Arg.Any<MenuCreatedEvent>());
     }
 }

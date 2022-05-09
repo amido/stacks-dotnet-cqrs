@@ -8,7 +8,6 @@ using Amido.Stacks.API.Swagger.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -29,6 +28,7 @@ public class Startup
     private readonly ILogger logger;
 
     private IConfiguration configuration { get; }
+    private readonly IWebHostEnvironment hostingEnv;
     private readonly string pathBase;
     private readonly bool useAppInsights;
     private readonly bool useOpenTelemetry;
@@ -37,12 +37,17 @@ public class Startup
 
     public Startup(IWebHostEnvironment env, IConfiguration configuration, ILogger<Startup> logger)
     {
+        this.hostingEnv = env;
         this.configuration = configuration;
         this.logger = logger;
 
-        pathBase = Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.ApiBasePathEnvName) ?? String.Empty;
-        useAppInsights = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.AppInsightsEnvName));
-        useOpenTelemetry = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.OtlpServiceName));
+        pathBase = Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.ApiBasePathEnvName) ??
+                   String.Empty;
+        useAppInsights =
+            !string.IsNullOrEmpty(
+                Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.AppInsightsEnvName));
+        useOpenTelemetry =
+            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.OtlpServiceName));
     }
 
     // This method gets called by the runtime. Use this method to add services to the container.
@@ -58,7 +63,8 @@ public class Startup
         {
             AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
             services.AddOpenTelemetryTracing((builder) => builder
-                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.OtlpServiceName)))
+                .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                    .AddService(Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.OtlpServiceName)))
                 .AddAspNetCoreInstrumentation()
                 .AddConsoleExporter(options =>
                 {
@@ -66,7 +72,8 @@ public class Startup
                 })
                 .AddOtlpExporter(otlpOptions =>
                 {
-                    otlpOptions.Endpoint = new Uri(Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.OltpEndpoint));
+                    otlpOptions.Endpoint =
+                        new Uri(Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.OltpEndpoint));
                 }));
         }
 
@@ -77,15 +84,25 @@ public class Startup
             .AddApiExplorer()
             .AddAuthorization()
             .AddDataAnnotations()
-            .AddCors();
+            .AddCors()
+            /* Only required if the models will used Json.Net features for serialization
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                options.SerializerSettings.Converters.Add(new StringEnumConverter(typeof(CamelCaseNamingStrategy)));
+            })
+            */
+            ;
 
         //Access HttpContext in ASP.NET Core: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-2.2
         services.AddHttpContextAccessor();
 
         // Configure Authentication
-        var jwtBearerAuthenticationConfigurationSection = configuration.GetJwtBearerAuthenticationConfigurationSection();
+        var jwtBearerAuthenticationConfigurationSection =
+            configuration.GetJwtBearerAuthenticationConfigurationSection();
         services.Configure<JwtBearerAuthenticationConfiguration>(jwtBearerAuthenticationConfigurationSection);
-        var jwtBearerAuthenticationConfiguration = jwtBearerAuthenticationConfigurationSection.Get<JwtBearerAuthenticationConfiguration>();
+        var jwtBearerAuthenticationConfiguration =
+            jwtBearerAuthenticationConfigurationSection.Get<JwtBearerAuthenticationConfiguration>();
         services.AddJwtBearerTokenAuthentication(jwtBearerAuthenticationConfiguration);
 
         services.AddSingleton<IAuthorizationPolicyProvider, ConfigurableAuthorizationPolicyProvider>();
@@ -109,44 +126,44 @@ public class Startup
         app.UseCorrelationId();
 
         app
-        .UsePathBase(pathBase)
-        .UseRouting()
-        //these need to be added between .UseRouting() and .UseEndpoints()
-        .UseAuthentication()
-        .UseAuthorization()
-        .UseEndpoints(endpoints =>
-        {
-            endpoints.MapHealthChecks("/health");
-            endpoints.MapControllers();
-            endpoints.MapGet("/", context =>
+            .UsePathBase(pathBase)
+            .UseRouting()
+            //these need to be added between .UseRouting() and .UseEndpoints()
+            .UseAuthentication()
+            .UseAuthorization()
+            .UseEndpoints(endpoints =>
             {
-                context.Response.Redirect((Environment.GetEnvironmentVariable("API_BASEPATH") ?? String.Empty) + "/swagger");
-                return Task.CompletedTask;
+                endpoints.MapHealthChecks("/health");
+                endpoints.MapControllers();
+                endpoints.MapGet("/", context =>
+                {
+                    context.Response.Redirect((Environment.GetEnvironmentVariable("API_BASEPATH") ?? String.Empty) +
+                                              "/swagger");
+                    return Task.CompletedTask;
+                });
+            })
+
+            .UseSwagger(c =>
+            {
+                c.PreSerializeFilters.Add((swagger, httpReq) =>
+                {
+                    swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{pathBase}" } };
+                });
+            })
+            .UseSwaggerUI(c =>
+            {
+                c.DisplayOperationId();
+
+                c.SwaggerEndpoint("all/swagger.json", "Menu (all)");
+                c.SwaggerEndpoint("v1/swagger.json", "Menu (version 1)");
+                c.SwaggerEndpoint("v2/swagger.json", "Menu (version 2)");
+
+                if (jwtBearerAuthenticationConfiguration.HasOpenApiClient())
+                {
+                    c.OAuthClientId(jwtBearerAuthenticationConfiguration.OpenApi.ClientId);
+                    c.OAuthUsePkce();
+                }
             });
-        })
-
-        .UseSwagger(c =>
-        {
-            c.PreSerializeFilters.Add((swagger, httpReq) =>
-            {
-                swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{pathBase}" } };
-            });
-        })
-        .UseSwaggerUI(c =>
-        {
-            c.DisplayOperationId();
-
-            c.SwaggerEndpoint("all/swagger.json", "Menu (all)");
-            c.SwaggerEndpoint("v1/swagger.json", "Menu (version 1)");
-            c.SwaggerEndpoint("v2/swagger.json", "Menu (version 2)");
-
-            if (jwtBearerAuthenticationConfiguration.HasOpenApiClient())
-            {
-                c.OAuthClientId(jwtBearerAuthenticationConfiguration.OpenApi.ClientId);
-                c.OAuthUsePkce();
-            }
-        })
-        ;
     }
 
     private void AddSwagger(
@@ -161,34 +178,37 @@ public class Startup
                 {
                     Version = "all",
                     Title = "Menu API",
-                    Description = "APIs used to interact and manage menus",
+                    Description = "APIs used to interact and manage menus for a restaurant",
                     Contact = new OpenApiContact()
                     {
                         Name = "Amido",
                         Url = new Uri(projectUrl),
                         Email = "stacks@amido.com"
                     },
-                        //TermsOfService = new Uri("http://www.amido.com/")
+                    //TermsOfService = new Uri("http://www.amido.com/")
                 });
 
-                    //Load comments to show as examples and descriptions in the swagger page
-                c.IncludeXmlComments($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{typeof(Startup).Assembly.GetName().Name}.xml");
-                c.IncludeXmlComments($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{typeof(CreateMenuRequest).Assembly.GetName().Name}.xml");
+                //Load comments to show as examples and descriptions in the swagger page
+                c.IncludeXmlComments(
+                    $"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{typeof(Startup).Assembly.GetName().Name}.xml");
+                c.IncludeXmlComments(
+                    $"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{typeof(CreateMenuRequest).Assembly.GetName().Name}.xml");
 
-                    //Set default tags, shows on top, non defined tags appears at bottom
-                c.DocumentFilter<SwaggerDocumentTagger>(new OpenApiTag[] {
-                        new OpenApiTag { Name = "Menu" },
-                        new OpenApiTag { Name = "Category" },
-                        new OpenApiTag { Name = "Item" }
-                }, Array.Empty<string>());
+                //Set default tags, shows on top, non defined tags appears at bottom
+                c.DocumentFilter<SwaggerDocumentTagger>(
+                    new OpenApiTag[]
+                    {
+                        new OpenApiTag {Name = "Menu"}, new OpenApiTag {Name = "Category"},
+                        new OpenApiTag {Name = "Item"}
+                    }, new string[] { });
 
-                    //By Default, all endpoints are grouped by the controller name
-                    //We want to Group by Api Group first, then by controller name if not provided
+                //By Default, all endpoints are grouped by the controller name
+                //We want to Group by Api Group first, then by controller name if not provided
                 c.TagActionsBy((api) => new[] { api.GroupName ?? api.ActionDescriptor.RouteValues["controller"] });
 
                 c.DocInclusionPredicate((docName, apiDesc) => { return true; });
 
-                    // Use method name as operationId
+                // Use method name as operationId
                 c.CustomOperationIds(apiDesc =>
                 {
                     return apiDesc.TryGetMethodInfo(out MethodInfo methodInfo) ? methodInfo.Name : null;
@@ -204,19 +224,20 @@ public class Startup
                 {
                     Version = "v1",
                     Title = "Menu API",
-                    Description = "APIs used to interact and manage menus",
+                    Description = "APIs used to interact and manage menus for a restaurant",
                     Contact = new OpenApiContact()
                     {
                         Name = "Amido",
                         Url = new Uri(projectUrl),
                         Email = "stacks@amido.com"
                     },
-                        //TermsOfService = new Uri("http://www.amido.com/")
+                    //TermsOfService = new Uri("http://www.amido.com/")
                 });
 
-                c.IncludeXmlComments($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{this.GetType().Assembly.GetName().Name}.xml");
+                c.IncludeXmlComments(
+                    $"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{this.GetType().Assembly.GetName().Name}.xml");
 
-                    // Show only operations where route starts with
+                // Show only operations where route starts with
                 c.DocumentFilter<VersionPathFilter>("/v1");
             })
 
@@ -234,13 +255,15 @@ public class Startup
                         Url = new Uri(projectUrl),
                         Email = "stacks@amido.com"
                     },
-                        //TermsOfService = new Uri("http://www.amido.com/")
+                    //TermsOfService = new Uri("http://www.amido.com/")
                 });
 
-                c.IncludeXmlComments($"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{this.GetType().Assembly.GetName().Name}.xml");
+                c.IncludeXmlComments(
+                    $"{AppContext.BaseDirectory}{Path.DirectorySeparatorChar}{this.GetType().Assembly.GetName().Name}.xml");
 
-                    // Show only operations where route starts with
+                // Show only operations where route starts with
                 c.DocumentFilter<VersionPathFilter>("/v2");
             });
     }
 }
+

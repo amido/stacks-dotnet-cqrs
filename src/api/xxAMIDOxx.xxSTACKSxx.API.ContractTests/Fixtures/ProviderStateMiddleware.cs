@@ -25,17 +25,17 @@ public class ProviderStateMiddleware : IMiddleware
 
         //Provider states are from the Given clause in the consumer tests
         providerStates = new Dictionary<string, Action>
+        {
             {
-                {
-                    //These are case sensitive. Consumer and Provider should share list of states when states are required
-                    "An existing menu",
-                    ExistingMenu
-                },
-                {
-                    "A menu does not exist",
-                    MenuDoesNotExist
-                }
-            };
+                //These are case sensitive. Consumer and Provider should share list of states when states are required
+                "An existing menu",
+                ExistingMenu
+            },
+            {
+                "A menu does not exist",
+                MenuDoesNotExist
+            }
+        };
     }
 
     //These functions set up the mocked provider API state by mocking the response the repository gives

@@ -24,14 +24,14 @@ public class JwtBearerAuthenticationOperationFilter : IOperationFilter
         operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden. The user does not have permission to execute this operation." });
 
         operation.Security = new List<OpenApiSecurityRequirement>
+        {
             {
+                new()
                 {
-                    new()
-                    {
-                        { new OpenApiSecurityScheme { Reference = new OpenApiReference { Id = OpenApiSecurityDefinitions.OAuth2, Type = ReferenceType.SecurityScheme } }, new List<string>() },
-                        { new OpenApiSecurityScheme { Reference = new OpenApiReference { Id = OpenApiSecurityDefinitions.Bearer, Type = ReferenceType.SecurityScheme } }, new List<string>() },
-                    }
+                    { new OpenApiSecurityScheme { Reference = new OpenApiReference { Id = OpenApiSecurityDefinitions.OAuth2, Type = ReferenceType.SecurityScheme } }, new List<string>() },
+                    { new OpenApiSecurityScheme { Reference = new OpenApiReference { Id = OpenApiSecurityDefinitions.Bearer, Type = ReferenceType.SecurityScheme } }, new List<string>() },
                 }
-            };
+            }
+        };
     }
 }

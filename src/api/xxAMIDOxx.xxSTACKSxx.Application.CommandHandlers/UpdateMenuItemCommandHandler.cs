@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
-using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
+using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Commands;
 using xxAMIDOxx.xxSTACKSxx.Domain;
 
@@ -32,9 +32,9 @@ public class UpdateMenuItemCommandHandler : MenuCommandHandlerBase<UpdateMenuIte
     public override IEnumerable<IApplicationEvent> RaiseApplicationEvents(Menu menu, UpdateMenuItem command)
     {
         return new IApplicationEvent[] {
-                new MenuUpdated(command, command.MenuId),
-                //new CategoryUpdated(command, command.MenuId, command.CategoryId),
-                new MenuItemUpdated(command, command.MenuId, command.CategoryId, command.MenuItemId)
-            };
+            new MenuUpdatedEvent(command, command.MenuId),
+            //new CategoryUpdated(command, command.MenuId, command.CategoryId),
+            new MenuItemUpdatedEvent(command, command.MenuId, command.CategoryId, command.MenuItemId)
+        };
     }
 }

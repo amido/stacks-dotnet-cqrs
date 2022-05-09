@@ -20,7 +20,8 @@ public class DynamoDbCategoryConverter : IPropertyConverter
         IEnumerable<Category> categories = value as IReadOnlyCollection<Category>;
         List<Document> entries = new List<Document>();
 
-        if (categories == null) throw new ArgumentOutOfRangeException("Categories");
+        if (categories == null) 
+            throw new ArgumentOutOfRangeException(nameof(value));
 
         entries.AddRange(categories.Select(x =>
         {
@@ -36,7 +37,7 @@ public class DynamoDbCategoryConverter : IPropertyConverter
         var entries = entry as DynamoDBList;
         var documents = entries?.AsListOfDocument();
         if (documents == null)
-            throw new ArgumentOutOfRangeException("Documents");
+            throw new ArgumentOutOfRangeException(nameof(entry));
 
         var categories = documents
             .Select(x => JsonConvert.DeserializeObject<Category>((x.ToJson())))

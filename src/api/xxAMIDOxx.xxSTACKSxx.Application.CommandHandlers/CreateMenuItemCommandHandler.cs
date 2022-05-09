@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
-using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
+using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.CQRS.Commands;
 using xxAMIDOxx.xxSTACKSxx.Domain;
 
@@ -36,9 +36,9 @@ public class CreateMenuItemCommandHandler : MenuCommandHandlerBase<CreateMenuIte
     public override IEnumerable<IApplicationEvent> RaiseApplicationEvents(Menu menu, CreateMenuItem command)
     {
         return new IApplicationEvent[] {
-                new MenuUpdated(command, command.MenuId),
-                new CategoryUpdated(command, command.MenuId, command.CategoryId),
-                new MenuItemCreated(command, command.MenuId, command.CategoryId, id)
-            };
+            new MenuUpdatedEvent(command, command.MenuId),
+            new CategoryUpdatedEvent(command, command.MenuId, command.CategoryId),
+            new MenuItemCreatedEvent(command, command.MenuId, command.CategoryId, id)
+        };
     }
 }

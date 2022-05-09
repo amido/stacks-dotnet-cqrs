@@ -34,7 +34,7 @@ variables:
 
   # Pact Broker Info
   - name: Test.PactBrokerUrl
-    value: https://amido-stacks.pact.dius.com.au
+    value: https://amido-stacks.pactflow.io
   # Specific Contract Test Variable Declarations
   - name: BROKER_URL
     value: $(Test.PactBrokerUrl)

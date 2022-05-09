@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Amido.Stacks.Application.CQRS.ApplicationEvents;
+using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 using Amido.Stacks.Testing.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -11,7 +12,6 @@ using xxAMIDOxx.xxSTACKSxx.API.Authentication;
 using xxAMIDOxx.xxSTACKSxx.API.Models.Requests;
 using xxAMIDOxx.xxSTACKSxx.API.Models.Responses;
 using xxAMIDOxx.xxSTACKSxx.Application.Integration;
-using xxAMIDOxx.xxSTACKSxx.CQRS.ApplicationEvents;
 
 namespace xxAMIDOxx.xxSTACKSxx.API.ComponentTests.Fixtures;
 
@@ -49,16 +49,16 @@ public class CreateCategoryFixture : ApiClientFixture
     internal void GivenAnExistingMenu()
     {
         repository.GetByIdAsync(id: Arg.Is<Guid>(id => id == existingMenu.Id))
-                    .Returns(existingMenu);
+            .Returns(existingMenu);
 
         repository.SaveAsync(entity: Arg.Is<Domain.Menu>(e => e.Id == existingMenu.Id))
-                    .Returns(true);
+            .Returns(true);
     }
 
     internal void GivenAMenuDoesNotExist()
     {
         repository.GetByIdAsync(id: Arg.Any<Guid>())
-                    .Returns((Domain.Menu)null);
+            .Returns((Domain.Menu)null);
     }
 
     internal void GivenTheMenuBelongsToUserRestaurant()
@@ -77,7 +77,7 @@ public class CreateCategoryFixture : ApiClientFixture
             return;
 
         //Ensure in the future menu is not created with categories
-        for (int i = 0; i < existingMenu.Categories.Count; i++)
+        for (int i = 0; i < existingMenu.Categories.Count(); i++)
         {
             existingMenu.RemoveCategory(existingMenu.Categories[0].Id);
         }
@@ -129,21 +129,21 @@ public class CreateCategoryFixture : ApiClientFixture
 
     internal void ThenAMenuUpdatedEventIsRaised()
     {
-        applicationEventPublisher.Received(1).PublishAsync(Arg.Any<MenuUpdated>());
+        applicationEventPublisher.Received(1).PublishAsync(Arg.Any<MenuUpdatedEvent>());
     }
 
     internal void ThenAMenuUpdatedEventIsNotRaised()
     {
-        applicationEventPublisher.DidNotReceive().PublishAsync(Arg.Any<MenuCreated>());
+        applicationEventPublisher.DidNotReceive().PublishAsync(Arg.Any<MenuCreatedEvent>());
     }
 
     internal void ThenACategoryCreatedEventIsRaised()
     {
-        applicationEventPublisher.Received(1).PublishAsync(Arg.Any<CategoryCreated>());
+        applicationEventPublisher.Received(1).PublishAsync(Arg.Any<CategoryCreatedEvent>());
     }
 
     internal void ThenACategoryCreatedEventIsNotRaised()
     {
-        applicationEventPublisher.DidNotReceive().PublishAsync(Arg.Any<CategoryCreated>());
+        applicationEventPublisher.DidNotReceive().PublishAsync(Arg.Any<CategoryCreatedEvent>());
     }
 }

@@ -3,14 +3,16 @@
 	"author": "stacks@amido.com",
 	"classifications": [
 		"Stacks",
+		"Application",
 		"Infrastructure",
 		"CQRS",
+		"Events",
 		"WebAPI"
 	],
 	"name": "Amido Stacks CQRS Web API",
 	"identity": "Amido.Stacks.CQRS.WebApi.CSharp",
 	"groupIdentity": "Amido.Stacks.CQRS.WebApi",
-	"shortName": "stacks-cqrs-webapi",
+	"shortName": "stacks-cqrs-app",
 	"tags": {
 		"language": "C#",
 		"type": "project"
@@ -31,6 +33,30 @@
 				]
 			}
 		},
+		"eventPublisher": {
+			"type": "parameter",
+			"datatype": "choice",
+			"defaultValue": "None",
+			"choices": [
+				{
+					"choice": "ServiceBus",
+					"description": "Targets Azure Service Bus for publishing events."
+				},
+				{
+					"choice": "EventHub",
+					"description": "Targets Azure Event Hubs for publishing events."
+				},
+				{
+					"choice": "AwsSqs",
+					"description": "Targets AWS SQS for publishing events."
+				},
+				{
+					"choice": "None",
+					"description": "Use a dummy event publisher"
+				}
+			],
+			"description": "Adds event publishing."
+		},
 		"database": {
 			"type": "parameter",
 			"datatype": "choice",
@@ -38,15 +64,15 @@
 			"choices": [
 				{
 					"choice": "CosmosDb",
-					"description": "Targets Azure Cosmos database for storing data."
+					"description": "Targets Azure CosmosDB for storing data."
 				},
 				{
 					"choice": "DynamoDb",
-					"description": "Targets AWS Dynamo database for storing data."
+					"description": "Targets AWS DynamoDB for storing data."
 				},
 				{
 					"choice": "InMemoryDb",
-					"description": "Targets an In Memory database for storing data."
+					"description": "Targets an In-Memory database for storing data."
 				}
 			],
 			"description": "Adds saving to database."
@@ -62,6 +88,37 @@
 		"InMemoryDb": {
 			"type": "computed",
 			"value": "(database == \"InMemoryDb\")"
+		},
+		"EventPublisherServiceBus": {
+			"type": "computed",
+			"value": "(eventPublisher == \"ServiceBus\")"
+		},
+		"EventPublisherEventHub": {
+			"type": "computed",
+			"value": "(eventPublisher == \"EventHub\")"
+		},
+		"EventPublisherAwsSqs": {
+			"type": "computed",
+			"value": "(eventPublisher == \"AwsSqs\")"
+		},
+		"EventPublisherNone": {
+			"type": "computed",
+			"value": "(eventPublisher == \"None\")"
+		},
+		"enableFunctionWorker": {
+			"type": "parameter",
+			"dataType": "bool",
+			"defaultValue": "false"
+		},
+		"enableFunctionListener": {
+			"type": "parameter",
+			"dataType": "bool",
+			"defaultValue": "false"
+		},
+		"enableBackgroundWorker": {
+			"type": "parameter",
+			"dataType": "bool",
+			"defaultValue": "false"
 		}
 	},
 	"sources": [
@@ -113,6 +170,49 @@
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs",
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/DynamoDbCategoryConverterTests.cs"
+					]
+				},
+				{
+					"condition": "(enableFunctionWorker == false)",
+					"exclude": [
+						"**/src/functions/func-cosmosdb-worker/**"
+					]
+				},
+				{
+					"condition": "(enableFunctionListener == false)",
+					"exclude": [
+						"**/src/functions/func-aeh-listener/*"
+					]
+				},
+				{
+					"condition": "(enableFunctionListener && EventPublisherServiceBus)",
+					"exclude": [
+						"**/src/functions/func-aeh-listener/**"
+					]
+				},
+				{
+					"condition": "(enableFunctionListener && EventPublisherEventHub)",
+					"exclude": [
+						"**/src/functions/func-asb-listener/**"
+					]
+				},
+				{
+					"condition": "(!enableFunctionListener && !enableFunctionWorker)",
+					"exclude": [
+						"**/src/functions/**",
+						"**/build/azDevOps/azure/templates/steps/build/build-function.yml"
+					]
+				},
+				{
+					"condition": "(enableBackgroundWorker == false)",
+					"exclude": [
+						"**/src/worker/**"
+					]
+				},
+				{
+					"condition": "(EventPublisherServiceBus || EventPublisherEventHub || EventPublisherAwsSqs)",
+					"exclude": [
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Fakes/DummyEventPublisher.cs"
 					]
 				}
 			]

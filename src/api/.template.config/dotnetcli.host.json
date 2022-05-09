@@ -5,6 +5,10 @@
             "longName": "domain",
             "shortName": "do"
         },
+        "eventPublisher": {
+            "longName": "eventPublisher",
+            "shortName": "e"
+        },
         "database": {
             "longName": "database",
             "shortName": "db"

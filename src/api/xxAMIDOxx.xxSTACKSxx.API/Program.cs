@@ -25,12 +25,11 @@ public static class Program
             .ConfigureLogging((context, builder) =>
             {
                 Log.Logger = new LoggerConfiguration()
-                       .ReadFrom.Configuration(context.Configuration)
-                       .CreateLogger();
+                    .ReadFrom.Configuration(context.Configuration)
+                    .CreateLogger();
             })
             .UseStartup<Startup>()
             .UseSerilog()
             .ConfigureServices(DependencyRegistration.ConfigureStaticDependencies)
-            .ConfigureServices(DependencyRegistration.ConfigureProductionDependencies)
-        ;
+            .ConfigureServices(DependencyRegistration.ConfigureProductionDependencies);
 }
