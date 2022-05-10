@@ -90,6 +90,7 @@ type: Opaque
 stringData:
   cosmos_key: ${cosmosdb_key}
   app_insights: ${app_insights_key}
+  servicebus_connectionstring: ${servicebus_connectionstring}
 
 ---
 
@@ -151,11 +152,82 @@ data:
           "Item B from congig",
           "Item C from config"
         ]
+      },
+      "ServiceBusConfiguration": {
+        "Sender": {
+          "Topics": [
+            {
+              "Name": "${servicebus_topic_name}",
+              "ConnectionStringSecret": {
+                  "Identifier": "SERVICEBUS_CONNECTIONSTRING",
+                  "Source": "Environment"
+              }
+            }
+          ]
+        }
       }
     }
 
 ---
 
+# Config map for the background worker
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workersettings
+  namespace: ${namespace}
+data:
+  appsettings.json: |
+    {
+      "Serilog": {
+        "Using": [
+          "Serilog.Sinks.Console",
+          "Serilog.Sinks.ApplicationInsights"
+        ],
+        "MinimumLevel": {
+          "Default": "Debug",
+          "Override": {}
+        },
+        "WriteTo": [
+          {
+            "Name": "Console"
+          },
+          {
+            "Name": "ApplicationInsights",
+            "Args": {
+              "telemetryConverter": "Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights"
+            }
+          }
+        ],
+        "Enrich": [
+          "FromLogContext",
+          "WithMachineName",
+          "WithThreadId"
+        ],
+        "Destructure": []
+      },
+      "ServiceBusConfiguration": {
+        "Listener": {
+          "Topics": [
+            {
+              "Name": "${servicebus_topic_name}",
+              "SubscriptionName": "${servicebus_subscription_name}",
+              "ConcurrencyLevel": 5,
+              "DisableProcessing": false,
+              "ConnectionStringSecret": {
+                "Identifier": "SERVICEBUS_CONNECTIONSTRING",
+                "Source": "Environment"
+              },
+              "DisableMessageValidation": true
+            }
+          ]
+        }
+      }
+    }
+
+---
+
+# Deployment for the API
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -247,6 +319,11 @@ spec:
                 secretKeyRef:
                   name: appsecrets
                   key: app_insights
+            - name: SERVICEBUS_CONNECTIONSTRING
+              valueFrom:
+                secretKeyRef:
+                  name: appsecrets
+                  key: servicebus_connectionstring
           resources:
             limits:
               cpu: "1"
@@ -285,3 +362,118 @@ spec:
         - name: appsettings
           configMap:
             name: appsettings
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app.kubernetes.io/instance: ${project}-${app_worker_name}
+    app.kubernetes.io/version: ${version}
+    applicationId: ${project}/${app_worker_name}
+    applicationName: ${project}-${app_worker_name}
+    customerID: ${company}
+    owner: ${company}/${project}
+    projectID: ${project}
+    version: ${version}
+  labels:
+    aadpodidbinding: ${aadpodidentitybinding}
+    app.kubernetes.io/component: ${component}
+    app.kubernetes.io/name: ${resource_def_worker_name}
+    app.kubernetes.io/part-of: ${project}
+    environment: ${environment}
+  name: ${resource_def_worker_name}
+  namespace: ${namespace}
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: ${component}
+      app.kubernetes.io/name: ${resource_def_worker_name}
+      app.kubernetes.io/part-of: ${project}
+      environment: ${environment}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        app.kubernetes.io/version: ${version}
+        applicationId: ${project}/${app_worker_name}
+        applicationName: ${project}-${app_worker_name}
+        customerID: ${company}
+        owner: ${company}/${project}
+        projectID: ${project}
+        role: api
+        version: ${version}
+      labels:
+        aadpodidbinding: ${aadpodidentitybinding}
+        app.kubernetes.io/component: ${component}
+        app.kubernetes.io/name: ${resource_def_worker_name}
+        app.kubernetes.io/part-of: ${project}
+        environment: ${environment}
+    spec:
+      dnsPolicy: ClusterFirst
+      containers:
+        - name: api
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "0.5"
+              memory: "256Mi"
+          image: ${k8s_worker_image}
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: appsettings
+              mountPath: /app/config
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: ENVIRONMENT
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['environment']
+            - name: VERSION
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.annotations['version']
+            - name: RELEASE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.annotations['release']
+            - name: API_BASEPATH
+              value: ${k8s_app_route}
+            - name: COSMOSDB_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: appsecrets
+                  key: cosmos_key
+            - name: LOG_LEVEL
+              value: debug
+            - name: APPINSIGHTS_INSTRUMENTATIONKEY
+              valueFrom:
+                secretKeyRef:
+                  name: appsecrets
+                  key: app_insights
+            - name: SERVICEBUS_CONNECTIONSTRING
+              valueFrom:
+                secretKeyRef:
+                  name: appsecrets
+                  key: servicebus_connectionstring
+      volumes:
+        - name: appsettings
+          configMap:
+            name: workersettings

@@ -3,6 +3,7 @@
 # Each module is conditionally created within this app infra definition interface and can be re-used across app types e.g. SSR webapp, API only
 ########
 
+# Naming convention
 module "default_label" {
   source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=0.24.1"
   namespace  = "${var.name_company}-${var.name_project}"
@@ -34,4 +35,25 @@ module "app" {
   create_cdn_endpoint                  = var.create_cdn_endpoint
   # Alternatively if you want you can pass in the IP directly and remove the need for a lookup
   # dns_a_records                        = ["0.1.23.45"]
+}
+
+module "servicebus" {
+  count                      = contains(split(",", var.app_bus_type), "servicebus") ? 1 : 0
+  source                     = "../servicebus"
+  resource_group_name        = module.default_label.id
+  resource_group_location    = var.resource_group_location
+  name_company               = var.name_company
+  name_project               = var.name_project
+  name_domain                = var.name_domain
+  stage                      = var.stage
+  cosmosdb_database_name     = module.app.cosmosdb_database_name
+  cosmosdb_collection_name   = var.cosmosdb_sql_container
+  cosmosdb_connection_string = "AccountEndpoint=${module.app.cosmosdb_endpoint};AccountKey=${module.app.cosmosdb_primary_master_key};"
+}
+
+module "eventhub" {
+  count                   = contains(split(",", var.app_bus_type), "eventhub") ? 1 : 0
+  source                  = "../eventhub"
+  resource_group_name     = module.default_label.id
+  resource_group_location = var.resource_group_location
 }

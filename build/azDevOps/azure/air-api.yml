@@ -64,14 +64,16 @@ stages:
               ARM_CLIENT_ID: "$(azure-client-id)"
               ARM_CLIENT_SECRET: "$(azure-client-secret)"
               # Docker
+              DOCKER_IMAGE_NAME_BG_WORKER: $(docker_image_name_bg_worker)
+              DOCKER_IMAGE_ARGS_BG_WORKER: $(docker_image_args_bg_worker)
+              DOCKER_IMAGE_NAME_WORKER: $(docker_image_name_worker)
+              DOCKER_IMAGE_ARGS_WORKER: $(docker_image_args_worker)
+              DOCKER_IMAGE_NAME_ASB_LISTENER: $(docker_image_name_asb_listener)
+              DOCKER_IMAGE_ARGS_ASB_LISTENER: $(docker_image_args_asb_listener)
+              DOCKER_IMAGE_NAME_AEH_LISTENER: $(docker_image_name_aeh_listener)
+              DOCKER_IMAGE_ARGS_AEH_LISTENER: $(docker_image_args_aeh_listener)
               DOCKER_CONTAINER_REGISTRY_NAME: $(docker_container_registry_name_nonprod).azurecr.io
               REGISTRY_RESOURCE_GROUP: $(docker_container_registry_rg_name_nonprod)
-
-          - task: PublishPipelineArtifact@1
-            displayName: "DEBUG: Publish: Coverage Folder"
-            inputs:
-              path: $(Agent.BuildDirectory)/s/coverage/
-              artifact: coverage_folder
 
           # Upload test coverage results as artifacts
           - task: PublishCodeCoverageResults@1
@@ -98,6 +100,7 @@ stages:
               artifact: tests
 
   - stage: Dev
+    # TODO: Temporary condition
     dependsOn: Build
     # condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master')),eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     variables:
@@ -160,6 +163,7 @@ stages:
                     TF_VAR_cosmosdb_sql_container_partition_key: "/id"
                     TF_VAR_cosmosdb_kind: "GlobalDocumentDB"
                     TF_VAR_cosmosdb_offer_type: "Standard"
+                    TF_VAR_app_bus_type: $(app_bus_type)
 
       - deployment: DeployDev
         dependsOn: AppInfraDev
@@ -218,6 +222,7 @@ stages:
                     TF_VAR_cosmosdb_sql_container_partition_key: "/id"
                     TF_VAR_cosmosdb_kind: "GlobalDocumentDB"
                     TF_VAR_cosmosdb_offer_type: "Standard"
+                    TF_VAR_app_bus_type: $(app_bus_type)
                     # Docker Image Information
                     DOCKER_IMAGE_NAME: $(docker_image_name)
                     DOCKER_IMAGE_TAG: $(docker_image_tag)
@@ -243,9 +248,43 @@ stages:
                   inputs:
                     path: $(Agent.BuildDirectory)/s/$(k8s_resource_file)
                     artifact: manifests_dev
+
+                # TODO: This functionality in general should be run via AIR, but there are limitations in CLI tooling.
+                - template: templates/legacy-deploy-functions.yml
+                  parameters:
+                    condition: contains('${{ variables.app_bus_type }}', 'servicebus')
+                    azureSubscription: ${{ variables.azure_service_connection}}
+                    container_registry_name: $(docker_container_registry_name_nonprod)
+                    function_image_name: $(docker_image_name_asb_listener)
+                    function_image_tag: $(docker_image_tag)
+                    function_name: func-asb-listener-nwhujo # TODO: This name is constructed in TF but we currently have no way of reading the output into the pipeline
+                    function_resource_group: amido-stacks-dev-euw-netcore-api-cqrs # TODO: This name is constructed in TF but we currently have no way of reading the output into the pipeline
+
+                - template: templates/legacy-deploy-functions.yml
+                  parameters:
+                    condition: contains('${{ variables.app_bus_type }}', 'eventhub')
+                    azureSubscription: ${{ variables.azure_service_connection}}
+                    container_registry_name: $(docker_container_registry_name_nonprod)
+                    function_image_name: $(docker_image_name_aeh_listener)
+                    function_image_tag: $(docker_image_tag)
+                    function_name: func-aeh-listener-lngrjm # TODO: This name is constructed in TF but we currently have no way of reading the output into the pipeline
+                    function_resource_group: amido-stacks-dev-euw-netcore-api-cqrs # TODO: This name is constructed in TF but we currently have no way of reading the output into the pipeline
+
+                - template: templates/legacy-deploy-functions.yml
+                  parameters:
+                    azureSubscription: ${{ variables.azure_service_connection}}
+                    container_registry_name: $(docker_container_registry_name_nonprod)
+                    function_image_name: $(docker_image_name_worker)
+                    function_image_tag: $(docker_image_tag)
+                    function_name: function-publisher-nwhujo # TODO: This name is constructed in TF but we currently have no way of reading the output into the pipeline
+                    function_resource_group: amido-stacks-dev-euw-netcore-api-cqrs # TODO: This name is constructed in TF but we currently have no way of reading the output into the pipeline
+
+
+
+
   - stage: Prod
     dependsOn: Build
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))
     variables:
       - group: amido-stacks-infra-credentials-prod
       - group: stacks-credentials-prod-kv
@@ -306,7 +345,7 @@ stages:
                     TF_VAR_cosmosdb_sql_container_partition_key: "/id"
                     TF_VAR_cosmosdb_kind: "GlobalDocumentDB"
                     TF_VAR_cosmosdb_offer_type: "Standard"
-
+                    TF_VAR_app_bus_type: $(app_bus_type)
       - deployment: DeployProd
         dependsOn:
           - AppInfraProd
@@ -364,6 +403,7 @@ stages:
                     TF_VAR_cosmosdb_sql_container_partition_key: "/id"
                     TF_VAR_cosmosdb_kind: "GlobalDocumentDB"
                     TF_VAR_cosmosdb_offer_type: "Standard"
+                    TF_VAR_app_bus_type: $(app_bus_type)
                     # Docker Image Information
                     DOCKER_IMAGE_NAME: $(docker_image_name)
                     DOCKER_IMAGE_TAG: $(docker_image_tag)
