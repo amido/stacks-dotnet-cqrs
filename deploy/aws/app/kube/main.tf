@@ -7,15 +7,15 @@
 #   tags = module.default_label.tags
 # }
 
-# module "default_label" {
-#   source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=0.24.1"
-#   namespace  = "${var.name_company}-${var.name_project}"
-#   stage      = var.stage
-#   name       = "${lookup(var.location_name_map, var.resource_group_location, "uksouth")}-${var.name_domain}"
-#   attributes = var.attributes
-#   delimiter  = "-"
-#   tags       = var.tags
-# }
+module "default_label" {
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=0.24.1"
+  namespace  = "${var.name_company}-${var.name_project}"
+  stage      = var.stage
+  name       = "${var.region}-${var.name_domain}"
+  attributes = var.attributes
+  delimiter  = "-"
+  tags       = var.tags
+}
 
 resource "random_string" "random" {
   length  = 3
@@ -34,5 +34,5 @@ module "server_side_app" {
   enable_queue    = var.enable_queue
   queue_name      = var.queue_name
   env             = var.env
-  tags            = var.tags
+  tags            = module.default_label.tags
 }

@@ -2,22 +2,14 @@
 #   type = string
 # }
 
-variable "tags" {
-  description = "Meta data for labelling the infrastructure"
-  type        = map(string)
-  default     = {}
-}
 
+#############
+# Common Vars
+#############
 variable "env" {
-  description = "The name of the environment."
-  default     = "nonprod"
+  description = "Name of the deployment environment, like dev, staging, nonprod, prod."
   type        = string
 }
-
-# variable "owner" {
-#   description = "Responsible parties"
-#   type        = string
-# }
 
 variable "region" {
   description = "AWS Region for this infrastruture"
@@ -25,19 +17,66 @@ variable "region" {
   default     = "eu-west-2"
 }
 
+############################################
+# NAMING
+############################################
+
+variable "name_company" {
+  type = string
+}
+
+variable "name_project" {
+  type = string
+}
+
+variable "name_domain" {
+  type = string
+}
+
+variable "name_component" {
+  type = string
+}
+
+variable "stage" {
+  type = string
+}
+
+variable "attributes" {
+  default = []
+}
+
+variable "owner" {
+  type = string
+}
+
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
+
+# Each region must have corresponding a shortend name for resource naming purposes
+variable "location_name_map" {
+  type = map(string)
+
+  default = {
+    northeurope   = "eun"
+    westeurope    = "euw"
+    uksouth       = "uks"
+    ukwest        = "ukw"
+    eastus        = "use"
+    eastus2       = "use2"
+    westus        = "usw"
+    eastasia      = "ase"
+    southeastasia = "asse"
+  }
+}
+
+############
+# Dynamo DB
+############
 variable "enable_dynamodb" {
   description = "Whether to create dynamodb table."
   type        = bool
-}
-
-variable "enable_queue" {
-  description = "Whether to create SQS queue."
-  type        = bool
-}
-
-variable "queue_name" {
-  description = "This is the human-readable name of the queue. If omitted, Terraform will assign a random name."
-  type        = string
 }
 
 variable "table_name" {
@@ -59,10 +98,17 @@ variable "attribute_type" {
   description = "Type of the attribute, which must be a scalar type: S, N, or B for (S)tring, (N)umber or (B)inary data."
 }
 
-variable "name_company" {
-  type = string
+############
+# SQS
+############
+variable "queue_name" {
+  description = "This is the human-readable name of the queue. If omitted, Terraform will assign a random name."
+  type        = string
 }
 
-variable "name_project" {
-  type = string
+variable "enable_queue" {
+
+  default     = false
+  description = "Whether to create SQS queue."
+  type        = bool
 }
