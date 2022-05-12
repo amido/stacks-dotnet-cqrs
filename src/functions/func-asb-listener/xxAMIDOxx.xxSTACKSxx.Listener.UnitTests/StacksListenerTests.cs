@@ -3,6 +3,7 @@ using System.Text;
 using Amido.Stacks.Core.Operations;
 using Amido.Stacks.Messaging.Azure.ServiceBus.Extensions;
 using Amido.Stacks.Messaging.Azure.ServiceBus.Serializers;
+using Azure.Messaging.ServiceBus;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -25,7 +26,7 @@ public class StacksListenerTests
     }
 
     [Fact]
-    public void TestExecution()
+    public void TestMessage()
     {
         var msgBody = BuildMessageBody();
         var message = BuildMessage(msgBody);
@@ -36,6 +37,20 @@ public class StacksListenerTests
 
         msgReader.Received(1).Read<StacksCloudEvent<MenuCreatedEvent>>(message);
     }
+
+    [Fact]
+    public void TestReceiveMessage()
+    {
+        var msgBody = BuildMessageBody();
+        var message = BuildReceivedMessage(msgBody);
+
+        var stacksListener = new StacksListener(msgReader, logger);
+
+        stacksListener.ReceiveMessage(message);
+
+        logger.Received(1).LogInformation($"Message read. Menu Id: {message.MessageId}");
+    }
+
 
     public MenuCreatedEvent BuildMessageBody()
     {
@@ -58,6 +73,19 @@ public class StacksListenerTests
             .SetEnclosedMessageType(body.GetType())
             .SetSerializerType(GetType());
     }
+
+    public ServiceBusReceivedMessage BuildReceivedMessage(MenuCreatedEvent body)
+    {
+        Guid correlationId = GetCorrelationId(body);
+
+        var message = ServiceBusModelFactory.ServiceBusReceivedMessage(
+            new BinaryData(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(body))),
+            contentType: "application/json;charset=utf-8",
+            correlationId: $"{correlationId}");
+
+        return message;
+    }
+
 
     private static Guid GetCorrelationId(object body)
     {
