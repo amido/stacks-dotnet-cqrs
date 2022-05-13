@@ -28,6 +28,30 @@
                 ]
             }
         },
+        "eventPublisher": {
+			"type": "parameter",
+			"datatype": "choice",
+			"defaultValue": "None",
+			"choices": [
+				{
+					"choice": "ServiceBus",
+					"description": "Targets Azure Service Bus for publishing events."
+				},
+				{
+					"choice": "EventHub",
+					"description": "Targets Azure Event Hubs for publishing events."
+				},
+				{
+					"choice": "AwsSqs",
+					"description": "Targets AWS SQS for publishing events."
+				},
+				{
+					"choice": "None",
+					"description": "Use a dummy event publisher"
+				}
+			],
+			"description": "Adds event publishing."
+		},
         "database": {
             "type": "parameter",
             "datatype": "choice",
@@ -59,7 +83,23 @@
         "InMemoryDb": {
             "type": "computed",
             "value": "(database == \"InMemoryDb\")"
-        }
+        },
+        "EventPublisherServiceBus": {
+			"type": "computed",
+			"value": "(eventPublisher == \"ServiceBus\")"
+		},
+		"EventPublisherEventHub": {
+			"type": "computed",
+			"value": "(eventPublisher == \"EventHub\")"
+		},
+		"EventPublisherAwsSqs": {
+			"type": "computed",
+			"value": "(eventPublisher == \"AwsSqs\")"
+		},
+		"EventPublisherNone": {
+			"type": "computed",
+			"value": "(eventPublisher == \"None\")"
+		}
     },
     "sources": [
         {
@@ -74,10 +114,13 @@
                 "**/xxAMIDOxx.xxSTACKSxx.Domain/**",
                 "**/xxAMIDOxx.xxSTACKSxx.Infrastructure/**",
                 "**/xxAMIDOxx.xxSTACKSxx.API.ComponentTests/**",
+                "**/xxAMIDOxx.xxSTACKSxx.API.ContractTests/**",
+                "**/xxAMIDOxx.xxSTACKSxx.API.UnitTests/**",
                 "**/xxAMIDOxx.xxSTACKSxx.Common.UnitTests/**",
                 "**/xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests/**",
                 "**/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/**",
-                "**/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/**"
+                "**/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/**",
+                "**/xxAMIDOxx.xxSTACKSxx.Infrastructure.UnitTests/**"
             ],
             "exclude": [
                 "**/[Bb]in/**",
@@ -97,28 +140,48 @@
             ],
             "modifiers": [
                 {
-                    "condition": "(CosmosDb)",
-                    "exclude": [
-                        "xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
-                        "xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs"
-                    ]
-                },
+					"condition": "(CosmosDb)",
+					"exclude": [
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/DynamoDbCategoryConverterTests.cs",
+					]
+				},
+				{
+					"condition": "(DynamoDb)",
+					"exclude": [
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/CosmosDbMenuRepository.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/CosmosDbMenuRepositoryTests.cs",
+					]
+				},
+				{
+					"condition": "(!CosmosDb && !DynamoDb)",
+					"exclude": [
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/CosmosDbMenuRepository.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/CosmosDbMenuRepositoryTests.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/DynamoDbCategoryConverterTests.cs"
+					]
+				},
                 {
-                    "condition": "(DynamoDb)",
-                    "exclude": [
-                        "xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/CosmosDbMenuRepository.cs",
-                        "xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/CosmosDbMenuRepositoryTests.cs"
-                    ]
-                },
+					"condition": "(EventPublisherServiceBus || EventPublisherEventHub || EventPublisherAwsSqs)",
+					"exclude": [
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Fakes/DummyEventPublisher.cs"
+					]
+				},
                 {
-                    "condition": "(!CosmosDb && !DynamoDb)",
-                    "exclude": [
-                        "xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/CosmosDbMenuRepository.cs",
-                        "xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/CosmosDbMenuRepositoryTests.cs",
-                        "xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
-                        "xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs"
-                    ]
-                }
+					"condition": "(CosmosDb || EventPublisherServiceBus || EventPublisherEventHub)",
+					"exclude": [
+                        "**/build/awsDevOps/**"
+					]
+				},
+                {
+					"condition": "(DynamoDb || EventPublisherAwsSqs)",
+					"exclude": [
+						"**/build/azDevOps/**"
+					]
+				}
             ]
         }
     ],
@@ -201,10 +264,11 @@
             "args": {
                 "solutionFolder": "Tests",
                 "projectFiles": [
-                    "xxAMIDOxx.xxSTACKSxx.Common.UnitTests.csproj",
-                    "xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests.csproj",
-                    "xxAMIDOxx.xxSTACKSxx.Domain.UnitTests.csproj",
-                    "xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests.csproj"
+                    "**/xxAMIDOxx.xxSTACKSxx.Common.UnitTests/**",
+                    "**/xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests/**",
+                    "**/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/**",
+                    "**/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/**",
+                    "**/xxAMIDOxx.xxSTACKSxx.Infrastructure.UnitTests/**"
                 ]
             },
             "actionId": "D396686C-DE0E-4DE6-906D-291CD29FC5DE",
