@@ -51,7 +51,6 @@ public class StacksListenerTests
         logger.Received(1).LogInformation($"Message read. Menu Id: {message.MessageId}");
     }
 
-
     public MenuCreatedEvent BuildMessageBody()
     {
         var id = Guid.NewGuid();
@@ -85,7 +84,6 @@ public class StacksListenerTests
 
         return message;
     }
-
 
     private static Guid GetCorrelationId(object body)
     {
