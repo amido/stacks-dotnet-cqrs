@@ -21,9 +21,13 @@ public class StacksListener
         this.logger = logger;
     }
 
-    [Obsolete("This Method is Deprecated. Please use StacksListener.ReceiveMessage()")]
+    // This method is left here to show off the IMessageReader.Read<T>() from the ASB package - Amido.Stacks.Messaging.Azure.ServiceBus
+    // However, we advise against using it since the package is working with the old 'Message' type. A major refactor of the package is needed.
+    // New types from 'Azure.Messaging.ServiceBus' are 'ServiceBusMessage' and 'ServiceBusReceivedMessage'
+    // You can still send 'Message' types, but depending on the version of your function and the .NET SDK, you might need to receive it as 'ServiceBusReceivedMessage'
+    [Obsolete("This Method is Deprecated. Please use StacksListener.Run()")]
     [FunctionName("StacksListenerMessage")]
-    public void Run([ServiceBusTrigger(
+    public void RunMessage([ServiceBusTrigger(
         "%TOPIC_NAME%",
         "%SUBSCRIPTION_NAME%",
         Connection = "SERVICEBUS_CONNECTIONSTRING")] Message mySbMsg)
@@ -36,8 +40,8 @@ public class StacksListener
         logger.LogInformation($"C# ServiceBus topic trigger function processed message: {appEvent}");
     }
 
-    [FunctionName("StacksListenerServiceBusReceivedMessage")]
-    public void ReceiveMessage([ServiceBusTrigger(
+    [FunctionName("StacksListener")]
+    public void Run([ServiceBusTrigger(
         "%TOPIC_NAME%",
         "%SUBSCRIPTION_NAME%",
         Connection = "SERVICEBUS_CONNECTIONSTRING")] ServiceBusReceivedMessage mySbMsg)
