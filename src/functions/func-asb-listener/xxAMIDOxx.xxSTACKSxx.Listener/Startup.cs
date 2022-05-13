@@ -34,8 +34,6 @@ public class Startup : FunctionsStartup
             .Configure<StacksListener>(configuration.GetSection(nameof(StacksListener)))
             .AddLogging(l => { l.AddSerilog(CreateLogger(configuration)); })
             .AddTransient(typeof(ILogger<>), typeof(LogAdapter<>));
-
-        builder.Services.AddTransient<IMessageReader, JsonMessageSerializer>();
     }
 
     private static IConfiguration LoadConfiguration(IFunctionsHostBuilder builder)

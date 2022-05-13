@@ -16,17 +16,15 @@ namespace xxAMIDOxx.xxSTACKSxx.Listener.UnitTests;
 [Trait("TestType", "UnitTests")]
 public class StacksListenerTests
 {
-    private readonly IMessageReader msgReader;
     private readonly ILogger<StacksListener> logger;
 
     public StacksListenerTests()
     {
-        msgReader = Substitute.For<IMessageReader>();
         logger = Substitute.For<ILogger<StacksListener>>();
     }
 
     [Fact]
-    public void TestMessage()
+    public void TestRun()
     {
         var msgBody = BuildMessageBody();
         var message = BuildMessage(msgBody);
@@ -34,19 +32,6 @@ public class StacksListenerTests
         var stacksListener = new StacksListener(msgReader, logger);
 
         stacksListener.Run(message);
-
-        msgReader.Received(1).Read<StacksCloudEvent<MenuCreatedEvent>>(message);
-    }
-
-    [Fact]
-    public void TestReceiveMessage()
-    {
-        var msgBody = BuildMessageBody();
-        var message = BuildReceivedMessage(msgBody);
-
-        var stacksListener = new StacksListener(msgReader, logger);
-
-        stacksListener.ReceiveMessage(message);
 
         logger.Received(1).LogInformation($"Message read. Menu Id: {message.MessageId}");
     }
@@ -57,23 +42,7 @@ public class StacksListenerTests
         return new MenuCreatedEvent(new TestOperationContext(), id);
     }
 
-    public Message BuildMessage(MenuCreatedEvent body)
-    {
-        Guid correlationId = GetCorrelationId(body);
-
-        var convertedMessage = new Message
-        {
-            CorrelationId = $"{correlationId}",
-            ContentType = "application/json;charset=utf-8",
-            Body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(body))
-        };
-
-        return convertedMessage
-            .SetEnclosedMessageType(body.GetType())
-            .SetSerializerType(GetType());
-    }
-
-    public ServiceBusReceivedMessage BuildReceivedMessage(MenuCreatedEvent body)
+    public ServiceBusReceivedMessage BuildMessage(MenuCreatedEvent body)
     {
         Guid correlationId = GetCorrelationId(body);
 
