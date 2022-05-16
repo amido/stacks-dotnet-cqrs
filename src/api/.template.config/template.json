@@ -142,44 +142,32 @@
                 {
 					"condition": "(CosmosDb)",
 					"exclude": [
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs",
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/DynamoDbCategoryConverterTests.cs",
+						"xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
+						"xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs",
+						"xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/DynamoDbCategoryConverterTests.cs"
 					]
 				},
 				{
 					"condition": "(DynamoDb)",
 					"exclude": [
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/CosmosDbMenuRepository.cs",
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/CosmosDbMenuRepositoryTests.cs",
+						"xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/CosmosDbMenuRepository.cs",
+						"xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/CosmosDbMenuRepositoryTests.cs"
 					]
 				},
 				{
 					"condition": "(!CosmosDb && !DynamoDb)",
 					"exclude": [
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/CosmosDbMenuRepository.cs",
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/CosmosDbMenuRepositoryTests.cs",
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs",
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/DynamoDbCategoryConverterTests.cs"
+						"xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/CosmosDbMenuRepository.cs",
+						"xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/CosmosDbMenuRepositoryTests.cs",
+						"xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
+						"xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs",
+						"xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/DynamoDbCategoryConverterTests.cs"
 					]
 				},
                 {
 					"condition": "(EventPublisherServiceBus || EventPublisherEventHub || EventPublisherAwsSqs)",
 					"exclude": [
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Fakes/DummyEventPublisher.cs"
-					]
-				},
-                {
-					"condition": "(CosmosDb || EventPublisherServiceBus || EventPublisherEventHub)",
-					"exclude": [
-                        "**/build/awsDevOps/**"
-					]
-				},
-                {
-					"condition": "(DynamoDb || EventPublisherAwsSqs)",
-					"exclude": [
-						"**/build/azDevOps/**"
+						"xxAMIDOxx.xxSTACKSxx.Infrastructure/Fakes/DummyEventPublisher.cs"
 					]
 				}
             ]
@@ -264,11 +252,11 @@
             "args": {
                 "solutionFolder": "Tests",
                 "projectFiles": [
-                    "**/xxAMIDOxx.xxSTACKSxx.Common.UnitTests/**",
-                    "**/xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests/**",
-                    "**/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/**",
-                    "**/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/**",
-                    "**/xxAMIDOxx.xxSTACKSxx.Infrastructure.UnitTests/**"
+                    "xxAMIDOxx.xxSTACKSxx.Common.UnitTests/**",
+                    "xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests/**",
+                    "xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/**",
+                    "xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/**",
+                    "xxAMIDOxx.xxSTACKSxx.Infrastructure.UnitTests/**"
                 ]
             },
             "actionId": "D396686C-DE0E-4DE6-906D-291CD29FC5DE",
