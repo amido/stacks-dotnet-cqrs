@@ -53,10 +53,29 @@ stages:
               BUILD_BUILDNUMBER: $(version_number)
 
           - task: Bash@3
-            displayName: "TaskCTL: Build"
+            displayName: "TaskCTL: Build API-CQRS"
+            condition: not(or(contains('${{ variables.app_bus_type }}', 'servicebus'), contains('${{ variables.app_bus_type }}', 'eventhub'))) # when var.app_bus_type contains neither servicebus nor eventhub
+
             inputs:
               targetType: inline
-              script: taskctl build
+              script: taskctl build:api
+            env:
+              # Azure
+              ARM_TENANT_ID: "$(azure-tenant-id)"
+              ARM_SUBSCRIPTION_ID: "$(azure-subscription-id)"
+              ARM_CLIENT_ID: "$(azure-client-id)"
+              ARM_CLIENT_SECRET: "$(azure-client-secret)"
+              # Docker
+              DOCKER_IMAGE_NAME: $(docker_image_name)
+              DOCKER_CONTAINER_REGISTRY_NAME: $(docker_container_registry_name_nonprod).azurecr.io
+              REGISTRY_RESOURCE_GROUP: $(docker_container_registry_rg_name_nonprod)
+
+          - task: Bash@3
+            displayName: "TaskCTL: Build API-CQRS-Events"
+            condition: or(contains('${{ variables.app_bus_type }}', 'servicebus'), contains('${{ variables.app_bus_type }}', 'eventhub')) # when var.app_bus_type contains either servicebus or eventhub
+            inputs:
+              targetType: inline
+              script: taskctl build:events
             env:
               # Azure
               ARM_TENANT_ID: "$(azure-tenant-id)"

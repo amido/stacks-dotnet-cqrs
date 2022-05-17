@@ -27,9 +27,48 @@ pipelines:
       depends_on:
         - lint
   # Pipeline to perform the build of the project
-  build:
+  build:api:
     - task: build:functional_tests
     - task: build:container
+      variables:
+        - buildargs: src/api
+        - imagename: $env:DOCKER_IMAGE_NAME
+# Pipeline to perform the build of the project
+  build:events:
+    - task: build:functional_tests
+    - task: build:container
+      name: build:container:api
+      variables:
+        - buildargs: src/api
+        - imagename: $env:DOCKER_IMAGE_NAME
+    - task: build:container
+      name: build:container:bg_worker
+      variables:
+        - buildargs: $env:DOCKER_IMAGE_ARGS_BG_WORKER
+        - imagename: $env:DOCKER_IMAGE_NAME_BG_WORKER
+      depends_on:
+        - build:container:api
+    - task: build:container
+      name: build:container:worker
+      variables:
+        - buildargs: $env:DOCKER_IMAGE_ARGS_WORKER
+        - imagename: $env:DOCKER_IMAGE_NAME_WORKER
+      depends_on:
+        - build:container:bg_worker
+    - task: build:container
+      name: build:container:listener_asb
+      variables:
+        - buildargs: $env:DOCKER_IMAGE_ARGS_ASB_LISTENER
+        - imagename: $env:DOCKER_IMAGE_NAME_ASB_LISTENER
+      depends_on:
+        - build:container:worker
+    - task: build:container
+      name: build:container:listener_aeh
+      variables:
+        - buildargs: $env:DOCKER_IMAGE_ARGS_AEH_LISTENER
+        - imagename: $env:DOCKER_IMAGE_NAME_AEH_LISTENER
+      depends_on:
+        - build:container:listener_asb
 
   # Pipeline to ensure that the infrastructure is valid
   infrastructure:
