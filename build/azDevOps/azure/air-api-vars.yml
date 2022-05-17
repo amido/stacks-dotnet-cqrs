@@ -21,6 +21,9 @@ variables:
   - name: tf_state_key
     value: netcore-api-cqrs
 
+  - name: cloud_provider
+    value: "azure"
+
   # TF File location in Repo
   - name: TF_FILE_LOCATION
     value: deploy/azure/app/kube

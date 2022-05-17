@@ -115,7 +115,7 @@ tasks:
     context: powershell-dotnet
     description: Create container image for application
     command:
-      - Build-DockerImage -Name {{ .imagename }} -buildargs "{{ .buildargs }}" -push
+      - Build-DockerImage -Provider $env:CLOUD_PROVIDER -Name {{ .imagename }} -buildargs "{{ .buildargs }}" -push
     variables:
       buildargs: src/api # Parameterised for multiple docker builds in the same repo
       imagename: $env:DOCKER_IMAGE_NAME  # Parameterised for multiple docker builds in the same repo
@@ -157,7 +157,7 @@ tasks:
     context: powershell
     description: Deploy to Kubernetes
     command:
-      - Invoke-Kubectl -provider Azure -target $env:K8S_CLUSTER_TARGET -identifier $env:K8S_CLUSTER_IDENTIFIER -Apply -Arguments $env:K8S_RESOURCE_FILE
+      - Invoke-Kubectl  -provider $env:CLOUD_PROVIDER -target $env:K8S_CLUSTER_TARGET -identifier $env:K8S_CLUSTER_IDENTIFIER -Apply -Arguments $env:K8S_RESOURCE_FILE
       # - Invoke-Kubectl -provider Azure -target {{ .KUBECTL_TARGET }} -identifier {{ .KUBECTL_IDENTIFIER }} -Rollout -Arguments "-n $env:NAMESPACE deploy/$env:RESOURCE_DEF_NAME --timeout $env:DEPLOYMENT_STATUS_TIMEOUT"
 
   deploy:functional_tests:
@@ -202,3 +202,11 @@ tasks:
     context: powershell
     command:
       - Write-Host "***** DEBUG *****" && get-childitem -filter "*opencover.xml" -recurse
+
+  debug:sleep:
+    context: powershell
+    command:
+      - echo "Sleeping for {{ .sleep }}"
+      - sleep {{ .sleep }}
+    variables:
+      sleep: 30

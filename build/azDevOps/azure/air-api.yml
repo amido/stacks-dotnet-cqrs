@@ -52,10 +52,10 @@ stages:
               PROJECT_NAME: $(sonar_project_name)
               BUILD_BUILDNUMBER: $(version_number)
 
+          # The two build tasks are mutually exclusive
           - task: Bash@3
             displayName: "TaskCTL: Build API-CQRS"
             condition: not(or(contains('${{ variables.app_bus_type }}', 'servicebus'), contains('${{ variables.app_bus_type }}', 'eventhub'))) # when var.app_bus_type contains neither servicebus nor eventhub
-
             inputs:
               targetType: inline
               script: taskctl build:api
@@ -70,6 +70,7 @@ stages:
               DOCKER_CONTAINER_REGISTRY_NAME: $(docker_container_registry_name_nonprod).azurecr.io
               REGISTRY_RESOURCE_GROUP: $(docker_container_registry_rg_name_nonprod)
 
+          # The two build tasks are mutually exclusive
           - task: Bash@3
             displayName: "TaskCTL: Build API-CQRS-Events"
             condition: or(contains('${{ variables.app_bus_type }}', 'servicebus'), contains('${{ variables.app_bus_type }}', 'eventhub')) # when var.app_bus_type contains either servicebus or eventhub
