@@ -16,7 +16,7 @@ variables:
   - name: tf_state_container
     value: {{ .Input.Terraform.Backend.Container }}
   - name: tf_state_key
-    value: $(self-generic-name)
+    value: $(self_generic_name)
 
   # TF File location in Repo
   - name: TF_FILE_LOCATION
@@ -39,10 +39,12 @@ variables:
     value: deploy/azure/app/kube
   - name: self_repo_tf_dir
     value: "$(self_repo_dir)/$(self_repo_tf_src)"
+  - name: self_generic_name
+    value: stacks-api-cqrs
 
   # App Specific Taxonomy
   - name: resource_def_name
-    value: $(self-generic-name)
+    value: $(self_generic_name)
   - name: component
     value: api
   - name: role
@@ -52,7 +54,7 @@ variables:
   - name: self_generic_name
     value: $(company)-$(domain)
   - name: app_name
-    value:  $(self-generic-name)
+    value:  $(self_generic_name)
   - name: region
     value: {{ .Project.Cloud.Region }}
   - name: company

@@ -69,8 +69,13 @@ variables:
     value: netcore-api-cqrs
   - name: k8s_app_route
     value: /api/menu
+  # Messaging Config
   - name: app_bus_type
     value: servicebus,eventhub
+  - name: resource_def_worker_name
+    value: dotnet-api-worker
+  - name: app_worker_name
+    value: worker
 
   # Function Naming
   - name: docker_image_name_bg_worker
