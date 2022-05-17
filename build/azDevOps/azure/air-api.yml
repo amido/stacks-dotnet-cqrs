@@ -64,6 +64,7 @@ stages:
               ARM_CLIENT_ID: "$(azure-client-id)"
               ARM_CLIENT_SECRET: "$(azure-client-secret)"
               # Docker
+              DOCKER_IMAGE_NAME: ${docker_image_name}
               DOCKER_IMAGE_NAME_BG_WORKER: $(docker_image_name_bg_worker)
               DOCKER_IMAGE_ARGS_BG_WORKER: $(docker_image_args_bg_worker)
               DOCKER_IMAGE_NAME_WORKER: $(docker_image_name_worker)
@@ -100,9 +101,8 @@ stages:
               artifact: tests
 
   - stage: Dev
-    # TODO: Temporary condition
     dependsOn: Build
-    # condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master')),eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master')),eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     variables:
       - group: amido-stacks-infra-credentials-nonprod
       - group: stacks-credentials-nonprod-kv
