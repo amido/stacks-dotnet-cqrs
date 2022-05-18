@@ -3,8 +3,6 @@ using Amido.Stacks.Application.CQRS.Commands;
 using Amido.Stacks.Application.CQRS.Queries;
 using Amido.Stacks.Configuration.Extensions;
 using Amido.Stacks.DependencyInjection;
-using Amido.Stacks.Messaging.AWS.SNS;
-using Amido.Stacks.Messaging.AWS.SNS.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
