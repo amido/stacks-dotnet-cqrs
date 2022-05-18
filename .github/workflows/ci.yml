@@ -44,45 +44,45 @@ jobs:
         env:
           TF_FILE_LOCATION: deploy/aws/app/kube
 
-  build:
-    needs: lint
-    runs-on: ubuntu-latest
-    environment: nonprod
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./build/github/templates/install-taskctl
-      - run: taskctl build:api # TODO: Must be able to build events also
-        env:
-          # TF Linting and Validation
-          TF_FILE_LOCATION: deploy/aws/app/kube
-          # Testing
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_ORG: amido
-          SONAR_URL: "https://sonarcloud.io"
-          SONAR_PROPERTIES: '/d:sonar.cs.opencover.reportsPaths="/app/coverage/*.opencover.xml" /d:sonar.exclusions="**/*Tests" /d:sonar.coverage.exclusions="**/*Tests"'
-          PROJECT_NAME: stacks-dotnet
-          BUILD_BUILDNUMBER: 0.0.${{env.GITHUB_RUN_NUMBER}}
-          # Dotnet Build
-          SELF_REPO_SRC: src/api
-          # Docker
-          DOCKER_CONTAINER_REGISTRY_NAME: ${{ env.DOCKER_REGISTRY_NAME }}
-          ECR_REGION: ${{ env.REGION }}
-          # AWS ECR Authorisation
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ env.REGION }}
-          # Publish test results
-          # TODO: to publish coverage/etc.
-          # Publish test artifact
-          # TODO: to publish functional tests to run after deploy
-      - name: Publish Functional Tests
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.FUNCTIONAL_TESTS_ARTEFACT_NAME }}
-          path: ${{ env.FUNCTIONAL_TESTS_SRC_DIR }}
+  # build:
+  #   needs: lint
+  #   runs-on: ubuntu-latest
+  #   environment: nonprod
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: ./build/github/templates/install-taskctl
+  #     - run: taskctl build:api # TODO: Must be able to build events also
+  #       env:
+  #         # TF Linting and Validation
+  #         TF_FILE_LOCATION: deploy/aws/app/kube
+  #         # Testing
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #         SONAR_ORG: amido
+  #         SONAR_URL: "https://sonarcloud.io"
+  #         SONAR_PROPERTIES: '/d:sonar.cs.opencover.reportsPaths="/app/coverage/*.opencover.xml" /d:sonar.exclusions="**/*Tests" /d:sonar.coverage.exclusions="**/*Tests"'
+  #         PROJECT_NAME: stacks-dotnet
+  #         BUILD_BUILDNUMBER: 0.0.${{env.GITHUB_RUN_NUMBER}}
+  #         # Dotnet Build
+  #         SELF_REPO_SRC: src/api
+  #         # Docker
+  #         DOCKER_CONTAINER_REGISTRY_NAME: ${{ env.DOCKER_REGISTRY_NAME }}
+  #         ECR_REGION: ${{ env.REGION }}
+  #         # AWS ECR Authorisation
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         AWS_DEFAULT_REGION: ${{ env.REGION }}
+  #         # Publish test results
+  #         # TODO: to publish coverage/etc.
+  #         # Publish test artifact
+  #         # TODO: to publish functional tests to run after deploy
+  #     - name: Publish Functional Tests
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: ${{ env.FUNCTIONAL_TESTS_ARTEFACT_NAME }}
+  #         path: ${{ env.FUNCTIONAL_TESTS_SRC_DIR }}
 
   AppInfraDev:
-    needs: build
+    # needs: build
     runs-on: ubuntu-latest
     environment: nonprod
     steps:
