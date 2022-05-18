@@ -51,7 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./build/github/templates/install-taskctl
-      - run: taskctl build
+      - run: taskctl build:api # TODO: Must be able to build events also
         env:
           # TF Linting and Validation
           TF_FILE_LOCATION: deploy/aws/app/kube
