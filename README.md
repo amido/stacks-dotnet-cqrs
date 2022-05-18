@@ -34,7 +34,7 @@ stacks-dotnet-cqrs
   - `func-cosmosdb-worker` is a CosmosDB change feed trigger function that publishes a `CosmosDbChangeFeedEvent` when a new entity has been added or was changed to CosmosDB
 - The `worker` folder contains a background worker that listens to all event types from the ASB topic and shows example handlers for them and the use of the [Amido.Stacks.Messaging.Azure.ServiceBus](https://github.com/amido/stacks-dotnet-packages-messaging-asb) package.
 
-The API, functions and worker all depend on the [Amido.Stacks.Messaging.Azure.ServiceBus](https://github.com/amido/stacks-dotnet-packages-messaging-asb),  the [Amido.Stacks.Messaging.Azure.EventHub](https://github.com/amido/stacks-dotnet-packages-messaging-aeh) or the [Amido.Stacks.SQS](https://github.com/amido/stacks-dotnet-packages-sqs) packages for their communication with either Azure Service Bus, Azure Event Hub or AWS SQS depending on the specific implementation.
+The API, functions and worker all depend on the [Amido.Stacks.Messaging.Azure.ServiceBus](https://github.com/amido/stacks-dotnet-packages-messaging-asb),  the [Amido.Stacks.Messaging.Azure.EventHub](https://github.com/amido/stacks-dotnet-packages-messaging-aeh) or the [Amido.Stacks.SNS](https://github.com/amido/stacks-dotnet-packages-sns) packages for their communication with either Azure Service Bus, Azure Event Hub or AWS SNS depending on the specific implementation.
 
 The functions and workers are all stand-alone implementations that can be used together or separately in different projects.
 
@@ -235,10 +235,10 @@ It's entirely up to you where you want to generate the WebAPI. For example your 
 The template "Amido Stacks CQRS Web API" was created successfully.
 ```
 
-Alternatively, if you wanted to generate the WebAPI with structure `Bar.Baz` as a prefix to all your namespaces where `Bar` is the company name and `Baz` is the name of the project. And you want the WebAPI to have a domain `Warehouse`, use `DynamoDb`, publish events to `AwsSqs` and be generated inside a folder called `new-proj-folder` you'll execute the following command:
+Alternatively, if you wanted to generate the WebAPI with structure `Bar.Baz` as a prefix to all your namespaces where `Bar` is the company name and `Baz` is the name of the project. And you want the WebAPI to have a domain `Warehouse`, use `DynamoDb`, publish events to `AwsSns` and be generated inside a folder called `new-proj-folder` you'll execute the following command:
 
 ```shell
-% dotnet new stacks-cqrs-app -n Foo.Bar -do Warehouse -db DynamoDb -e AwsSqs -o new-proj-folder
+% dotnet new stacks-cqrs-app -n Foo.Bar -do Warehouse -db DynamoDb -e AwsSns -o new-proj-folder
 The template "Amido Stacks CQRS Web API" was created successfully.
 ```
 
@@ -314,7 +314,7 @@ Now both `Foo.Bar.Worker` and `Foo.Bar.Worker.UnitTests` projects are part of yo
 
 ## Running the API locally on MacOS
 
-To run the API locally on MacOS there are a couple of prerequisites that you have to be aware of. You'll need a CosmosDB emulator/instance or an instance of DynamoDB on AWS. You also might need access to Azure/AWS for Azure Service Bus, Azure Event Hubs or AWS SQS.
+To run the API locally on MacOS there are a couple of prerequisites that you have to be aware of. You'll need a CosmosDB emulator/instance or an instance of DynamoDB on AWS. You also might need access to Azure/AWS for Azure Service Bus, Azure Event Hubs or AWS SNS.
 
 ### Docker CosmosDB emulator setup
 
@@ -331,11 +331,11 @@ You'll need an Azure Service Bus namespace and a topic with subscriber in order 
 
 You'll will need an Azure Event Hub namespace and an Event Hub to publish application events. You will also need a blob container storage account.
 
-### AWS SQS
+### AWS SNS
 
-You'll need an AWS SQS Queue setup with a defined QueueUrl in order to be able to publish application events.
+You'll need an AWS SNS Topic setup with a defined TopicArn in order to be able to publish application events.
 
-### Configuring CosmosDb, ServiceBus, EventHub or SQS
+### Configuring CosmosDb, ServiceBus, EventHub or SNS
 
 Now that you have your CosmosDB all set, you can point the API project to it. In `appsettings.json` you can see the following sections
 
@@ -382,15 +382,15 @@ Now that you have your CosmosDB all set, you can point the API project to it. In
         "BlobContainerName": "stacks-blob-container-name"
     }
 }
-"AwsSqsConfiguration": {
-    "QueueUrl": {
-            "Identifier": "SQS_QUEUE_URL",
+"AwsSnsConfiguration": {
+    "TopicArn": {
+            "Identifier": "TOPIC_ARN",
             "Source": "Environment"
         }
 }
 ```
 
-The `SecurityKeySecret` and `ConnectionStringSecret` sections are needed because of our use of the `Amido.Stacks.Configuration` package. `COSMOSDB_KEY`, `SERVICEBUS_CONNECTIONSTRING`, `EVENTHUB_CONNECTIONSTRING` or `SQS_QUEUE_URL` have to be set before you can run the project. If you want to debug the solution with VSCode you usually have a `launch.json` file. In that file there's an `env` section where you can put environment variables for the current session.
+The `SecurityKeySecret` and `ConnectionStringSecret` sections are needed because of our use of the `Amido.Stacks.Configuration` package. `COSMOSDB_KEY`, `SERVICEBUS_CONNECTIONSTRING`, `EVENTHUB_CONNECTIONSTRING` or `TOPIC_ARN` have to be set before you can run the project. If you want to debug the solution with VSCode you usually have a `launch.json` file. In that file there's an `env` section where you can put environment variables for the current session.
 
 ```json
 "env": {
@@ -398,17 +398,17 @@ The `SecurityKeySecret` and `ConnectionStringSecret` sections are needed because
     "COSMOSDB_KEY": "YOUR_COSMOSDB_PRIMARY_KEY",
     "SERVICEBUS_CONNECTIONSTRING": "YOUR_SERVICE_BUS_CONNECTION_STRING",
     "EVENTHUB_CONNECTIONSTRING": "YOUR_EVENT_HUB_CONNECTION_STRING",
-    "SQS_QUEUE_URL": "YOUR_SQS_QUEUE_URL"
+    "TOPIC_ARN": "YOUR_TOPIC_ARN"
 }
 ```
 
-If you want to run the application without VSCode you'll have to set the `COSMOSDB_KEY`, `SERVICEBUS_CONNECTIONSTRING`, `EVENTHUB_CONNECTIONSTRING` or `SQS_QUEUE_URL` environment variables through your terminal.
+If you want to run the application without VSCode you'll have to set the `COSMOSDB_KEY`, `SERVICEBUS_CONNECTIONSTRING`, `EVENTHUB_CONNECTIONSTRING` or `TOPIC_ARN` environment variables through your terminal.
 
 ```shell
 export COSMOSDB_KEY=YOUR_COSMOSDB_PRIMARY_KEY
 export SERVICEBUS_CONNECTIONSTRING=YOUR_SERVICE_BUS_CONNECTION_STRING
 export EVENTHUB_CONNECTIONSTRING=YOUR_EVENT_HUB_CONNECTION_STRING
-export SQS_QUEUE_URL=YOUR_SQS_QUEUE_URL
+export TOPIC_ARN=YOUR_TOPIC_ARN
 ```
 
 This will set the environment variables only for the current session of your terminal.
@@ -420,7 +420,7 @@ To set the environment variables permanently on your system you'll have to edit 
 echo 'export COSMOSDB_KEY=YOUR_COSMOSDB_PRIMARY_KEY' >> ~/.zshenv
 echo 'export SERVICEBUS_CONNECTIONSTRING=YOUR_SERVICE_BUS_CONNECTION_STRING' >> ~/.zshenv
 echo 'export EVENTHUB_CONNECTIONSTRING=YOUR_EVENT_HUB_CONNECTION_STRING' >> ~/.zshenv
-echo 'export SQS_QUEUE_URL=YOUR_SQS_QUEUE_URL' >> ~/.zshenv
+echo 'export TOPIC_ARN=YOUR_TOPIC_ARN' >> ~/.zshenv
 ```
 
 If you wan to run the application using Visual Studio, you will need to set the environment variables in the `launchSettings.json` file contained in the Properties folder of the solution.
@@ -434,7 +434,7 @@ If you wan to run the application using Visual Studio, you will need to set the 
     "STORAGE_CONNECTIONSTRING": "",
     "OTLP_SERVICENAME": "",
     "OTLP_ENDPOINT": "",
-    "SQS_QUEUE_URL": "",
+    "TOPIC_ARN": "",
 }
 ```
 

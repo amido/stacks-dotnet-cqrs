@@ -3,6 +3,8 @@ using Amido.Stacks.Application.CQRS.Commands;
 using Amido.Stacks.Application.CQRS.Queries;
 using Amido.Stacks.Configuration.Extensions;
 using Amido.Stacks.DependencyInjection;
+using Amido.Stacks.Messaging.AWS.SNS;
+using Amido.Stacks.Messaging.AWS.SNS.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -12,9 +14,9 @@ using xxAMIDOxx.xxSTACKSxx.Application.QueryHandlers;
 using xxAMIDOxx.xxSTACKSxx.Domain;
 using xxAMIDOxx.xxSTACKSxx.Infrastructure.Fakes;
 using xxAMIDOxx.xxSTACKSxx.Infrastructure.HealthChecks;
-#if (EventPublisherAwsSqs)
-using Amido.Stacks.Messaging.AWS.SQS;
-using Amido.Stacks.Messaging.AWS.SQS.Extensions;
+#if (EventPublisherAwsSns)
+using Amido.Stacks.Messaging.AWS.SNS;
+using Amido.Stacks.Messaging.AWS.SNS.Extensions;
 #endif
 #if (CosmosDb || DynamoDb)
 using Amido.Stacks.DynamoDB.Extensions;
@@ -55,10 +57,10 @@ public static class DependencyRegistration
         services.Configure<Amido.Stacks.Messaging.Azure.EventHub.Configuration.EventHubConfiguration>(context.Configuration.GetSection("EventHubConfiguration"));
         services.AddEventHub();
         services.AddTransient<IApplicationEventPublisher, Amido.Stacks.Messaging.Azure.EventHub.Publisher.EventPublisher>();
-#elif (EventPublisherAwsSqs)
-        services.Configure<AwsSqsConfiguration>(context.Configuration.GetSection("AwsSqsConfiguration"));
-        services.AddAwsSqs();
-        services.AddTransient<IApplicationEventPublisher, Amido.Stacks.Messaging.AWS.SQS.Publisher.EventPublisher>();
+#elif (EventPublisherAwsSns)
+        services.Configure<AwsSnsConfiguration>(context.Configuration.GetSection("AwsSnsConfiguration"));
+        services.AddAwsSns(context.Configuration);
+        services.AddTransient<IApplicationEventPublisher, Amido.Stacks.Messaging.AWS.SNS.Publisher.EventPublisher>();
 #elif (EventPublisherNone)
         services.AddTransient<IApplicationEventPublisher, DummyEventPublisher>();
 #else

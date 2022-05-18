@@ -42,8 +42,8 @@
 					"description": "Targets Azure Event Hubs for publishing events."
 				},
 				{
-					"choice": "AwsSqs",
-					"description": "Targets AWS SQS for publishing events."
+					"choice": "AwsSns",
+					"description": "Targets AWS SNS for publishing events."
 				},
 				{
 					"choice": "None",
@@ -92,9 +92,9 @@
 			"type": "computed",
 			"value": "(eventPublisher == \"EventHub\")"
 		},
-		"EventPublisherAwsSqs": {
+		"EventPublisherAwsSns": {
 			"type": "computed",
-			"value": "(eventPublisher == \"AwsSqs\")"
+			"value": "(eventPublisher == \"AwsSns\")"
 		},
 		"EventPublisherNone": {
 			"type": "computed",
@@ -165,7 +165,7 @@
 					]
 				},
                 {
-					"condition": "(EventPublisherServiceBus || EventPublisherEventHub || EventPublisherAwsSqs)",
+					"condition": "(EventPublisherServiceBus || EventPublisherEventHub || EventPublisherAwsSns)",
 					"exclude": [
 						"xxAMIDOxx.xxSTACKSxx.Infrastructure/Fakes/DummyEventPublisher.cs"
 					]
