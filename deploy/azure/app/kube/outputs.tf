@@ -43,8 +43,87 @@ output "dns_name" {
   value       = module.app.dns_name
 }
 
-# Core State Query Outputs (to reduce variable duplication)
+# Events - Servicebus
+output "servicebus_namespace" {
+  description = "Service bus namespace"
+  value       = module.servicebus.*.servicebus_namespace[0]
+}
 
+output "servicebus_topic_name" {
+  description = "Name of the topic"
+  value       = module.servicebus.*.servicebus_topic_name[0]
+}
+
+output "servicebus_subscription_name" {
+  description = "Servicebus Subscription name"
+  value       = module.servicebus.*.servicebus_subscription_name[0]
+}
+
+output "servicebus_connectionstring" {
+  value     = module.servicebus.*.servicebus_connectionstring[0]
+  sensitive = true
+}
+
+output "servicebus_subscription_filtered_name" {
+  description = "Servicebus Subscription filtered name"
+  value       = module.servicebus.*.servicebus_subscription_filtered_name[0]
+}
+
+output "servicebus_subscription_id" {
+  description = "Servicebus Subscription ID"
+  value       = module.servicebus.*.servicebus_subscription_id[0]
+}
+
+output "servicebus_subscription_filtered_id" {
+  description = "Servicebus Subscription filtered ID"
+  value       = module.servicebus.*.servicebus_subscription_filtered_id[0]
+}
+
+# Events - Function
+output "function_publisher_id" {
+  value = module.servicebus.*.function_publisher_id[0]
+}
+
+output "function_listener_id" {
+  value = module.servicebus.*.function_listener_id[0]
+}
+
+output "function_publisher_name" {
+  value = module.servicebus.*.function_publisher_name[0]
+}
+
+output "function_listener_name" {
+  value = module.servicebus.*.function_listener_name[0]
+}
+
+output "eventhub_connectionstring" {
+  value     = module.eventhub.*.eventhub_connectionstring[0]
+  sensitive = true
+}
+
+# Events - Eventhub
+output "eventhub_name" {
+  value = module.eventhub.*.eventhub_name[0]
+}
+
+output "eventhub_sa_connectionstring" {
+  value     = module.eventhub.*.eventhub_sa_connectionstring[0]
+  sensitive = true
+}
+
+output "eventhub_sa_container" {
+  value = module.eventhub.*.eventhub_sa_container[0]
+}
+
+output "eventhub_function_listener_name" {
+  value = module.eventhub.*.function_listener_name[0]
+}
+
+output "eventhub_function_listener_id" {
+  value = module.eventhub.*.function_listener_id[0]
+}
+
+# Core State Query Outputs (to reduce variable duplication)
 output "dns_base_domain" {
   description = "Name of the base domain for core DNS"
   value       = data.terraform_remote_state.core.outputs.dns_base_domain

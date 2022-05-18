@@ -21,6 +21,9 @@ variables:
   - name: tf_state_key
     value: netcore-api-cqrs
 
+  - name: cloud_provider
+    value: "azure"
+
   # TF File location in Repo
   - name: TF_FILE_LOCATION
     value: deploy/azure/app/kube
@@ -66,6 +69,31 @@ variables:
     value: netcore-api-cqrs
   - name: k8s_app_route
     value: /api/menu
+  # Messaging Config
+  - name: app_bus_type
+    value: servicebus,eventhub
+  - name: resource_def_worker_name
+    value: dotnet-api-worker
+  - name: app_worker_name
+    value: worker
+
+  # Function Naming
+  - name: docker_image_name_bg_worker
+    value: "stacks-api-events-bg-worker"
+  - name: docker_image_args_bg_worker
+    value: "src/worker"
+  - name: docker_image_name_worker
+    value: "stacks-api-events-worker-function"
+  - name: docker_image_args_worker
+    value: "--build-arg function=xxAMIDOxx.xxSTACKSxx.Worker src/functions/func-cosmosdb-worker"
+  - name: docker_image_name_asb_listener
+    value: "stacks-api-events-listener-asb-function"
+  - name: docker_image_args_asb_listener
+    value: "--build-arg function=xxAMIDOxx.xxSTACKSxx.Listener src/functions/func-asb-listener"
+  - name: docker_image_name_aeh_listener
+    value: "stacks-api-events-listener-aeh-function"
+  - name: docker_image_args_aeh_listener
+    value: "--build-arg function=xxAMIDOxx.xxSTACKSxx.Listener src/functions/func-aeh-listener"
 
   # SonarQube Configuration
   # SONAR_TOKEN and SONAR_ORGANIZATION must be inherited from library groups/etc.
@@ -148,6 +176,7 @@ variables:
   - name: github_org
     value: $(company)
 
+
   # GitHub Package Release
   - name: COMMIT_ID
     value: "$(Build.SourceVersion)"
@@ -160,3 +189,7 @@ variables:
   - name: ARTIFACTS_LIST
     value: "*.nupkg"
   - group: amido-stacks-github-credentials
+
+  # Azure service connection
+  - name: azure_service_connection
+    value: "amido.stacks (719637e5-aedd-4fb1-b231-5101b45f8bb5)"

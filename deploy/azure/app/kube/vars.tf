@@ -85,6 +85,12 @@ variable "create_dns_record" {
 variable "create_cdn_endpoint" {
   type = bool
 }
+
+variable "app_bus_type" {
+  type    = string
+  default = "servicebus"
+}
+
 ###########################
 # CosmosDB SETTINGS
 ##########################
