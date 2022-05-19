@@ -23,7 +23,7 @@ env:
   DOCKER_REGISTRY: "${{ secrets.AWS_ACCOUNT_ID}}.dkr.ecr.eu-west-2.amazonaws.com" # (duplicates DOCKER_REGISTRY_NAME)
   K8S_APP_ROUTE: "/api/menu"
   # App Config (for both TF and K8S)
-  RESOURCE_DEF_NAME: "dotnet-api"
+  RESOURCE_DEF_NAME: "dotnet-api-cqrs"
   COMPONENT: "api"
   ROLE: "backend"
   APP_NAME: "yumido-netcore-api-cqrs"
@@ -33,6 +33,8 @@ env:
   FUNCTIONAL_TESTS_SRC_DIR: src/tests/Functional
   FUNCTIONAL_TESTS_RUN_DIR: ${{ github.workspace }}/tests
   FUNCTIONAL_TESTS_ARTEFACT_NAME: tests
+  SONAR_PROJECT_NAME: "dotnet-api-cqrs"
+
 jobs:
   Lint:
     runs-on: ubuntu-latest
@@ -60,7 +62,7 @@ jobs:
           SONAR_ORG: amido
           SONAR_URL: "https://sonarcloud.io"
           SONAR_PROPERTIES: '/d:sonar.cs.opencover.reportsPaths="/app/coverage/*.opencover.xml" /d:sonar.exclusions="**/*Tests" /d:sonar.coverage.exclusions="**/*Tests"'
-          PROJECT_NAME: stacks-dotnet
+          PROJECT_NAME: ${{ env.SONAR_PROJECT_NAME }}
           BUILD_BUILDNUMBER: 0.0.${{env.GITHUB_RUN_NUMBER}}
           # Dotnet Build
           SELF_REPO_SRC: src/api
