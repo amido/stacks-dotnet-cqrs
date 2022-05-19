@@ -17,6 +17,7 @@ using Amido.Stacks.Messaging.AWS.SQS;
 using Amido.Stacks.Messaging.AWS.SQS.Extensions;
 #endif
 #if (CosmosDb || DynamoDb)
+using Amido.Stacks.DynamoDB;
 using Amido.Stacks.DynamoDB.Extensions;
 using Amazon.DynamoDBv2;
 using xxAMIDOxx.xxSTACKSxx.Infrastructure.Repositories;
@@ -70,6 +71,7 @@ public static class DependencyRegistration
         services.AddCosmosDB();
         services.AddTransient<IMenuRepository, CosmosDbMenuRepository>();
 #elif (DynamoDb)
+        services.Configure<DynamoDbConfiguration>(context.Configuration.GetSection("DynamoDb"));
         services.AddDynamoDB();
         services.AddTransient<IMenuRepository, DynamoDbMenuRepository>();
 #elif (InMemoryDb)

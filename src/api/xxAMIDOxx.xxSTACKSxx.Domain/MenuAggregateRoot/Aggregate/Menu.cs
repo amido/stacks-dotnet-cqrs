@@ -16,7 +16,6 @@ using xxAMIDOxx.xxSTACKSxx.Domain.Converters;
 namespace xxAMIDOxx.xxSTACKSxx.Domain;
 
 #if (DynamoDb)
-    [DynamoDBTable("Menu")]
     public class Menu
     {
         [JsonProperty("Categories")]
