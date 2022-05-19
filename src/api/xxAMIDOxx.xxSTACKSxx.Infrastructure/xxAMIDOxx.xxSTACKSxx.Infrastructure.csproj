@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Amido.Stacks.Data.Documents.CosmosDB" Version="0.2.45" />
-    <PackageReference Include="Amido.Stacks.Messaging.AWS.SQS" Version="0.2.11" />
+    <PackageReference Include="Amido.Stacks.Messaging.AWS.SNS" Version="0.2.3" />
     <PackageReference Include="Amido.Stacks.Messaging.Azure.ServiceBus" Version="0.2.49" />
     <PackageReference Include="Amido.Stacks.Messaging.Azure.EventHub" Version="0.2.6-preview-master" />
     <PackageReference Include="Amido.Stacks.DependencyInjection" Version="0.2.19" />
