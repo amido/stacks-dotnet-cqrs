@@ -50,8 +50,6 @@ spec:
           - backend:
               serviceName: ${resource_def_name}
               servicePort: 80
-            # path: ${k8s_app_route}(/|$)(.*)
-            # pathType: ImplementationSpecific
             path: ${k8s_app_route}/*
             pathType: ImplementationSpecific
 ---
