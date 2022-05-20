@@ -128,14 +128,14 @@ jobs:
           TF_FILE_LOCATION: deploy/aws/app/kube
           TF_BACKEND_ARGS: region=${{ secrets.AWS_TF_STATE_REGION }},access_key=${{ secrets.AWS_ACCESS_KEY_ID }},secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }},bucket=${{ secrets.AWS_TF_STATE_BUCKET }},key=${{ secrets.AWS_TF_STATE_KEY }},dynamodb_table=${{ secrets.AWS_TF_STATE_DYNAMOTABLE }},encrypt=${{ secrets.AWS_TF_STATE_ENCRYPTION }}
           # Terraform Resource Configuration
-          TF_VAR_env:  "nonprod"
+          TF_VAR_env: "nonprod"
           TF_VAR_owner: ${{ env.OWNER }}
           TF_VAR_region: ${{ env.REGION }}
           TF_VAR_docker_image_name: ${{ env.DOCKER_IMAGE_NAME }}
           TF_VAR_STAGE: "nonprod"
-          TF_VAR_COMPANY: ${{ env.COMPANY }}
-          TF_VAR_PROJECT: ${{ env.PROJECT }}
-          TF_VAR_DOMAIN: "netcore-api-cqrs"
+          TF_VAR_NAME_COMPANY: ${{ env.COMPANY }}
+          TF_VAR_NAME_PROJECT: ${{ env.PROJECT }}
+          TF_VAR_NAME_DOMAIN: "netcore-api-cqrs"
           # ServiceBus and EventHub Functions & Workers
           TF_VAR_docker_image_name_worker: ${{ env.DOCKER_IMAGE_NAME_WORKER }}
           TF_VAR_docker_image_name_bg_worker: ${{ env.DOCKER_IMAGE_NAME_BG_WORKER }}
@@ -148,6 +148,7 @@ jobs:
           TF_VAR_ATTRIBUTE_NAME: "ID"
           TF_VAR_ATTRIBUTE_TYPE: "S"
           # SQS Configuration (controlled by APP_BUS_TYPE)
+          TF_VAR_APP_BUS_TYPE: ${{ env.APP_BUS_TYPE }}
           TF_VAR_ENABLE_QUEUE: true
           TF_VAR_QUEUE_NAME: "menu"
 
@@ -186,9 +187,9 @@ jobs:
           TF_VAR_region: ${{ env.REGION }}
           TF_VAR_docker_image_name: ${{ env.DOCKER_IMAGE_NAME }}
           TF_VAR_STAGE: "nonprod"
-          TF_VAR_COMPANY: ${{ env.COMPANY }}
-          TF_VAR_PROJECT: ${{ env.PROJECT }}
-          TF_VAR_DOMAIN: "netcore-api-cqrs"
+          TF_VAR_NAME_COMPANY: ${{ env.COMPANY }}
+          TF_VAR_NAME_PROJECT: ${{ env.PROJECT }}
+          TF_VAR_NAME_DOMAIN: "netcore-api-cqrs"
           # ServiceBus and EventHub Functions & Workers
           TF_VAR_docker_image_name_worker: ${{ env.DOCKER_IMAGE_NAME_WORKER }}
           TF_VAR_docker_image_name_bg_worker: ${{ env.DOCKER_IMAGE_NAME_BG_WORKER }}
@@ -201,6 +202,7 @@ jobs:
           TF_VAR_ATTRIBUTE_NAME: "ID"
           TF_VAR_ATTRIBUTE_TYPE: "S"
           # SQS Configuration (controlled by APP_BUS_TYPE)
+          TF_VAR_APP_BUS_TYPE: ${{ env.APP_BUS_TYPE }}
           TF_VAR_ENABLE_QUEUE: true
           TF_VAR_QUEUE_NAME: "menu"
           # K8S Target Configuration
