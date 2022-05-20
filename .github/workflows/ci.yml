@@ -1,10 +1,20 @@
-name: Run taskctl
+name: air.stacks-dotnet-cqrs
 
 # on:
 #   push:
-#     branches: [master]
+#     branches:
+#       - master
+#       - main
+#     paths:
+#       - 'build/github/**'
+#       - 'src/**'
+#       - 'deploy/aws/**' # TODO: Review this as new cloud provider targets are used
+#       - 'deploy/k8s/aws/**'  # TODO: Review this as new cloud provider targets are used
+#       - '.github/workflows/ci.yml'
 #   pull_request:
-#     branches: [master]
+#     branches:
+#         - master
+#         - main
 
 on: [push]
 
@@ -20,7 +30,7 @@ env:
   # K8S Configuration
   K8S_RESOURCE_FILE: "deploy/k8s/aws/api-deploy.yml"
   # K8S Additional Deploy-Templater var substitutions
-  DOCKER_REGISTRY: "${{ secrets.AWS_ACCOUNT_ID}}.dkr.ecr.eu-west-2.amazonaws.com" # (duplicates DOCKER_REGISTRY_NAME)
+  DOCKER_REGISTRY: "${{ secrets.AWS_ACCOUNT_ID}}.dkr.ecr.eu-west-2.amazonaws.com" # #TODO: Parse this with region, duplicates DOCKER_REGISTRY_NAME
   K8S_APP_ROUTE: "/api/menu"
   # App Config (for both TF and K8S)
   RESOURCE_DEF_NAME: "dotnet-api-cqrs"
@@ -34,10 +44,18 @@ env:
   FUNCTIONAL_TESTS_RUN_DIR: ${{ github.workspace }}/tests
   FUNCTIONAL_TESTS_ARTEFACT_NAME: tests
   SONAR_PROJECT_NAME: "dotnet-api-cqrs"
-  # Worker Config
-  APP_BUS_TYPE: 'sns'
+  # Events Function/s Config
+  APP_BUS_TYPE: 'sns' # We build all functions even though we don't use them all.
+  # Function Naming
+  DOCKER_IMAGE_NAME_BG_WORKER: "stacks-api-events-bg-worker"
+  DOCKER_IMAGE_ARGS_BG_WORKER: "src/worker"
   DOCKER_IMAGE_NAME_WORKER: "stacks-api-events-worker-function"
   DOCKER_IMAGE_ARGS_WORKER: "--build-arg function=xxAMIDOxx.xxSTACKSxx.Worker src/functions/func-cosmosdb-worker"
+  DOCKER_IMAGE_NAME_ASB_LISTENER: "stacks-api-events-listener-asb-function"
+  DOCKER_IMAGE_ARGS_ASB_LISTENER: "--build-arg function=xxAMIDOxx.xxSTACKSxx.Listener src/functions/func-asb-listener"
+  DOCKER_IMAGE_NAME_AEH_LISTENER: "stacks-api-events-listener-aeh-function"
+  DOCKER_IMAGE_ARGS_AEH_LISTENER: "--build-arg function=xxAMIDOxx.xxSTACKSxx.Listener src/functions/func-aeh-listener"
+
 
 jobs:
   Lint:
@@ -57,7 +75,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./build/github/templates/install-taskctl
-      - run: taskctl build:events
+      - run: taskctl build:events  # Note: We build all containers even though currently we only use the BG worker and main API containers
+        if: contains( env.APP_BUS_TYPE, 'sns')
         env:
           # TF Linting and Validation
           TF_FILE_LOCATION: deploy/aws/app/kube
@@ -79,37 +98,33 @@ jobs:
           AWS_DEFAULT_REGION: ${{ env.REGION }}
           # Publish test results
           # TODO: to publish coverage/etc.
+
+      - run: taskctl build:api
+        if: "!contains( env.APP_BUS_TYPE, 'sns')"
+        env:
+          # TF Linting and Validation
+          TF_FILE_LOCATION: deploy/aws/app/kube
+          # Testing
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_ORG: amido
+          SONAR_URL: "https://sonarcloud.io"
+          SONAR_PROPERTIES: '/d:sonar.cs.opencover.reportsPaths="/app/coverage/*.opencover.xml" /d:sonar.exclusions="**/*Tests" /d:sonar.coverage.exclusions="**/*Tests"'
+          PROJECT_NAME: ${{ env.SONAR_PROJECT_NAME }}-worker
+          BUILD_BUILDNUMBER: 0.0.${{env.GITHUB_RUN_NUMBER}}
+          # Dotnet Build
+          SELF_REPO_SRC: src/api
+          # Docker
           DOCKER_IMAGE_NAME_BG_WORKER: ${{ env.DOCKER_IMAGE_NAME_BG_WORKER }}
           DOCKER_IMAGE_ARGS_BG_WORKER: ${{ env.DOCKER_IMAGE_ARGS_BG_WORKER }}
+          DOCKER_CONTAINER_REGISTRY_NAME: ${{ env.DOCKER_REGISTRY_NAME }}
+          ECR_REGION: ${{ env.REGION }}
+          # AWS ECR Authorisation
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ env.REGION }}
+          # Publish test results
+          # TODO: to publish coverage/etc.
 
-
-      # - run: taskctl build:events # taskctl build:events is standard option in Azure/ADO - but it is not used here since we are not currently deploying Lambdas
-      #   if: contains( env.APP_BUS_TYPE, 'sns')
-      #   env:
-      #     # TF Linting and Validation
-      #     TF_FILE_LOCATION: deploy/aws/app/kube
-      #     # Testing
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #     SONAR_ORG: amido
-      #     SONAR_URL: "https://sonarcloud.io"
-      #     SONAR_PROPERTIES: '/d:sonar.cs.opencover.reportsPaths="/app/coverage/*.opencover.xml" /d:sonar.exclusions="**/*Tests" /d:sonar.coverage.exclusions="**/*Tests"'
-      #     PROJECT_NAME: ${{ env.SONAR_PROJECT_NAME }}-worker
-      #     BUILD_BUILDNUMBER: 0.0.${{env.GITHUB_RUN_NUMBER}}
-      #     # Dotnet Build
-      #     SELF_REPO_SRC: src/api
-      #     # Docker
-      #     DOCKER_IMAGE_NAME_BG_WORKER: ${{ env.DOCKER_IMAGE_NAME_BG_WORKER }}
-      #     DOCKER_IMAGE_ARGS_BG_WORKER: ${{ env.DOCKER_IMAGE_ARGS_BG_WORKER }}
-      #     DOCKER_CONTAINER_REGISTRY_NAME: ${{ env.DOCKER_REGISTRY_NAME }}
-      #     ECR_REGION: ${{ env.REGION }}
-      #     # AWS ECR Authorisation
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_DEFAULT_REGION: ${{ env.REGION }}
-      #     # Publish test results
-      #     # TODO: to publish coverage/etc.
-      #     # Publish test artifact
-      #     # TODO: to publish functional tests to run after deploy
 
       - name: Publish Functional Tests
         uses: actions/upload-artifact@v3

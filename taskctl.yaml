@@ -38,13 +38,11 @@ pipelines:
     - task: build:functional_tests
     - task: build:container
       name: build:container:api
-      condition: 1
       variables:
         - buildargs: src/api
         - imagename: $env:DOCKER_IMAGE_NAME
     - task: build:container
       name: build:container:bg_worker
-      condition: 1
       variables:
         - buildargs: $env:DOCKER_IMAGE_ARGS_BG_WORKER
         - imagename: $env:DOCKER_IMAGE_NAME_BG_WORKER
@@ -52,7 +50,6 @@ pipelines:
         - build:container:api
     - task: build:container
       name: build:container:worker
-      condition: 0
       variables:
         - buildargs: $env:DOCKER_IMAGE_ARGS_WORKER
         - imagename: $env:DOCKER_IMAGE_NAME_WORKER
@@ -60,7 +57,6 @@ pipelines:
         - build:container:bg_worker
     - task: build:container
       name: build:container:listener_asb
-      condition: 0
       variables:
         - buildargs: $env:DOCKER_IMAGE_ARGS_ASB_LISTENER
         - imagename: $env:DOCKER_IMAGE_NAME_ASB_LISTENER
@@ -68,7 +64,6 @@ pipelines:
         - build:container:worker
     - task: build:container
       name: build:container:listener_aeh
-      condition: 0
       variables:
         - buildargs: $env:DOCKER_IMAGE_ARGS_AEH_LISTENER
         - imagename: $env:DOCKER_IMAGE_NAME_AEH_LISTENER
