@@ -9,10 +9,5 @@ terraform {
       version = ">= 3.37.0"
     }
 
-    terraform-null-label = {
-      source  = "cloudposse/label/null"
-      version = "0.25.0"
-    }
-
   }
 }
