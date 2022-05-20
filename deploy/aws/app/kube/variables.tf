@@ -160,5 +160,5 @@ variable "attribute_name" {
 
 variable "attribute_type" {
   description = "Type of the attribute, which must be a scalar type: S, N, or B for (S)tring, (N)umber or (B)inary data."
-  type        = any
+  type        = string
 }
