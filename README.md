@@ -34,7 +34,7 @@ stacks-dotnet-cqrs
   - `func-cosmosdb-worker` is a CosmosDB change feed trigger function that publishes a `CosmosDbChangeFeedEvent` when a new entity has been added or was changed to CosmosDB
 - The `worker` folder contains a background worker that listens to all event types from the ASB topic and shows example handlers for them and the use of the [Amido.Stacks.Messaging.Azure.ServiceBus](https://github.com/amido/stacks-dotnet-packages-messaging-asb) package.
 
-The API, functions and worker all depend on the [Amido.Stacks.Messaging.Azure.ServiceBus](https://github.com/amido/stacks-dotnet-packages-messaging-asb),  the [Amido.Stacks.Messaging.Azure.EventHub](https://github.com/amido/stacks-dotnet-packages-messaging-aeh) or the [Amido.Stacks.SQS](https://github.com/amido/stacks-dotnet-packages-sqs) packages for their communication with either Azure Service Bus, Azure Event Hub or AWS SQS depending on the specific implementation.
+The API, functions and worker all depend on the [Amido.Stacks.Messaging.Azure.ServiceBus](https://github.com/amido/stacks-dotnet-packages-messaging-asb),  the [Amido.Stacks.Messaging.Azure.EventHub](https://github.com/amido/stacks-dotnet-packages-messaging-aeh) or the [Amido.Stacks.SNS](https://github.com/amido/stacks-dotnet-packages-sns) packages for their communication with either Azure Service Bus, Azure Event Hub or AWS SNS depending on the specific implementation.
 
 The functions and workers are all stand-alone implementations that can be used together or separately in different projects.
 
@@ -116,31 +116,93 @@ It's entirely up to you where you want to generate the WebAPI. For example your 
 The template "Amido Stacks Web Api" was created successfully.
 ```
 
-## DynamoDb Setup
+## Creating a new WebAPI with CQRS event sourcing
 
-You need a DynamoDB instance in order to use this library. You can follow the official instructions provided by AWS [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SettingUp.DynamoWebService.html).
+Let's say you want to create a brand new WebAPI with CQRS and event sourcing for your project.
 
-Also the object(s) from your application that you want to store in DynamoDB have to conform to the [Object Persistence Model](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DotNetSDKHighLevel.html). That means your object and its fields will need to have certain attribute annotations like `[DynamoDBTable("Menu")]` etc.
+It's entirely up to you where you want to generate the WebAPI. For example your company has the name structure `Foo.Bar` as a prefix to all your namespaces where `Foo` is the company name and `Bar` is the name of the project. If you want the WebAPI to have a domain `Warehouse`, use `CosmosDb`, publish events to `ServiceBus` and be generated inside a folder called `new-proj-folder` you'll execute the following command:
 
-**IMPORTANT:** The DynamoDB table must have the same name as your Domain. If your domain is `Menu` then the table created in AWS has to have the same name.
+```shell
+% dotnet new stacks-cqrs-app -n Foo.Bar -do Warehouse -db CosmosDb -e ServiceBus -o new-proj-folder
+The template "Amido Stacks CQRS Web API" was created successfully.
+```
 
-Relevant documentation pages that you can follow to set up your profile:
+Alternatively, if you wanted to generate the WebAPI with structure `Bar.Baz` as a prefix to all your namespaces where `Bar` is the company name and `Baz` is the name of the project. And you want the WebAPI to have a domain `Warehouse`, use `DynamoDb`, publish events to `AwsSns` and be generated inside a folder called `new-proj-folder` you'll execute the following command:
 
-- [Configuration and credential file settings](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)
+```shell
+% dotnet new stacks-cqrs-app -n Foo.Bar -do Warehouse -db DynamoDb -e AwsSns -o new-proj-folder
+The template "Amido Stacks CQRS Web API" was created successfully.
+```
 
-- [Named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html)
+## Adding a function template to your project
 
-This library assumes you'll use the `AWS CLI` tools and will have configured your access keys via the `aws configure` command.
+Let's say you want to add either `stacks-az-func-cosmosdb-worker` or `stacks-az-func-asb-listener` function apps to your solution or project.
 
-### Configuration
+It's entirely up to you where you want to generate the function project. For example your project has the name structure `Foo.Bar` as a prefix to all your namespaces. If you want the function project to be generated inside a folder called `Foo.Bar` you'll do the following:
 
-Relevant documentation pages that you can follow to set up your profile:
+```shell
+% cd functions
 
-- [Configuration and credential file settings](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)
+% dotnet new stacks-az-func-cosmosdb-worker -n Foo.Bar -do Menu
+The template "Amido Stacks Azure Function CosmosDb Worker" was created successfully.
 
-- [Named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html)
+% ls -la
+total 0
+drwxr-xr-x  3 amido  staff   96 23 Aug 15:51 .
+drwxr-xr-x  9 amido  staff  288 16 Aug 14:06 ..
+drwxr-xr-x  6 amido  staff  192 23 Aug 15:51 Foo.Bar
 
-This library assumes you'll use the `AWS CLI` tools and will have configured your access keys via the `aws configure` command.
+% ls -la Foo.Bar
+total 16
+drwxr-xr-x  6 amido  staff   192 23 Aug 15:51 .
+drwxr-xr-x  3 amido  staff    96 23 Aug 15:51 ..
+-rw-r--r--  1 amido  staff   639 23 Aug 15:51 Dockerfile
+drwxr-xr-x  9 amido  staff   288 23 Aug 15:51 Foo.Bar.Worker
+drwxr-xr-x  4 amido  staff   128 23 Aug 15:51 Foo.Bar.Worker.UnitTests
+-rw-r--r--  1 amido  staff  1643 23 Aug 15:51 Foo.Bar.Worker.sln
+```
+
+As you can see your `Foo.Bar` namespace prefix got added to the class names and is reflected not only in the filename, but inside the codebase as well.
+
+To generate the template with your own namespace, but in a different folder you'll have to pass the `-o` flag with your desired path.
+
+```shell
+% dotnet new stacks-az-func-cosmosdb-worker -n Foo.Bar -o cosmosdb-worker
+The template "Amido Stacks Azure Function CosmosDb Worker" was created successfully.
+
+% ls -la
+total 0
+drwxr-xr-x  3 amido  staff   96 23 Aug 15:58 .
+drwxr-xr-x  9 amido  staff  288 16 Aug 14:06 ..
+drwxr-xr-x  6 amido  staff  192 23 Aug 15:58 cosmosdb-worker
+
+% ls -la cosmosdb-worker
+total 16
+drwxr-xr-x  6 amido  staff   192 23 Aug 15:58 .
+drwxr-xr-x  3 amido  staff    96 23 Aug 15:58 ..
+-rw-r--r--  1 amido  staff   639 23 Aug 15:58 Dockerfile
+drwxr-xr-x  9 amido  staff   288 23 Aug 15:58 Foo.Bar.Worker
+drwxr-xr-x  4 amido  staff   128 23 Aug 15:58 Foo.Bar.Worker.UnitTests
+-rw-r--r--  1 amido  staff  1643 23 Aug 15:58 Foo.Bar.Worker.sln
+```
+
+Now you can build the solution and run/deploy it. If you want to add the existing projects to your own solution you can go to the folder where your `.sln` file lives and execute the following commands
+
+```shell
+% cd my-proj-folder
+
+% ls -la
+total 16
+drwxr-xr-x  6 amido  staff   192 23 Aug 15:58 .
+drwxr-xr-x  3 amido  staff    96 23 Aug 15:58 ..
+-rw-r--r--  1 amido  staff   639 23 Aug 15:58 src
+-rw-r--r--  1 amido  staff  1643 23 Aug 15:58 Foo.Bar.sln
+
+% dotnet sln add path/to/function/Foo.Bar.Worker
+% dotnet sln add path/to/function/Foo.Bar.Worker.UnitTests
+```
+
+Now both `Foo.Bar.Worker` and `Foo.Bar.Worker.UnitTests` projects are part of your `Foo.Bar` solution.
 
 ## Adding a CQRS template to your existing solution
 
@@ -224,97 +286,27 @@ This will happen if the newly generated template project names collide with your
 
 If you don't want to do that you can generate the new projects with a different namespace (what was shown above) and then copy/remove the things you don't need.
 
-## Creating a new WebAPI with CQRS event sourcing
+## DynamoDB Setup
 
-Let's say you want to create a brand new WebAPI with CQRS and event sourcing for your project.
+You need a DynamoDB instance in order to use this library. You can follow the official instructions provided by AWS [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SettingUp.DynamoWebService.html).
 
-It's entirely up to you where you want to generate the WebAPI. For example your company has the name structure `Foo.Bar` as a prefix to all your namespaces where `Foo` is the company name and `Bar` is the name of the project. If you want the WebAPI to have a domain `Warehouse`, use `CosmosDb`, publish events to `ServiceBus` and be generated inside a folder called `new-proj-folder` you'll execute the following command:
+It should be noted that the object(s) from your application that you want to store in DynamoDB have to conform to the [Object Persistence Model](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DotNetSDKHighLevel.html).
 
-```shell
-% dotnet new stacks-cqrs-app -n Foo.Bar -do Warehouse -db CosmosDb -e ServiceBus -o new-proj-folder
-The template "Amido Stacks CQRS Web API" was created successfully.
-```
+Relevant documentation pages that you can follow to set up your profile:
 
-Alternatively, if you wanted to generate the WebAPI with structure `Bar.Baz` as a prefix to all your namespaces where `Bar` is the company name and `Baz` is the name of the project. And you want the WebAPI to have a domain `Warehouse`, use `DynamoDb`, publish events to `AwsSqs` and be generated inside a folder called `new-proj-folder` you'll execute the following command:
+- [Configuration and credential file settings](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)
 
-```shell
-% dotnet new stacks-cqrs-app -n Foo.Bar -do Warehouse -db DynamoDb -e AwsSqs -o new-proj-folder
-The template "Amido Stacks CQRS Web API" was created successfully.
-```
+- [Named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html)
 
-## Adding a function template to your project
+This library assumes you'll use the `AWS CLI` tools and will have configured your access keys via the `aws configure` command.
 
-Let's say you want to add either `stacks-az-func-cosmosdb-worker` or `stacks-az-func-asb-listener` function apps to your solution or project.
+### Amido.Stacks.DynamoDB package
 
-It's entirely up to you where you want to generate the function project. For example your project has the name structure `Foo.Bar` as a prefix to all your namespaces. If you want the function project to be generated inside a folder called `Foo.Bar` you'll do the following:
-
-```shell
-% cd functions
-
-% dotnet new stacks-az-func-cosmosdb-worker -n Foo.Bar -do Menu
-The template "Amido Stacks Azure Function CosmosDb Worker" was created successfully.
-
-% ls -la
-total 0
-drwxr-xr-x  3 amido  staff   96 23 Aug 15:51 .
-drwxr-xr-x  9 amido  staff  288 16 Aug 14:06 ..
-drwxr-xr-x  6 amido  staff  192 23 Aug 15:51 Foo.Bar
-
-% ls -la Foo.Bar
-total 16
-drwxr-xr-x  6 amido  staff   192 23 Aug 15:51 .
-drwxr-xr-x  3 amido  staff    96 23 Aug 15:51 ..
--rw-r--r--  1 amido  staff   639 23 Aug 15:51 Dockerfile
-drwxr-xr-x  9 amido  staff   288 23 Aug 15:51 Foo.Bar.Worker
-drwxr-xr-x  4 amido  staff   128 23 Aug 15:51 Foo.Bar.Worker.UnitTests
--rw-r--r--  1 amido  staff  1643 23 Aug 15:51 Foo.Bar.Worker.sln
-```
-
-As you can see your `Foo.Bar` namespace prefix got added to the class names and is reflected not only in the filename, but inside the codebase as well.
-
-To generate the template with your own namespace, but in a different folder you'll have to pass the `-o` flag with your desired path.
-
-```shell
-% dotnet new stacks-az-func-cosmosdb-worker -n Foo.Bar -o cosmosdb-worker
-The template "Amido Stacks Azure Function CosmosDb Worker" was created successfully.
-
-% ls -la
-total 0
-drwxr-xr-x  3 amido  staff   96 23 Aug 15:58 .
-drwxr-xr-x  9 amido  staff  288 16 Aug 14:06 ..
-drwxr-xr-x  6 amido  staff  192 23 Aug 15:58 cosmosdb-worker
-
-% ls -la cosmosdb-worker
-total 16
-drwxr-xr-x  6 amido  staff   192 23 Aug 15:58 .
-drwxr-xr-x  3 amido  staff    96 23 Aug 15:58 ..
--rw-r--r--  1 amido  staff   639 23 Aug 15:58 Dockerfile
-drwxr-xr-x  9 amido  staff   288 23 Aug 15:58 Foo.Bar.Worker
-drwxr-xr-x  4 amido  staff   128 23 Aug 15:58 Foo.Bar.Worker.UnitTests
--rw-r--r--  1 amido  staff  1643 23 Aug 15:58 Foo.Bar.Worker.sln
-```
-
-Now you can build the solution and run/deploy it. If you want to add the existing projects to your own solution you can go to the folder where your `.sln` file lives and execute the following commands
-
-```shell
-% cd my-proj-folder
-
-% ls -la
-total 16
-drwxr-xr-x  6 amido  staff   192 23 Aug 15:58 .
-drwxr-xr-x  3 amido  staff    96 23 Aug 15:58 ..
--rw-r--r--  1 amido  staff   639 23 Aug 15:58 src
--rw-r--r--  1 amido  staff  1643 23 Aug 15:58 Foo.Bar.sln
-
-% dotnet sln add path/to/function/Foo.Bar.Worker
-% dotnet sln add path/to/function/Foo.Bar.Worker.UnitTests
-```
-
-Now both `Foo.Bar.Worker` and `Foo.Bar.Worker.UnitTests` projects are part of your `Foo.Bar` solution.
+This template uses the [Amido.Stacks.DynamoDB](https://github.com/amido/stacks-dotnet-packages-dynamodb) package to connect and use DynamoDB.
 
 ## Running the API locally on MacOS
 
-To run the API locally on MacOS there are a couple of prerequisites that you have to be aware of. You'll need a CosmosDB emulator/instance or an instance of DynamoDB on AWS. You also might need access to Azure/AWS for Azure Service Bus, Azure Event Hubs or AWS SQS.
+To run the API locally on MacOS there are a couple of prerequisites that you have to be aware of. You'll need a CosmosDB emulator/instance or an instance of DynamoDB on AWS. You also might need access to Azure/AWS for Azure Service Bus, Azure Event Hubs or AWS SNS.
 
 ### Docker CosmosDB emulator setup
 
@@ -331,11 +323,11 @@ You'll need an Azure Service Bus namespace and a topic with subscriber in order 
 
 You'll will need an Azure Event Hub namespace and an Event Hub to publish application events. You will also need a blob container storage account.
 
-### AWS SQS
+### AWS SNS
 
-You'll need an AWS SQS Queue setup with a defined QueueUrl in order to be able to publish application events.
+You'll need an AWS SNS Topic setup with a defined TopicArn in order to be able to publish application events.
 
-### Configuring CosmosDb, ServiceBus, EventHub or SQS
+### Configuring CosmosDb, ServiceBus, EventHub or SNS
 
 Now that you have your CosmosDB all set, you can point the API project to it. In `appsettings.json` you can see the following sections
 
@@ -382,15 +374,18 @@ Now that you have your CosmosDB all set, you can point the API project to it. In
         "BlobContainerName": "stacks-blob-container-name"
     }
 }
-"AwsSqsConfiguration": {
-    "QueueUrl": {
-            "Identifier": "SQS_QUEUE_URL",
+"AwsSnsConfiguration": {
+    "TopicArn": {
+            "Identifier": "TOPIC_ARN",
             "Source": "Environment"
         }
 }
+"AWS": {
+    "Region": "eu-west-2"
+}
 ```
 
-The `SecurityKeySecret` and `ConnectionStringSecret` sections are needed because of our use of the `Amido.Stacks.Configuration` package. `COSMOSDB_KEY`, `SERVICEBUS_CONNECTIONSTRING`, `EVENTHUB_CONNECTIONSTRING` or `SQS_QUEUE_URL` have to be set before you can run the project. If you want to debug the solution with VSCode you usually have a `launch.json` file. In that file there's an `env` section where you can put environment variables for the current session.
+The `SecurityKeySecret` and `ConnectionStringSecret` sections are needed because of our use of the `Amido.Stacks.Configuration` package. `COSMOSDB_KEY`, `SERVICEBUS_CONNECTIONSTRING`, `EVENTHUB_CONNECTIONSTRING` or `TOPIC_ARN` have to be set before you can run the project. If you want to debug the solution with VSCode you usually have a `launch.json` file. In that file there's an `env` section where you can put environment variables for the current session.
 
 ```json
 "env": {
@@ -398,17 +393,17 @@ The `SecurityKeySecret` and `ConnectionStringSecret` sections are needed because
     "COSMOSDB_KEY": "YOUR_COSMOSDB_PRIMARY_KEY",
     "SERVICEBUS_CONNECTIONSTRING": "YOUR_SERVICE_BUS_CONNECTION_STRING",
     "EVENTHUB_CONNECTIONSTRING": "YOUR_EVENT_HUB_CONNECTION_STRING",
-    "SQS_QUEUE_URL": "YOUR_SQS_QUEUE_URL"
+    "TOPIC_ARN": "YOUR_TOPIC_ARN"
 }
 ```
 
-If you want to run the application without VSCode you'll have to set the `COSMOSDB_KEY`, `SERVICEBUS_CONNECTIONSTRING`, `EVENTHUB_CONNECTIONSTRING` or `SQS_QUEUE_URL` environment variables through your terminal.
+If you want to run the application without VSCode you'll have to set the `COSMOSDB_KEY`, `SERVICEBUS_CONNECTIONSTRING`, `EVENTHUB_CONNECTIONSTRING` or `TOPIC_ARN` environment variables through your terminal.
 
 ```shell
 export COSMOSDB_KEY=YOUR_COSMOSDB_PRIMARY_KEY
 export SERVICEBUS_CONNECTIONSTRING=YOUR_SERVICE_BUS_CONNECTION_STRING
 export EVENTHUB_CONNECTIONSTRING=YOUR_EVENT_HUB_CONNECTION_STRING
-export SQS_QUEUE_URL=YOUR_SQS_QUEUE_URL
+export TOPIC_ARN=YOUR_TOPIC_ARN
 ```
 
 This will set the environment variables only for the current session of your terminal.
@@ -420,7 +415,7 @@ To set the environment variables permanently on your system you'll have to edit 
 echo 'export COSMOSDB_KEY=YOUR_COSMOSDB_PRIMARY_KEY' >> ~/.zshenv
 echo 'export SERVICEBUS_CONNECTIONSTRING=YOUR_SERVICE_BUS_CONNECTION_STRING' >> ~/.zshenv
 echo 'export EVENTHUB_CONNECTIONSTRING=YOUR_EVENT_HUB_CONNECTION_STRING' >> ~/.zshenv
-echo 'export SQS_QUEUE_URL=YOUR_SQS_QUEUE_URL' >> ~/.zshenv
+echo 'export TOPIC_ARN=YOUR_TOPIC_ARN' >> ~/.zshenv
 ```
 
 If you wan to run the application using Visual Studio, you will need to set the environment variables in the `launchSettings.json` file contained in the Properties folder of the solution.
@@ -434,7 +429,7 @@ If you wan to run the application using Visual Studio, you will need to set the 
     "STORAGE_CONNECTIONSTRING": "",
     "OTLP_SERVICENAME": "",
     "OTLP_ENDPOINT": "",
-    "SQS_QUEUE_URL": "",
+    "TOPIC_ARN": "",
 }
 ```
 
