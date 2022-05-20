@@ -132,25 +132,25 @@ jobs:
           TF_VAR_owner: ${{ env.OWNER }}
           TF_VAR_region: ${{ env.REGION }}
           TF_VAR_docker_image_name: ${{ env.DOCKER_IMAGE_NAME }}
-          TF_VAR_STAGE: "nonprod"
-          TF_VAR_NAME_COMPANY: ${{ env.COMPANY }}
-          TF_VAR_NAME_PROJECT: ${{ env.PROJECT }}
-          TF_VAR_NAME_DOMAIN: "netcore-api-cqrs"
+          TF_VAR_stage: "nonprod"
+          TF_VAR_name_company: ${{ env.COMPANY }}
+          TF_VAR_name_project: ${{ env.PROJECT }}
+          TF_VAR_name_domain: "netcore-api-cqrs"
           # ServiceBus and EventHub Functions & Workers
           TF_VAR_docker_image_name_worker: ${{ env.DOCKER_IMAGE_NAME_WORKER }}
           TF_VAR_docker_image_name_bg_worker: ${{ env.DOCKER_IMAGE_NAME_BG_WORKER }}
           TF_VAR_docker_image_name_asb_listener: ${{ env.DOCKER_IMAGE_NAME_ASB_LISTENER }}
           TF_VAR_docker_image_name_aeh_listener: ${{ env.DOCKER_IMAGE_NAME_AEH_LISTENER }}
           # Dynamo-DB Configuration
-          TF_VAR_ENABLE_DYNAMODB: true
-          TF_VAR_TABLE_NAME: "menu"
-          TF_VAR_HASH_KEY: "ID"
-          TF_VAR_ATTRIBUTE_NAME: "ID"
-          TF_VAR_ATTRIBUTE_TYPE: "S"
+          TF_VAR_enable_dynamodb: true
+          TF_VAR_table_name: "menu"
+          TF_VAR_hash_key: "ID"
+          TF_VAR_attribute_name: "ID"
+          TF_VAR_attribute_type: "S"
           # SQS Configuration (controlled by APP_BUS_TYPE)
-          TF_VAR_APP_BUS_TYPE: ${{ env.APP_BUS_TYPE }}
-          TF_VAR_ENABLE_QUEUE: true
-          TF_VAR_QUEUE_NAME: "menu"
+          TF_VAR_app_bus_type: ${{ env.APP_BUS_TYPE }}
+          TF_VAR_enable_queue: true
+          TF_VAR_queue_name: "menu"
 
   DeployDev:
     needs: AppInfraDev
@@ -186,25 +186,25 @@ jobs:
           TF_VAR_owner: ${{ env.OWNER }}
           TF_VAR_region: ${{ env.REGION }}
           TF_VAR_docker_image_name: ${{ env.DOCKER_IMAGE_NAME }}
-          TF_VAR_STAGE: "nonprod"
-          TF_VAR_NAME_COMPANY: ${{ env.COMPANY }}
-          TF_VAR_NAME_PROJECT: ${{ env.PROJECT }}
-          TF_VAR_NAME_DOMAIN: "netcore-api-cqrs"
+          TF_VAR_stage: "nonprod"
+          TF_VAR_name_company: ${{ env.COMPANY }}
+          TF_VAR_name_project: ${{ env.PROJECT }}
+          TF_VAR_name_domain: "netcore-api-cqrs"
           # ServiceBus and EventHub Functions & Workers
           TF_VAR_docker_image_name_worker: ${{ env.DOCKER_IMAGE_NAME_WORKER }}
           TF_VAR_docker_image_name_bg_worker: ${{ env.DOCKER_IMAGE_NAME_BG_WORKER }}
           TF_VAR_docker_image_name_asb_listener: ${{ env.DOCKER_IMAGE_NAME_ASB_LISTENER }}
           TF_VAR_docker_image_name_aeh_listener: ${{ env.DOCKER_IMAGE_NAME_AEH_LISTENER }}
           # Dynamo-DB Configuration
-          TF_VAR_ENABLE_DYNAMODB: true
-          TF_VAR_TABLE_NAME: "menu"
-          TF_VAR_HASH_KEY: "ID"
-          TF_VAR_ATTRIBUTE_NAME: "ID"
-          TF_VAR_ATTRIBUTE_TYPE: "S"
+          TF_VAR_enable_dynamodb: true
+          TF_VAR_table_name: "menu"
+          TF_VAR_hash_key: "ID"
+          TF_VAR_attribute_name: "ID"
+          TF_VAR_attribute_type: "S"
           # SQS Configuration (controlled by APP_BUS_TYPE)
-          TF_VAR_APP_BUS_TYPE: ${{ env.APP_BUS_TYPE }}
-          TF_VAR_ENABLE_QUEUE: true
-          TF_VAR_QUEUE_NAME: "menu"
+          TF_VAR_app_bus_type: ${{ env.APP_BUS_TYPE }}
+          TF_VAR_enable_queue: true
+          TF_VAR_queue_name: "menu"
           # K8S Target Configuration
           K8S_CLUSTER_TARGET: "amido-stacks-dev-h0ax6owA"
           K8S_CLUSTER_IDENTIFIER: "eu-west-2"
