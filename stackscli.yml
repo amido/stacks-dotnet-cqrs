@@ -30,7 +30,7 @@ init:
       desc: Install "stacks-cqrs-app" template from the repo directory
     - action: cmd
       cmd: dotnet
-      args: new stacks-cqrs-app -n {{ .Input.Business.Company }}.{{ .Input.Business.Domain }} -do {{ .Input.Business.Domain }} -o {{ .Project.Directory.WorkingDir }}
+      args: new stacks-cqrs-app -n {{ .Input.Business.Company }}.{{ .Input.Business.Component }} --domain {{ .Input.Business.Domain }} -o {{ .Project.Directory.WorkingDir }}
       desc: Create a project using the "stacks-cqrs-app" template
     - action: cmd
       cmd: dotnet
