@@ -19,7 +19,7 @@ module "app" {
   hash_key        = var.hash_key
   attribute_name  = var.attribute_name
   attribute_type  = var.attribute_type
-  enable_queue    = contains(split(",", var.app_bus_type), "sqs") ? var.enable_queue : 0
+  enable_queue    = contains(split(",", var.app_bus_type), "sqs") ? var.enable_queue : false
   queue_name      = "${module.app_label.id}-${var.queue_name}"
   tags            = module.app_label.tags
 }
