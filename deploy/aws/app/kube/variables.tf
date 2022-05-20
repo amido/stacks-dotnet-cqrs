@@ -104,11 +104,6 @@ variable "location_name_map" {
   }
 }
 
-variable "region" {
-  description = "AWS region-code corresponding to aws infrastructure deployed, example for london it should be eu-west-2."
-  type        = string
-}
-
 ###############################################
 # Messaging
 ###############################################
@@ -125,7 +120,7 @@ variable "app_bus_type" {
         var.app_bus_type == "sns",
         var.app_bus_type == null
       ])
-      error_message = "The app_bus_type must be <null>, servicebus, eventhub, sqs, or sns"
+      error_message = "App_bus_type must be null, servicebus, eventhub, sqs, or sns."
   }
 }
 
