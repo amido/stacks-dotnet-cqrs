@@ -1,5 +1,5 @@
 ############################################
-# Repositories
+# Image Repositories
 ############################################
 variable "docker_image_name" {
   description = "Main docker image"
@@ -104,16 +104,33 @@ variable "location_name_map" {
   }
 }
 
-variable "resource_group_location" {
-  description = "AWS region-code corresponding to aws infrastrcuture deployed, example for london it should be eu-west-2."
+variable "region" {
+  description = "AWS region-code corresponding to aws infrastructure deployed, example for london it should be eu-west-2."
   type        = string
 }
 
 ###############################################
-# SQS
+# Messaging
 ###############################################
+
+variable "app_bus_type" {
+  description = "Which app bus to use"
+  type        = string
+  nullable = true
+  validation {
+      condition = anytrue([
+        var.app_bus_type == "servicebus",
+        var.app_bus_type == "eventhub",
+        var.app_bus_type == "sqs",
+        var.app_bus_type == "sns",
+        var.app_bus_type == null
+      ])
+      error_message = "The app_bus_type must be <null>, servicebus, eventhub, sqs, or sns"
+  }
+}
+
 variable "enable_queue" {
-  description = "Whether to create SQS queue."
+  description = "Whether to create SQS queue. Must match app_bus_type above."
   type        = bool
 }
 

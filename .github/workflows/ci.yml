@@ -45,20 +45,19 @@ env:
   FUNCTIONAL_TESTS_ARTEFACT_NAME: tests
   SONAR_PROJECT_NAME: "dotnet-api-cqrs"
   # Events Function/s Config
-  APP_BUS_TYPE: 'sns' # We build all functions even though we don't use them all.
-  # Worker & Listener Image Naming
+  APP_BUS_TYPE: 'sqs' # Supports sqs, sns, servicebus, eventhub
+  # Worker & Listener Image Naming (only implemented for ServiceBus and EventHub Messaging)
   DOCKER_IMAGE_NAME_BG_WORKER: "stacks-api-events-bg-worker"
   DOCKER_IMAGE_ARGS_BG_WORKER: "src/worker"
-  DOCKER_IMAGE_NAME_WORKER: "stacks-api-events-worker-function"
-  DOCKER_IMAGE_ARGS_WORKER: "--build-arg function=xxAMIDOxx.xxSTACKSxx.Worker src/functions/func-cosmosdb-worker"
   DOCKER_IMAGE_NAME_ASB_LISTENER: "stacks-api-events-listener-asb-function"
   DOCKER_IMAGE_ARGS_ASB_LISTENER: "--build-arg function=xxAMIDOxx.xxSTACKSxx.Listener src/functions/func-asb-listener"
   DOCKER_IMAGE_NAME_AEH_LISTENER: "stacks-api-events-listener-aeh-function"
   DOCKER_IMAGE_ARGS_AEH_LISTENER: "--build-arg function=xxAMIDOxx.xxSTACKSxx.Listener src/functions/func-aeh-listener"
-  # Worker K&S Resource Naming
+  # Worker K&S Resource Naming (only implemented for ServiceBus and EventHub Messaging)
   RESOURCE_DEF_WORKER_NAME: "dotnet-api-worker"
   APP_WORKER_NAME: "worker"
-
+  DOCKER_IMAGE_NAME_WORKER: "stacks-api-events-worker-function"
+  DOCKER_IMAGE_ARGS_WORKER: "--build-arg function=xxAMIDOxx.xxSTACKSxx.Worker src/functions/func-cosmosdb-worker"
 jobs:
   Lint:
     runs-on: ubuntu-latest
@@ -77,8 +76,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./build/github/templates/install-taskctl
-      - run: taskctl build:events  # Note: We build all containers even though currently we only use the BG worker and main API containers
-        if: contains( env.APP_BUS_TYPE, 'sns')
+      - run: taskctl build:api  # Note: There are no workers or functions for SQS/SNS. When these are implemented, use pipeline `build:events`
         env:
           # TF Linting and Validation
           TF_FILE_LOCATION: deploy/aws/app/kube
@@ -100,31 +98,6 @@ jobs:
           AWS_DEFAULT_REGION: ${{ env.REGION }}
           # Publish test results
           # TODO: to publish coverage/etc.
-
-      - run: taskctl build:api
-        if: "!contains( env.APP_BUS_TYPE, 'sns')"
-        env:
-          # TF Linting and Validation
-          TF_FILE_LOCATION: deploy/aws/app/kube
-          # Testing
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_ORG: amido
-          SONAR_URL: "https://sonarcloud.io"
-          SONAR_PROPERTIES: '/d:sonar.cs.opencover.reportsPaths="/app/coverage/*.opencover.xml" /d:sonar.exclusions="**/*Tests" /d:sonar.coverage.exclusions="**/*Tests"'
-          PROJECT_NAME: ${{ env.SONAR_PROJECT_NAME }}-worker
-          BUILD_BUILDNUMBER: 0.0.${{env.GITHUB_RUN_NUMBER}}
-          # Dotnet Build
-          SELF_REPO_SRC: src/api
-          # Docker
-          DOCKER_CONTAINER_REGISTRY_NAME: ${{ env.DOCKER_REGISTRY_NAME }}
-          ECR_REGION: ${{ env.REGION }}
-          # AWS ECR Authorisation
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ env.REGION }}
-          # Publish test results
-          # TODO: to publish coverage/etc.
-
 
       - name: Publish Functional Tests
         uses: actions/upload-artifact@v3
@@ -155,14 +128,31 @@ jobs:
           TF_FILE_LOCATION: deploy/aws/app/kube
           TF_BACKEND_ARGS: region=${{ secrets.AWS_TF_STATE_REGION }},access_key=${{ secrets.AWS_ACCESS_KEY_ID }},secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }},bucket=${{ secrets.AWS_TF_STATE_BUCKET }},key=${{ secrets.AWS_TF_STATE_KEY }},dynamodb_table=${{ secrets.AWS_TF_STATE_DYNAMOTABLE }},encrypt=${{ secrets.AWS_TF_STATE_ENCRYPTION }}
           # Terraform Resource Configuration
-          TF_VAR_env:  ${{ env.ENV_NAME }}
+          TF_VAR_env:  "nonprod"
           TF_VAR_owner: ${{ env.OWNER }}
           TF_VAR_region: ${{ env.REGION }}
           TF_VAR_docker_image_name: ${{ env.DOCKER_IMAGE_NAME }}
+          # ServiceBus and EventHub Functions & Workers
           TF_VAR_docker_image_name_worker: ${{ env.DOCKER_IMAGE_NAME_WORKER }}
           TF_VAR_docker_image_name_bg_worker: ${{ env.DOCKER_IMAGE_NAME_BG_WORKER }}
           TF_VAR_docker_image_name_asb_listener: ${{ env.DOCKER_IMAGE_NAME_ASB_LISTENER }}
           TF_VAR_docker_image_name_aeh_listener: ${{ env.DOCKER_IMAGE_NAME_AEH_LISTENER }}
+          # Label configuration
+          TF_VAR_STAGE: "nonprod"
+          TF_VAR_COMPANY: ${{ env.COMPANY }}
+          TF_VAR_OWNER: ${{ env.OWNER }}
+          TF_VAR_PROJECT: ${{ env.PROJECT }}
+          TF_VAR_REGION: ${{ env.REGION }}
+          TF_VAR_DOMAIN: "netcore-api-cqrs"
+          # Dynamo-DB Configuration
+          TF_VAR_ENABLE_DYNAMODB: true
+          TF_VAR_TABLE_NAME: "menu"
+          TF_VAR_HASH_KEY: "ID"
+          TF_VAR_ATTRIBUTE_NAME: "ID"
+          TF_VAR_ATTRIBUTE_TYPE: "S"
+          # SQS Configuration (controlled by APP_BUS_TYPE)
+          TF_VAR_ENABLE_QUEUE: true
+          TF_VAR_QUEUE_NAME: "menu"
 
   DeployDev:
     needs: AppInfraDev
