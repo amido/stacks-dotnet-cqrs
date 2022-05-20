@@ -132,18 +132,15 @@ jobs:
           TF_VAR_owner: ${{ env.OWNER }}
           TF_VAR_region: ${{ env.REGION }}
           TF_VAR_docker_image_name: ${{ env.DOCKER_IMAGE_NAME }}
+          TF_VAR_STAGE: "nonprod"
+          TF_VAR_COMPANY: ${{ env.COMPANY }}
+          TF_VAR_PROJECT: ${{ env.PROJECT }}
+          TF_VAR_DOMAIN: "netcore-api-cqrs"
           # ServiceBus and EventHub Functions & Workers
           TF_VAR_docker_image_name_worker: ${{ env.DOCKER_IMAGE_NAME_WORKER }}
           TF_VAR_docker_image_name_bg_worker: ${{ env.DOCKER_IMAGE_NAME_BG_WORKER }}
           TF_VAR_docker_image_name_asb_listener: ${{ env.DOCKER_IMAGE_NAME_ASB_LISTENER }}
           TF_VAR_docker_image_name_aeh_listener: ${{ env.DOCKER_IMAGE_NAME_AEH_LISTENER }}
-          # Label configuration
-          TF_VAR_STAGE: "nonprod"
-          TF_VAR_COMPANY: ${{ env.COMPANY }}
-          TF_VAR_OWNER: ${{ env.OWNER }}
-          TF_VAR_PROJECT: ${{ env.PROJECT }}
-          TF_VAR_REGION: ${{ env.REGION }}
-          TF_VAR_DOMAIN: "netcore-api-cqrs"
           # Dynamo-DB Configuration
           TF_VAR_ENABLE_DYNAMODB: true
           TF_VAR_TABLE_NAME: "menu"
