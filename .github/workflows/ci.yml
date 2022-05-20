@@ -46,7 +46,7 @@ env:
   SONAR_PROJECT_NAME: "dotnet-api-cqrs"
   # Events Function/s Config
   APP_BUS_TYPE: 'sns' # We build all functions even though we don't use them all.
-  # Function Naming
+  # Worker & Listener Image Naming
   DOCKER_IMAGE_NAME_BG_WORKER: "stacks-api-events-bg-worker"
   DOCKER_IMAGE_ARGS_BG_WORKER: "src/worker"
   DOCKER_IMAGE_NAME_WORKER: "stacks-api-events-worker-function"
@@ -55,7 +55,9 @@ env:
   DOCKER_IMAGE_ARGS_ASB_LISTENER: "--build-arg function=xxAMIDOxx.xxSTACKSxx.Listener src/functions/func-asb-listener"
   DOCKER_IMAGE_NAME_AEH_LISTENER: "stacks-api-events-listener-aeh-function"
   DOCKER_IMAGE_ARGS_AEH_LISTENER: "--build-arg function=xxAMIDOxx.xxSTACKSxx.Listener src/functions/func-aeh-listener"
-
+  # Worker K&S Resource Naming
+  RESOURCE_DEF_WORKER_NAME: "dotnet-api-worker"
+  APP_WORKER_NAME: "worker"
 
 jobs:
   Lint:
