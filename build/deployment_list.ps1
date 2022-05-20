@@ -19,7 +19,7 @@
             servicebus_connectionstring = "`${SERVICEBUS_CONNECTIONSTRING}"
             app_worker_name = "`${APP_WORKER_NAME}"
             resource_def_worker_name = "`${RESOURCE_DEF_WORKER_NAME}"
-            k8s_worker_image = "`${K8S_WORKER_IMAGE}"
+            k8s_worker_image = "`${DOCKER_REGISTRY}/`${DOCKER_IMAGE_NAME_BG_WORKER}:`${DOCKER_IMAGE_TAG}"
             version = "`${DOCKER_IMAGE_TAG}"
             jwtbearerauthentication_audience = "<TODO>"
             jwtbearerauthentication_authority = "<TODO>"
@@ -46,6 +46,7 @@
         cloudwatch_region = "`${REGION}"
         version = "`${DOCKER_IMAGE_TAG}"
         rewrite_target = '/$([char]0x0024)2' # Using UniCode to prevent substitution
+        k8s_worker_image = "`${DOCKER_REGISTRY}/`${DOCKER_IMAGE_NAME_BG_WORKER}:`${DOCKER_IMAGE_TAG}"
     }
   }
 )
