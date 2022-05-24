@@ -28,13 +28,15 @@ module "app" {
 # SNS (TODO: Tactical - migrate to app module)
 ###############
 resource "aws_sns_topic" "main" {
+  count = var.enable_queue ? 1 : 0
   name = "${module.app_label.id}-${var.queue_name}"
 }
 
 resource "aws_sns_topic_subscription" "main" {
+  count = var.enable_queue ? 1 : 0
   topic_arn = aws_sns_topic.main.arn
   protocol  = "sqs"
-  endpoint  = module.app.sqs_queue_arn
+  endpoint  = var.enable_queue ? module.app.sqs_queue_arn[0] : null
 }
 
 ################
