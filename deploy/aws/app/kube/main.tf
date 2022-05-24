@@ -31,6 +31,12 @@ resource "aws_sns_topic" "main" {
   name = "${module.app_label.id}-${var.queue_name}"
 }
 
+resource "aws_sns_topic_subscription" "main" {
+  topic_arn = aws_sns_topic.main.arn
+  protocol  = "sqs"
+  endpoint  = module.app.sqs_queue_arn
+}
+
 ################
 # Image Repositories (TODO: Should be list of strings created in app module)
 ###############
