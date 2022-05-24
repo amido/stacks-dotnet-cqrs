@@ -60,3 +60,5 @@
 # CLOUDWATCH_LOG_GROUP, CLOUDWATCH_STREAM_PREFIX and CLOUDWATCH_REGION for logging
 # VERSION (for K8S resource versioning)
 # TBC: additional vars used in the file which map straight to env-vars
+# SNS_TOPIC_ARN for Eventing / SNS integration Queue
+# REGION for AWS config

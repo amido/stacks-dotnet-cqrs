@@ -145,7 +145,21 @@ data:
           "Item B from congig",
           "Item C from config"
         ]
+      },
+      "AwsSnsConfiguration": {
+        "TopicArn": {
+                "Identifier": "TOPIC_ARN",
+                "Source": "Environment"
+            }
+      },
+      "AWS": {
+          "Region": "${region}"
+      },
+      "DynamoDb": {
+          "TableName": "${dynamodb_table_name}",
+          "TablePrefix": "${environment}"
       }
+
     }
 
 ---
@@ -229,6 +243,8 @@ spec:
               value: ${k8s_app_route}
             - name: LOG_LEVEL
               value: debug
+            - name: TOPIC_ARN
+              value: ${sns_topic_arn}
           resources:
             limits:
               cpu: "1"

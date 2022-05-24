@@ -24,6 +24,17 @@ module "app" {
   tags            = module.app_label.tags
 }
 
+################
+# SNS (TODO: Tactical - migrate to app module)
+###############
+resource "aws_sns_topic" "main" {
+  name = "${module.app_label.id}-${var.queue_name}"
+}
+
+################
+# Image Repositories (TODO: Should be list of strings created in app module)
+###############
+
 resource "aws_ecr_repository" "docker_image" {
   name = var.docker_image_name
   image_scanning_configuration {
