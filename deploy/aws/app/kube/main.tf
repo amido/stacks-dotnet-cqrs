@@ -34,7 +34,7 @@ resource "aws_sns_topic" "main" {
 
 resource "aws_sns_topic_subscription" "main" {
   count = var.enable_queue ? 1 : 0
-  topic_arn = aws_sns_topic.main.arn
+  topic_arn = aws_sns_topic.main.arn[0]
   protocol  = "sqs"
   endpoint  = var.enable_queue ? module.app.sqs_queue_arn[0] : null
 }
