@@ -3,27 +3,27 @@
 ############################################
 variable "docker_image_name" {
   description = "Main docker image"
-  type = string
+  type        = string
 }
 
 variable "docker_image_name_bg_worker" {
   description = "BG Worker docker image name"
-  type = string
+  type        = string
 }
 
 variable "docker_image_name_worker" {
   description = "K8S Worker docker image name"
-  type = string
+  type        = string
 }
 
 variable "docker_image_name_asb_listener" {
   description = "ASB Listener docker image name"
-  type = string
+  type        = string
 }
 
 variable "docker_image_name_aeh_listener" {
   description = "ASB Listener docker image name"
-  type = string
+  type        = string
 }
 
 ############################################
@@ -111,16 +111,16 @@ variable "location_name_map" {
 variable "app_bus_type" {
   description = "Which app bus to use"
   type        = string
-  nullable = true
+  nullable    = true
   validation {
-      condition = anytrue([
-        var.app_bus_type == "servicebus",
-        var.app_bus_type == "eventhub",
-        var.app_bus_type == "sqs",
-        var.app_bus_type == "sns",
-        var.app_bus_type == null
-      ])
-      error_message = "App_bus_type must be null, servicebus, eventhub, sqs, or sns."
+    condition = anytrue([
+      var.app_bus_type == "servicebus",
+      var.app_bus_type == "eventhub",
+      var.app_bus_type == "sqs",
+      var.app_bus_type == "sns",
+      var.app_bus_type == null
+    ])
+    error_message = "App_bus_type must be null, servicebus, eventhub, sqs, or sns."
   }
 }
 

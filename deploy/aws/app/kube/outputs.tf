@@ -13,8 +13,8 @@ output "dynamodb_table_id" {
 
 # TODO: This needs to be an output from the app module, rather than being constructed
 output "dynamodb_table_name" {
-    description = "Name of the DynamoDB table (constructed)"
-  table_name      = "${module.app_label.id}-${var.table_name}"
+  description = "Name of the DynamoDB table (constructed)"
+  value       = "${module.app_label.id}-${var.table_name}"
 }
 
 ############

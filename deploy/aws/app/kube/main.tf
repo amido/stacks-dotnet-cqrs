@@ -1,7 +1,7 @@
 
 module "app_label" {
-  source   = "cloudposse/label/null"
-  version = "0.24.1"
+  source     = "cloudposse/label/null"
+  version    = "0.24.1"
   namespace  = "${var.name_company}-${var.name_project}"
   stage      = var.stage
   name       = "${lookup(var.location_name_map, var.region, "eu-west-2")}-${var.name_domain}"
@@ -45,8 +45,8 @@ resource "aws_ecr_repository" "docker_image" {
 }
 
 resource "aws_ecr_repository" "docker_image_bg_worker" {
-  count = contains(split(",", var.app_bus_type), "servicebus") || contains(split(",", var.app_bus_type), "eventhub")? 1 : 0
-  name = var.docker_image_name_bg_worker
+  count = contains(split(",", var.app_bus_type), "servicebus") || contains(split(",", var.app_bus_type), "eventhub") ? 1 : 0
+  name  = var.docker_image_name_bg_worker
   image_scanning_configuration {
     scan_on_push = false
   }
@@ -55,8 +55,8 @@ resource "aws_ecr_repository" "docker_image_bg_worker" {
 }
 
 resource "aws_ecr_repository" "docker_image_worker_function" {
-  count = contains(split(",", var.app_bus_type), "servicebus") || contains(split(",", var.app_bus_type), "eventhub")? 1 : 0
-  name = var.docker_image_name_worker
+  count = contains(split(",", var.app_bus_type), "servicebus") || contains(split(",", var.app_bus_type), "eventhub") ? 1 : 0
+  name  = var.docker_image_name_worker
   image_scanning_configuration {
     scan_on_push = false
   }
@@ -66,7 +66,7 @@ resource "aws_ecr_repository" "docker_image_worker_function" {
 
 resource "aws_ecr_repository" "docker_image_asb_function" {
   count = contains(split(",", var.app_bus_type), "servicebus") ? 1 : 0
-  name = var.docker_image_name_asb_listener
+  name  = var.docker_image_name_asb_listener
   image_scanning_configuration {
     scan_on_push = false
   }
@@ -75,8 +75,8 @@ resource "aws_ecr_repository" "docker_image_asb_function" {
 }
 
 resource "aws_ecr_repository" "docker_image_aeh_function" {
-  count = contains(split(",", var.app_bus_type), "eventhub")? 1 : 0
-  name = var.docker_image_name_aeh_listener
+  count = contains(split(",", var.app_bus_type), "eventhub") ? 1 : 0
+  name  = var.docker_image_name_aeh_listener
   image_scanning_configuration {
     scan_on_push = false
   }
