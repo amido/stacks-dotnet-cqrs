@@ -160,8 +160,6 @@ data:
           "TablePrefix": "${environment}"
       }
 
-    }
-
 ---
 
 apiVersion: apps/v1
