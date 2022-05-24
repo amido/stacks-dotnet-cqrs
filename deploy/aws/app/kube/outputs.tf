@@ -35,6 +35,6 @@ output "sqs_queue_arn" {
 ############
 output "sns_topic_arn" {
   description = "The ARN for the created Amazon SNS topic"
-  value       = var.enable_queue ? aws_sns_topic.main : null
+  value       = var.enable_queue ? aws_sns_topic.main.arn : null
 }
 
