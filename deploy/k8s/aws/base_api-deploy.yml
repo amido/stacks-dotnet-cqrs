@@ -159,6 +159,7 @@ data:
           "TableName": "${dynamodb_table_name}",
           "TablePrefix": "${environment}"
       }
+    }
 
 ---
 
