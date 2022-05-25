@@ -2,27 +2,27 @@
 # Image Repositories
 ############################################
 variable "docker_image_name" {
-  description = "Main docker image"
+  description = "Main docker image."
   type        = string
 }
 
 variable "docker_image_name_bg_worker" {
-  description = "BG Worker docker image name"
+  description = "BG Worker docker image name."
   type        = string
 }
 
 variable "docker_image_name_worker" {
-  description = "K8S Worker docker image name"
+  description = "K8S Worker docker image name."
   type        = string
 }
 
 variable "docker_image_name_asb_listener" {
-  description = "ASB Listener docker image name"
+  description = "ASB Listener docker image name."
   type        = string
 }
 
 variable "docker_image_name_aeh_listener" {
-  description = "ASB Listener docker image name"
+  description = "ASB Listener docker image name."
   type        = string
 }
 
@@ -67,12 +67,12 @@ variable "env" {
 }
 
 variable "owner" {
-  description = "Responsible parties"
+  description = "Responsible parties for this component."
   type        = string
 }
 
 variable "region" {
-  description = "AWS Region for this infrastruture"
+  description = "AWS Region for this infrastructure."
   type        = string
   default     = "eu-west-2"
 }
@@ -109,7 +109,7 @@ variable "location_name_map" {
 ###############################################
 
 variable "app_bus_type" {
-  description = "Which app bus to use"
+  description = "Which app bus to use."
   type        = string
   nullable    = true
   validation {
