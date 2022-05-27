@@ -214,6 +214,22 @@
 					"exclude": [
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Fakes/DummyEventPublisher.cs"
 					]
+				},
+				{
+					"condition": "(EventPublisherServiceBus || EventPublisherEventHub || CosmosDb)",
+					"exclude": [
+						"**/build/azDevOps/aws/**",
+						"**/build/github/aws/**",
+						"**/deploy/aws/**"
+					]
+				},
+				{
+					"condition": "(EventPublisherAwsSns || DynamoDb)",
+					"exclude": [
+						"**/build/azDevOps/azure/**",
+						"**/build/github/azure/**",
+						"**/deploy/azure/**"
+					]
 				}
 			]
 		}

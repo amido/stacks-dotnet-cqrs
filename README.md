@@ -304,6 +304,14 @@ This library assumes you'll use the `AWS CLI` tools and will have configured you
 
 This template uses the [Amido.Stacks.DynamoDB](https://github.com/amido/stacks-dotnet-packages-dynamodb) package to connect and use DynamoDB.
 
+### Amido.Stacks.SNS package
+
+This template uses the [Amido.Stacks.SNS](https://github.com/amido/stacks-dotnet-packages-sns) package to connect and use AWS SNS.
+
+### Amido.Stacks.SQS package
+
+This template uses the [Amido.Stacks.SQS](https://github.com/amido/stacks-dotnet-packages-sqs) package to connect and use AWS SQS.
+
 ## Running the API locally on MacOS
 
 To run the API locally on MacOS there are a couple of prerequisites that you have to be aware of. You'll need a CosmosDB emulator/instance or an instance of DynamoDB on AWS. You also might need access to Azure/AWS for Azure Service Bus, Azure Event Hubs or AWS SNS.
@@ -327,9 +335,9 @@ You'll will need an Azure Event Hub namespace and an Event Hub to publish applic
 
 You'll need an AWS SNS Topic setup with a defined TopicArn in order to be able to publish application events.
 
-### Configuring CosmosDb, ServiceBus, EventHub or SNS
+### Configuring CosmosDb, ServiceBus, EventHub, DynamoDb or SNS
 
-Now that you have your CosmosDB all set, you can point the API project to it. In `appsettings.json` you can see the following sections
+Now that you have your cloud services all set, you can point the API project to it. In `appsettings.json` you can see the following sections
 
 ```json
 "CosmosDb": {
@@ -374,6 +382,10 @@ Now that you have your CosmosDB all set, you can point the API project to it. In
         "BlobContainerName": "stacks-blob-container-name"
     }
 }
+"DynamoDb": {
+    "TableName": "<Domain Object>",
+    "TablePrefix": "<Any Environmental Prefix You Would Like>"
+}
 "AwsSnsConfiguration": {
     "TopicArn": {
             "Identifier": "TOPIC_ARN",
@@ -382,6 +394,14 @@ Now that you have your CosmosDB all set, you can point the API project to it. In
 }
 "AWS": {
     "Region": "eu-west-2"
+}
+"logConfiguration": {
+    "logDriver": "awslogs",
+    "options": {
+        "awslogs-group": "${cloudwatch_log_group_name}",
+        "awslogs-region": "${region}",
+        "awslogs-stream-prefix": "${cloudwatch_log_prefix}"
+    }
 }
 ```
 
@@ -394,6 +414,21 @@ The `SecurityKeySecret` and `ConnectionStringSecret` sections are needed because
     "SERVICEBUS_CONNECTIONSTRING": "YOUR_SERVICE_BUS_CONNECTION_STRING",
     "EVENTHUB_CONNECTIONSTRING": "YOUR_EVENT_HUB_CONNECTION_STRING",
     "TOPIC_ARN": "YOUR_TOPIC_ARN"
+}
+```
+
+Alternatively, if you would like to run locally, you could also set the following environment variables in your `local.settings.json` file
+
+```json
+{
+    "IsEncrypted": false,
+    "Values": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "COSMOSDB_KEY": "YOUR_COSMOSDB_PRIMARY_KEY",
+        "SERVICEBUS_CONNECTIONSTRING": "YOUR_SERVICE_BUS_CONNECTION_STRING",
+        "EVENTHUB_CONNECTIONSTRING": "YOUR_EVENT_HUB_CONNECTION_STRING",
+        "TOPIC_ARN": "YOUR_TOPIC_ARN"
+    }
 }
 ```
 
