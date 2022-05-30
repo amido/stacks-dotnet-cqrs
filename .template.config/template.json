@@ -77,6 +77,26 @@
 			],
 			"description": "Adds saving to database."
 		},
+		"cloudProvider": {
+			"type": "parameter",
+			"datatype": "choice",
+			"defaultValue": "Azure",
+			"choices": [
+				{
+					"choice": "Azure",
+					"description": "Targets Azure DevOps"
+				},
+				{
+					"choice": "AWS",
+					"description": "Targets AWS pipelines"
+				},
+				{
+					"choice": "GitHub",
+					"description": "Targets Google Cloud Platform"
+				}
+			],
+			"description": "Adds cloud provider build pipelines."
+		},
 		"CosmosDb": {
 			"type": "computed",
 			"value": "(database == \"CosmosDb\")"
@@ -104,6 +124,18 @@
 		"EventPublisherNone": {
 			"type": "computed",
 			"value": "(eventPublisher == \"None\")"
+		},
+		"CloudProviderAzure": {
+			"type": "computed",
+			"value": "(cloudProvider == \"AzureCloud\")"
+		},
+		"CloudProviderAws": {
+			"type": "computed",
+			"value": "(cloudProvider == \"AwsCloud\")"
+		},
+		"CloudProviderGcp": {
+			"type": "computed",
+			"value": "(cloudProvider == \"GcpCloud\")"
 		},
 		"enableFunctionWorker": {
 			"type": "parameter",
@@ -216,7 +248,7 @@
 					]
 				},
 				{
-					"condition": "(EventPublisherServiceBus || EventPublisherEventHub || CosmosDb)",
+					"condition": "(EventPublisherServiceBus || EventPublisherEventHub || CosmosDb || CloudProviderAws || CloudProviderGcp)",
 					"exclude": [
 						"**/build/azDevOps/aws/**",
 						"**/build/github/aws/**",
@@ -224,7 +256,7 @@
 					]
 				},
 				{
-					"condition": "(EventPublisherAwsSns || DynamoDb)",
+					"condition": "(EventPublisherAwsSns || DynamoDb || CloudProviderAzure || CloudProviderGcp)",
 					"exclude": [
 						"**/build/azDevOps/azure/**",
 						"**/build/github/azure/**",

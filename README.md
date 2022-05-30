@@ -104,6 +104,8 @@ dotnet new --uninstall Amido.Stacks.CQRS.Templates
 - **-o|--output**
   - Sets the path to where the template project is generated
   - Omitting the parameter will result in the creation of a new folder
+- **-cp|--cloudProvider**
+  - Configures which cloud provider to be used
 
 ## Creating a new WebAPI + CQRS project from the template
 

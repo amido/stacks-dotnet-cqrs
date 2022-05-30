@@ -24,6 +24,10 @@
 		"enableBackgroundWorker": {
 			"longName": "enableBackgroundWorker",
 			"shortName": "e:bw"
+		},
+		"cloudProvider": {
+			"longName": "cloudProvider",
+			"shortName": "cp"
 		}
 	}
 }
