@@ -80,7 +80,7 @@
 		"cloudProvider": {
 			"type": "parameter",
 			"datatype": "choice",
-			"defaultValue": "Azure",
+			"defaultValue": "None",
 			"choices": [
 				{
 					"choice": "Azure",
@@ -93,7 +93,12 @@
 				{
 					"choice": "GitHub",
 					"description": "Targets Google Cloud Platform"
+				},
+				{
+					"choice": "None",
+					"description": "Targets no platform and leaves all provider templates"
 				}
+
 			],
 			"description": "Adds cloud provider build pipelines."
 		},
@@ -248,7 +253,7 @@
 					]
 				},
 				{
-					"condition": "(EventPublisherServiceBus || EventPublisherEventHub || CosmosDb || CloudProviderAws || CloudProviderGcp)",
+					"condition": "(EventPublisherServiceBus || EventPublisherEventHub || CosmosDb || CloudProviderAzure || CloudProviderGcp)",
 					"exclude": [
 						"**/build/azDevOps/aws/**",
 						"**/build/github/aws/**",
@@ -256,7 +261,7 @@
 					]
 				},
 				{
-					"condition": "(EventPublisherAwsSns || DynamoDb || CloudProviderAzure || CloudProviderGcp)",
+					"condition": "(EventPublisherAwsSns || DynamoDb || CloudProviderAws || CloudProviderGcp)",
 					"exclude": [
 						"**/build/azDevOps/azure/**",
 						"**/build/github/azure/**",
