@@ -1,6 +1,11 @@
 ############################################
 # Image Repositories
 ############################################
+
+variable "create_docker_repositories" {
+  type    = bool
+  default = false
+}
 variable "docker_image_name" {
   description = "Main docker image."
   type        = string

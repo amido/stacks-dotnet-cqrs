@@ -29,11 +29,11 @@ module "app" {
 ###############
 resource "aws_sns_topic" "main" {
   count = var.enable_queue ? 1 : 0
-  name = "${module.app_label.id}-${var.queue_name}"
+  name  = "${module.app_label.id}-${var.queue_name}"
 }
 
 resource "aws_sns_topic_subscription" "main" {
-  count = var.enable_queue ? 1 : 0
+  count     = var.enable_queue ? 1 : 0
   topic_arn = aws_sns_topic.main[0].arn
   protocol  = "sqs"
   endpoint  = var.enable_queue ? module.app.sqs_queue_arn[0] : null
@@ -44,7 +44,8 @@ resource "aws_sns_topic_subscription" "main" {
 ###############
 
 resource "aws_ecr_repository" "docker_image" {
-  name = var.docker_image_name
+  count = var.create_docker_repositories ? 1 : 0
+  name  = var.docker_image_name
   image_scanning_configuration {
     scan_on_push = false
   }
@@ -53,7 +54,7 @@ resource "aws_ecr_repository" "docker_image" {
 }
 
 resource "aws_ecr_repository" "docker_image_bg_worker" {
-  count = contains(split(",", var.app_bus_type), "servicebus") || contains(split(",", var.app_bus_type), "eventhub") ? 1 : 0
+  count = var.create_docker_repositories ? (contains(split(",", var.app_bus_type), "servicebus") || contains(split(",", var.app_bus_type), "eventhub") ? 1 : 0) : 0
   name  = var.docker_image_name_bg_worker
   image_scanning_configuration {
     scan_on_push = false
@@ -63,7 +64,7 @@ resource "aws_ecr_repository" "docker_image_bg_worker" {
 }
 
 resource "aws_ecr_repository" "docker_image_worker_function" {
-  count = contains(split(",", var.app_bus_type), "servicebus") || contains(split(",", var.app_bus_type), "eventhub") ? 1 : 0
+  count = var.create_docker_repositories ? (contains(split(",", var.app_bus_type), "servicebus") || contains(split(",", var.app_bus_type), "eventhub") ? 1 : 0) : 0
   name  = var.docker_image_name_worker
   image_scanning_configuration {
     scan_on_push = false
@@ -73,7 +74,7 @@ resource "aws_ecr_repository" "docker_image_worker_function" {
 }
 
 resource "aws_ecr_repository" "docker_image_asb_function" {
-  count = contains(split(",", var.app_bus_type), "servicebus") ? 1 : 0
+  count = var.create_docker_repositories ? (contains(split(",", var.app_bus_type), "servicebus") ? 1 : 0) : 0
   name  = var.docker_image_name_asb_listener
   image_scanning_configuration {
     scan_on_push = false
@@ -83,7 +84,7 @@ resource "aws_ecr_repository" "docker_image_asb_function" {
 }
 
 resource "aws_ecr_repository" "docker_image_aeh_function" {
-  count = contains(split(",", var.app_bus_type), "eventhub") ? 1 : 0
+  count = var.create_docker_repositories ? (contains(split(",", var.app_bus_type), "eventhub") ? 1 : 0) : 0
   name  = var.docker_image_name_aeh_listener
   image_scanning_configuration {
     scan_on_push = false
