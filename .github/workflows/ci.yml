@@ -288,7 +288,7 @@ jobs:
   DeployProd:
     needs: AppInfraProd
     runs-on: ubuntu-latest
-    environment: nonprod
+    environment: prod
     steps:
       - uses: actions/checkout@v3
       - name: Install TaskCTL
