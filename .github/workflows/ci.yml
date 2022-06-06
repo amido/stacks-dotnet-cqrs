@@ -69,6 +69,7 @@ env:
   APP_WORKER_NAME: "worker"
   DOCKER_IMAGE_NAME_WORKER: "stacks-api-events-worker-function"
   DOCKER_IMAGE_ARGS_WORKER: "--build-arg function=xxAMIDOxx.xxSTACKSxx.Worker src/functions/func-cosmosdb-worker"
+
 jobs:
   Lint:
     runs-on: ubuntu-latest
