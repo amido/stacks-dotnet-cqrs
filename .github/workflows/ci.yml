@@ -2,9 +2,9 @@ name: air.stacks-dotnet-cqrs
 
 on:
   push:
-    branches:
-      - master
-      - main
+    # branches:
+    #   - master
+    #   - main
     paths:
       - 'build/github/**'
       - 'src/**'
