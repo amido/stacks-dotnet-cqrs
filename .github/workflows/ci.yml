@@ -351,7 +351,7 @@ jobs:
           DNS_BASE_DOMAIN: "prod.amidostacks.com"
           # Functional Test Configuration
           FUNCTIONAL_TESTS_RUN_DIR: /app/tests # Must match RELATIVE path from repo root that artefact is downloaded to.
-          BaseUrl: "https://nonprod-dev-netcore-api-cqrs.prodaws.amidostacks.com/api/menu/"
+          BaseUrl: "https://prod-dev-netcore-api-cqrs.prodaws.amidostacks.com/api/menu/"
 
 
       - name: Publish Manifest File
