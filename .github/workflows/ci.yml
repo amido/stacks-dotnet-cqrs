@@ -348,7 +348,7 @@ jobs:
           # K8S Additional Deploy-Templater temporary var substitutions (should be from TF outputs and per env)
           CLOUDWATCH_LOG_GROUP: “amido-stacks-prod-0cvO68Bj-logs”
           CLOUDWATCH_STREAM_PREFIX: "prod-${{ env.DOMAIN }}"
-          DNS_BASE_DOMAIN: "prod.amidostacks.com"
+          DNS_BASE_DOMAIN: "prodaws.amidostacks.com"
           # Functional Test Configuration
           FUNCTIONAL_TESTS_RUN_DIR: /app/tests # Must match RELATIVE path from repo root that artefact is downloaded to.
           BaseUrl: "https://prod-dev-netcore-api-cqrs.prodaws.amidostacks.com/api/menu/"
