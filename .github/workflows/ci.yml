@@ -115,6 +115,7 @@ jobs:
           path: ${{ env.FUNCTIONAL_TESTS_SRC_DIR }}
 
   AppInfraDev:
+    if: github.ref != 'refs/heads/master' && github.ref != 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     environment: nonprod
@@ -163,7 +164,8 @@ jobs:
           TF_VAR_queue_name: "menu"
 
   DeployDev:
-    needs: AppInfraDev
+    if: github.ref != 'refs/heads/master' && github.ref != 'refs/heads/main'
+    needs: build
     runs-on: ubuntu-latest
     environment: nonprod
     steps:
