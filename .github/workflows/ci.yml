@@ -165,7 +165,7 @@ jobs:
 
   DeployDev:
     if: github.ref != 'refs/heads/master' && github.ref != 'refs/heads/main'
-    needs: build
+    needs: AppInfraDev
     runs-on: ubuntu-latest
     environment: nonprod
     steps:
@@ -238,7 +238,7 @@ jobs:
           path: ${{ env.K8S_RESOURCE_FILE }}
 
   AppInfraProd:
-    needs: DeployDev
+    needs: build
     runs-on: ubuntu-latest
     environment: prod
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
