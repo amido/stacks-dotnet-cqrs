@@ -91,7 +91,7 @@
 					"description": "Targets AWS pipelines"
 				},
 				{
-					"choice": "GitHub",
+					"choice": "GCP",
 					"description": "Targets Google Cloud Platform"
 				},
 				{
@@ -132,15 +132,15 @@
 		},
 		"CloudProviderAzure": {
 			"type": "computed",
-			"value": "(cloudProvider == \"AzureCloud\")"
+			"value": "(cloudProvider == \"Azure\")"
 		},
 		"CloudProviderAws": {
 			"type": "computed",
-			"value": "(cloudProvider == \"AwsCloud\")"
+			"value": "(cloudProvider == \"AWS\")"
 		},
 		"CloudProviderGcp": {
 			"type": "computed",
-			"value": "(cloudProvider == \"GcpCloud\")"
+			"value": "(cloudProvider == \"GCP\")"
 		},
 		"enableFunctionWorker": {
 			"type": "parameter",
@@ -253,18 +253,26 @@
 					]
 				},
 				{
-					"condition": "(EventPublisherServiceBus || EventPublisherEventHub || CosmosDb || CloudProviderAzure || CloudProviderGcp)",
+					"condition": "(CloudProviderAzure)",
 					"exclude": [
 						"**/build/azDevOps/aws/**",
+						"**/build/github/**",
+						"**/deploy/aws/**"
+					]
+				},
+				{
+					"condition": "(CloudProviderGcp)",
+					"exclude": [
+						"**/build/azDevOps/**",
 						"**/build/github/aws/**",
 						"**/deploy/aws/**"
 					]
 				},
 				{
-					"condition": "(EventPublisherAwsSns || DynamoDb || CloudProviderAws || CloudProviderGcp)",
+					"condition": "(CloudProviderAws)",
 					"exclude": [
-						"**/build/azDevOps/azure/**",
-						"**/build/github/azure/**",
+						"**/build/azDevOps/**",
+						"**/build/github/**",
 						"**/deploy/azure/**"
 					]
 				}
