@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using xxAMIDOxx.xxSTACKSxx.Application.Integration;
 using xxAMIDOxx.xxSTACKSxx.Domain;
 
@@ -8,11 +9,19 @@ namespace xxAMIDOxx.xxSTACKSxx.Infrastructure.Fakes;
 
 public class InMemoryMenuRepository : IMenuRepository
 {
+    ILogger<InMemoryMenuRepository> logger;
     private static readonly Object @lock = new Object();
     private static readonly Dictionary<Guid, Menu> storage = new Dictionary<Guid, Menu>();
 
+    public InMemoryMenuRepository(ILogger<InMemoryMenuRepository> logger)
+    {
+        this.logger = logger;
+    }
+
     public async Task<Menu> GetByIdAsync(Guid id)
     {
+        logger.LogInformation($"Entity requested: {id}");
+
         if (storage.ContainsKey(id))
             return await Task.FromResult(storage[id]);
         else
@@ -32,6 +41,8 @@ public class InMemoryMenuRepository : IMenuRepository
                 storage.Add(entity.Id, entity);
         }
 
+        logger.LogInformation($"Entity created: {entity.Id}");
+
         return await Task.FromResult(true);
     }
 
@@ -46,7 +57,8 @@ public class InMemoryMenuRepository : IMenuRepository
             result = storage.Remove(id);
         }
 
+        logger.LogInformation($"Entity deleted: {id}");
+
         return await Task.FromResult(result);
     }
-
 }
