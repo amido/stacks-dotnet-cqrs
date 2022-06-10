@@ -102,6 +102,27 @@
 			],
 			"description": "Adds cloud provider build pipelines."
 		},
+		"cicdProvider": {
+			"type": "parameter",
+			"datatype": "choice",
+			"defaultValue": "None",
+			"choices": [
+				{
+					"choice": "Azure",
+					"description": "Targets Azure DevOps for CI/CD templates"
+				},
+				{
+					"choice": "GitHub",
+					"description": "Targets GitHub Actions for CI/CD templates"
+				},
+				{
+					"choice": "None",
+					"description": "Targets no platform and leaves all provider templates"
+				}
+
+			],
+			"description": "Adds specified CI/CD provider build pipelines."
+		},
 		"CosmosDb": {
 			"type": "computed",
 			"value": "(database == \"CosmosDb\")"
@@ -141,6 +162,21 @@
 		"CloudProviderGcp": {
 			"type": "computed",
 			"value": "(cloudProvider == \"GCP\")"
+		},
+		"CloudProviderNone": {
+			"type": "computed",
+			"value": "(cloudProvider == \"None\")"
+		},"CiCdAzure": {
+			"type": "computed",
+			"value": "(cloudProvider == \"Azure\")"
+		},
+		"CiCdGitHub": {
+			"type": "computed",
+			"value": "(cloudProvider == \"GitHub\")"
+		},
+		"CiCdNone": {
+			"type": "computed",
+			"value": "(cloudProvider == \"None\")"
 		},
 		"enableFunctionWorker": {
 			"type": "parameter",
@@ -256,24 +292,44 @@
 					"condition": "(CloudProviderAzure)",
 					"exclude": [
 						"**/build/azDevOps/aws/**",
-						"**/build/github/**",
-						"**/deploy/aws/**"
+						"**/build/azDevOps/gcp/**",
+						"**/build/github/aws/**",
+						"**/build/github/gcp/**",
+						"**/deploy/aws/**",
+						"**/deploy/gcp/**"
 					]
 				},
 				{
 					"condition": "(CloudProviderGcp)",
 					"exclude": [
-						"**/build/azDevOps/**",
+						"**/build/azDevOps/aws/**",
+						"**/build/azDevOps/azure/**",
 						"**/build/github/aws/**",
-						"**/deploy/aws/**"
+						"**/deploy/aws/**",
+						"**/deploy/azure/**"
 					]
 				},
 				{
 					"condition": "(CloudProviderAws)",
 					"exclude": [
-						"**/build/azDevOps/**",
-						"**/build/github/**",
-						"**/deploy/azure/**"
+						"**/build/azDevOps/azure/**",
+						"**/build/azDevOps/gcp/**",
+						"**/build/github/azure/**",
+						"**/build/github/gcp/**",
+						"**/deploy/azure/**",
+						"**/deploy/gcp/**"
+					]
+				},
+				{
+					"condition": "(CiCdAzure)",
+					"exclude": [
+						"**/build/github/**"
+					]
+				},
+				{
+					"condition": "(CiCdGitHub)",
+					"exclude": [
+						"**/build/azDevOps/**"
 					]
 				}
 			]
