@@ -166,7 +166,8 @@
 		"CloudProviderNone": {
 			"type": "computed",
 			"value": "(cloudProvider == \"None\")"
-		},"CiCdAzure": {
+		},
+		"CiCdAzure": {
 			"type": "computed",
 			"value": "(cloudProvider == \"Azure\")"
 		},
@@ -232,7 +233,11 @@
 					"condition": "(DynamoDb)",
 					"exclude": [
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/CosmosDbMenuRepository.cs",
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/CosmosDbMenuRepositoryTests.cs"
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/CosmosDbMenuRepositoryTests.cs",
+						"**src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.UnitTests/CosmosDbMenuRepositoryTests.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests/HandlerTests.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.API.ComponentTests/Fixtures/CreateCategoryFixture.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.API.ComponentTests/Features/CreateCategoryFeature.cs"
 					]
 				},
 				{
