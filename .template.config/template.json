@@ -226,6 +226,8 @@
 					"exclude": [
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/InMemoryMenuRepositoryTests.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/InMemoryMenuRepositoryAutoDataAttribute.cs",
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/DynamoDbCategoryConverterTests.cs"
 					]
 				},
@@ -234,6 +236,8 @@
 					"exclude": [
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/CosmosDbMenuRepository.cs",
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/CosmosDbMenuRepositoryTests.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/InMemoryMenuRepositoryTests.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/InMemoryMenuRepositoryAutoDataAttribute.cs",
 						"**src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.UnitTests/CosmosDbMenuRepositoryTests.cs",
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.CQRS.UnitTests/HandlerTests.cs",
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.API.ComponentTests/Fixtures/CreateCategoryFixture.cs",
@@ -247,7 +251,9 @@
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/CosmosDbMenuRepositoryTests.cs",
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure/Repositories/DynamoDbMenuRepository.cs",
 						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.IntegrationTests/DynamoDbMenuRepositoryTests.cs",
-						"**/src/api/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/DynamoDbCategoryConverterTests.cs"
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Domain.UnitTests/DynamoDbCategoryConverterTests.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.UnitTests/CosmosDbMenuRepositoryTests.cs",
+						"**/src/api/xxAMIDOxx.xxSTACKSxx.Infrastructure.UnitTests/DynamoDbMenuRepositoryTests.cs"
 					]
 				},
 				{

@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using AutoFixture;
-using AutoFixture.Xunit2;
 using Xunit;
 using Xunit.Abstractions;
 using xxAMIDOxx.xxSTACKSxx.Domain;
@@ -31,7 +30,7 @@ public class InMemoryMenuRepositoryTests
     /// Ensure the implementation of MenuRepository.Save() submit
     /// the menu information and is retrieved properly
     /// </summary>
-    [Theory, AutoData]
+    [Theory, InMemoryMenuRepositoryAutoData]
     public async Task SaveAndGetTest(InMemoryMenuRepository repository, Menu menu)
     {
         output.WriteLine($"Creating the menu '{menu.Id}' in the repository");
@@ -52,7 +51,7 @@ public class InMemoryMenuRepositoryTests
     /// Ensure the implementation of MenuRepository.Delete()
     /// removes an existing menu and is not retrieved when requested
     /// </summary>
-    [Theory, AutoData]
+    [Theory, InMemoryMenuRepositoryAutoData]
     public async Task DeleteTest(InMemoryMenuRepository repository, Menu menu)
     {
         output.WriteLine($"Creating the menu '{menu.Id}' in the repository");
@@ -71,7 +70,7 @@ public class InMemoryMenuRepositoryTests
     /// <summary>
     /// This test will run 100 operations concurrently to test concurrency issues
     /// </summary>
-    [Theory, AutoData]
+    [Theory, InMemoryMenuRepositoryAutoData]
     public async Task ParallelRunTest(InMemoryMenuRepository repository)
     {
         Task[] tasks = new Task[100];
