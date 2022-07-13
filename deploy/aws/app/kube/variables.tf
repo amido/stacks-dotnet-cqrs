@@ -121,11 +121,10 @@ variable "app_bus_type" {
     condition = anytrue([
       var.app_bus_type == "servicebus",
       var.app_bus_type == "eventhub",
-      var.app_bus_type == "sqs",
       var.app_bus_type == "sns",
       var.app_bus_type == null
     ])
-    error_message = "App_bus_type must be null, servicebus, eventhub, sqs, or sns."
+    error_message = "App_bus_type must be null, servicebus, eventhub, or sns."
   }
 }
 
