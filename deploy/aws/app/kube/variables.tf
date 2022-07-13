@@ -124,7 +124,7 @@ variable "app_bus_type" {
       var.app_bus_type == "sns",
       var.app_bus_type == null
     ])
-    error_message = "app_bus_type must be null, servicebus, eventhub, or sns."
+    error_message = "The app_bus_type variable must be null, servicebus, eventhub, or sns."
   }
 }
 
