@@ -53,7 +53,7 @@ env:
   FUNCTIONAL_TESTS_ARTEFACT_NAME: tests
   SONAR_PROJECT_NAME: "dotnet-api-cqrs"
   # Events Function/s Config
-  APP_BUS_TYPE: 'sns' # Supports sns, servicebus, eventhub
+  APP_BUS_TYPE: 'sns' # Supports sns, servicebus, and eventhub
   # Worker & Listener Image Naming (only implemented for ServiceBus and EventHub Messaging)
   DOCKER_IMAGE_NAME_BG_WORKER: "stacks-api-events-bg-worker"
   DOCKER_IMAGE_ARGS_BG_WORKER: "src/worker"
