@@ -22,12 +22,12 @@ output "dynamodb_table_name" {
 ############
 output "sqs_queue_id" {
   description = "The URL for the created Amazon SQS queue"
-  value       = var.enable_queue ? module.app.sqs_queue_id[0] : null
+  value       = var.enable_queue ? module.app.sqs_queue_id : null
 }
 
 output "sqs_queue_arn" {
   description = "The ARN of the SQS queue"
-  value       = var.enable_queue ? module.app.sqs_queue_arn[0] : null
+  value       = var.enable_queue ? module.app.sqs_queue_arn : null
 }
 
 ############
@@ -35,6 +35,6 @@ output "sqs_queue_arn" {
 ############
 output "sns_topic_arn" {
   description = "The ARN for the created Amazon SNS topic"
-  value       = var.enable_queue ? module.app.sns_topic_arn[0] : null
+  value       = var.enable_queue ? module.app.sns_topic_arn : null
 }
 
