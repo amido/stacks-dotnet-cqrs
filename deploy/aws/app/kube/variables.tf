@@ -124,17 +124,17 @@ variable "app_bus_type" {
       var.app_bus_type == "sns",
       var.app_bus_type == null
     ])
-    error_message = "App_bus_type must be null, servicebus, eventhub, or sns."
+    error_message = "app_bus_type must be null, servicebus, eventhub, or sns."
   }
 }
 
 variable "enable_queue" {
-  description = "Whether to create SQS queue. Must match app_bus_type above."
+  description = "Whether to create SQS queue and SNS topic. Must match app_bus_type above."
   type        = bool
 }
 
 variable "queue_name" {
-  description = "This is the human-readable name of the queue. If omitted, Terraform will assign a random name."
+  description = "This is the human-readable name of the queue and topic. If omitted, Terraform will assign a random name."
   type        = string
 }
 
@@ -145,7 +145,6 @@ variable "enable_dynamodb" {
   description = "Whether to create dynamodb table."
   type        = bool
 }
-
 
 variable "table_name" {
   description = "The name of the table, this needs to be unique within a region."
